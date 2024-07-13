@@ -1,0 +1,87 @@
+
+.header {
+    background-color: rgb(37,37,37);
+    height: 60px;
+    display: flex;
+    flex: 1 3;
+    align-items: center;
+    justify-content: space-around;
+    padding: 5px;
+    top: 0;
+    position: fixed;
+    width: 100vw;
+}
+
+.header-button {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(37,37,37);
+    border: 0;
+    color: aliceblue;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 1px 6px 1px 6px;
+    margin: 5PX;
+}
+.header-button span{
+    vertical-align: middle;
+
+}
+.header-button svg{
+    height: 27px;
+    width: 27px;
+    vertical-align: middle;
+    margin: 3px;
+}
+.v-bar{
+    font-size: 20px;
+    color: rgb(119, 119, 119);
+    vertical-align: middle;
+}
+.ab-image{
+    height: 35px;
+    vertical-align: middle;
+}
+.Nav{
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-top: 65px;
+
+}
+.Nav img{
+    height: 32px;
+}
+h2{
+    color: rgb(221, 32, 44);
+}
+
+.scroll-container {
+    display: flex;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Prevent wrapping of items */
+    scroll-snap-type: x mandatory; /* Optional: for snapping behavior */
+}
+
+.scroll-container img {
+    flex-shrink: 0; /* Prevent images from shrinking */
+    width: 80%; /* Ensure images fit within their container */
+    height: auto; /* Maintain aspect ratio */
+    scroll-snap-align: start; /* Optional: for snapping behavior */
+}
+
+/* Optional: add some styling for scrollbar */
+.scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 4px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
