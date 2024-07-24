@@ -12,10 +12,10 @@ const ProductGrid = () => {
   });
 
   useEffect(() => {
-    // Save cart data to local storage whenever it changes
     localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
-
+    // Notify subscribers (e.g., Header) about the change
+    window.dispatchEvent(new Event('cart-updated'));
+}, [cart]);
   const addToCart = (product) => {
     setCart((prevCart) => [...prevCart, product]);
   };

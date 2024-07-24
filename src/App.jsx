@@ -14,9 +14,7 @@ function App() {
 
 
   
-  const removeFromCart = (productId) => {
-    setCart(cart.filter(product => product.id !== productId));
-  };
+ 
 
   
   return (

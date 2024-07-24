@@ -10,9 +10,10 @@ const Cart = () => {
   });
 
   useEffect(() => {
-    // Update cart data in local storage whenever it changes
     localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
+    // Notify subscribers (e.g., Header) about the change
+    window.dispatchEvent(new Event('cart-updated'));
+}, [cart]);
 
   const removeFromCart = (index) => {
     // Create a new cart array excluding the item at the specified index
