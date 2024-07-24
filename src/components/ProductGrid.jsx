@@ -1,12 +1,13 @@
 import React from 'react';
 import ProductCard from './ProductsCards';
 import './ProductGrid.css';
+import productsData from './db/products.json';
 
-const ProductGrid = ({ products,addToCart }) => {
+const ProductGrid = () => {
     return (
         <div className="product-grid">
-            {products.map((product) => (
-                <ProductCard key={product.id} product={product} addToCart={addToCart} />
+            {productsData.products.map((product) => (
+                <ProductCard key={product.id} product={product}  />
             ))}
         </div>
     );
