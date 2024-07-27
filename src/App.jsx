@@ -7,6 +7,7 @@ import Nav from './components/Nav';
 import Scroll from './components/Scroll';
 import ProductGrid from './components/ProductGrid';
 import CategoryGrid from './components/Category';
+import SearchBar from './components/SearchBar';
 
 
 
@@ -22,6 +23,7 @@ function App() {
     <>
       <Header />
         <Nav/>
+        <SearchBar/>
         <Scroll/>
         <CategoryGrid/>
         <ProductGrid />
