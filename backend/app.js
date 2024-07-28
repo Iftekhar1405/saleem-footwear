@@ -1,6 +1,8 @@
 require("dotenv").config();
 require("express-async-errors");
+const cors = require("cors");
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
 
 // packages
@@ -18,6 +20,9 @@ const productRouter = require("./routes/productRoutes");
 const userRouter = require("./routes/userRoutes");
 
 // middleware
+app.use(morgan("tiny"));
+app.set("trust proxy", 1);
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 

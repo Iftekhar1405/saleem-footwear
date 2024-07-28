@@ -1,5 +1,6 @@
 // src/ProductGrid.js
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './ProductGrid.css';
 import './ProductCard.css';
 import productsData from './db/products.json';
@@ -33,7 +34,23 @@ const ProductGrid = () => {
   const addToLiked = (product) => {
     setLiked((prevLiked) => [...prevLiked, product]);
   };
-  
+
+  // approach to fetch data from server
+    //   useEffect(() => {
+    //     axios.get('http://localhost:7000/api/v1/products',{
+    //       headers:{
+    //         'Cache-Control' : 'no-chche',
+    //         'Pragma':'no-cache'
+    //       }
+    //     })
+    //         .then(response => {
+    //             console.log(response.data);
+    //             const data = response.data
+    //         })
+    //         .catch(error => {
+    //             console.error(error);
+    //         });
+    // }, []);
 
   return (
     <div className="product-grid">
