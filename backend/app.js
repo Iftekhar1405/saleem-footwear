@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 
 app.get("/", (req, res) => {
-  res.send("Finally af ter so much long time....");
+  res.send("Finally after so much long time....");
 });
 
 const port = process.env.PORT || 7000;

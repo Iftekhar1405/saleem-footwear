@@ -4,6 +4,8 @@ const {
   createProduct,
   getAllProducts,
   getSingleProduct,
+  updateProduct,
+  deleteProduct,
 } = require("../controllers/productController");
 const {
   authenticateUser,
@@ -15,6 +17,10 @@ router
   .post([authenticateUser, authorizePermission("admin")], createProduct)
   .get(getAllProducts);
 
-router.route("/:id").get(getSingleProduct);
+router
+  .route("/:id")
+  .get(getSingleProduct)
+  .patch(updateProduct)
+  .delete(deleteProduct);
 
 module.exports = router;
