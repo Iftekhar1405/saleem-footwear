@@ -1,73 +1,80 @@
-// src/ProductGrid.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ProductGrid.css';
 import './ProductCard.css';
-import productsData from './db/products.json';
+
+const useFetchData = (url) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await axios.get(url);
+        setData(response.data.products);
+      } catch (error) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [url]);
+
+  return { data, loading, error };
+};
+
+const useLocalStorage = (key, initialValue) => {
+  const [storedValue, setStoredValue] = useState(() => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.error(error);
+      return initialValue;
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(storedValue));
+    window.dispatchEvent(new Event(`${key}-updated`));
+  }, [storedValue, key]);
+
+  return [storedValue, setStoredValue];
+};
 
 const ProductGrid = () => {
-  const [cart, setCart] = useState(() => {
-    // Get cart data from local storage
-    const savedCart = localStorage.getItem('cart');
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const { data: products, loading, error } = useFetchData('http://localhost:7000/api/v1/products');
+  const [cart, setCart] = useLocalStorage('cart', []);
+  const [liked, setLiked] = useLocalStorage('liked', []);
 
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-    // Notify subscribers (e.g., Header) about the change
-    window.dispatchEvent(new Event('cart-updated'));
-}, [cart]);
-  const addToCart = (product) => {
-    setCart((prevCart) => [...prevCart, product]);
-  };
-  const [Liked, setLiked] = useState(() => {
-    // Get cart data from local storage
-    const savedLiked = localStorage.getItem('Liked');
-    return savedLiked ? JSON.parse(savedLiked) : [];
-  });
+  const addToCart = (product) => setCart([...cart, product]);
+  const addToLiked = (product) => setLiked([...liked, product]);
 
-  useEffect(() => {
-    localStorage.setItem('Liked', JSON.stringify(Liked));
-    // Notify subscribers (e.g., Header) about the change
-    window.dispatchEvent(new Event('Liked-updated'));
-}, [Liked]);
-  const addToLiked = (product) => {
-    setLiked((prevLiked) => [...prevLiked, product]);
-  };
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
 
-  // approach to fetch data from server
-    //   useEffect(() => {
-    //     axios.get('http://localhost:7000/api/v1/products',{
-    //       headers:{
-    //         'Cache-Control' : 'no-chche',
-    //         'Pragma':'no-cache'
-    //       }
-    //     })
-    //         .then(response => {
-    //             console.log(response.data);
-    //             const data = response.data
-    //         })
-    //         .catch(error => {
-    //             console.error(error);
-    //         });
-    // }, []);
+  if (error) {
+    return <h1>Something went wrong</h1>;
+  }
 
   return (
     <div className="product-grid">
-      {productsData.products.map((product) => (
+      {products.map((product) => (
         <div className="product-card" key={product.id}>
-          <img src={product.image} alt={product.name} className="product-image" />
+          <img src={product.images} alt={product.name} className="product-image" />
           <div className="product-details">
             <h2 className="product-name">{product.name}</h2>
             <p className="product-brand">{product.brand}</p>
             <div className="product-info">
-              <p className="product-mrp">MRP: ₹{product.mrp}</p>
-              <p className="product-discount">Discount: {product.discountPercentage}%</p>
+              <p className="product-mrp">MRP: ₹{product.price}</p>
+              <p className="product-discount">Discount: {product.discount}%</p>
             </div>
-            <p className="product-discounted-price">Discounted Price: ₹{product.discountedPrice}</p>
-            <p className="product-sizes">For: {product.gender}</p>
-            <p className="product-sizes">Sizes: {product.sizes.join(', ')}</p>
-            <div className='buttons'>
+            <p className="product-discounted-price">Discounted Price: ₹{product.price - product.discount*(product.price/100)}</p>
+            <p className="product-sizes">For: {product.style}</p>
+            <p className="product-sizes">Colors: {product.color.join(', ')}</p>
+            <div className="buttons">
               <button className="header-button" onClick={() => addToLiked(product)}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
                   <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z" />
