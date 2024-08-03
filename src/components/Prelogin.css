@@ -1,0 +1,27 @@
+.preloginCont{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 100px auto;
+    
+}
+
+.preloginCont div:nth-of-type(2){
+    background: rgba(255, 255, 255, 0.603);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 2rem;
+    max-width: 400px;
+    margin: auto;
+    color: black;
+}
+.preloginCont *{
+    margin: 10px 2px;
+}
+.business-Svg{
+    width: 80vw;
+}
