@@ -7,7 +7,7 @@ import { Layout } from './components/Layout.jsx'
 import Cart from './components/Cart.jsx'
 import Liked from './components/Liked.jsx'
 import Login from './components/Login.jsx'
-import Prelogin from './components/Prelogin.jsx'
+import Register from './components/Register.jsx'
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element ={<Layout/>}>
@@ -15,7 +15,7 @@ const router = createBrowserRouter(
       <Route path='cart' element={<Cart/>}/>
       <Route path='liked' element={<Liked/>}/>
       <Route path='login' element={<Login/>}/>
-      <Route path='prelogin' element={<Prelogin/>}/>
+      <Route path='register' element={<Register/>}/>
     </Route>
   )
 )

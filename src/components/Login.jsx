@@ -1,4 +1,3 @@
-// src/Login.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css';
@@ -26,7 +25,7 @@ function Login() {
       console.log(response.data);
       // Handle successful login response here
     } catch (error) {
-      console.error('There was an error logging in!', error);
+      return  <h1>'There was an error logging in!'</h1>, {error}
       // Handle login error here
     }
   };
@@ -43,10 +42,9 @@ function Login() {
           <label htmlFor="password">Password</label>
           <input type="password" id="password" value={password} onChange={handlePasswordChange} required />
         </div>
-        <button type="submit"className='login-btn'>Log In</button>
+        <button type="submit" className="login-btn">Log In</button>
       </form>
     </div>
   );
 }
 
-export default Login;
