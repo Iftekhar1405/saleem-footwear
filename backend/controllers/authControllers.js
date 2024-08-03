@@ -56,7 +56,7 @@ const logIn = async (req, res) => {
   const userToken = createTokenUser(user);
   // console.log(req.signedCookies);
   attach_ResTOCookie({ res, user: userToken });
-  res.status(StatusCodes.OK).json({ userToken });
+  res.status(StatusCodes.OK).json({ body: userToken, user });
 };
 
 const logout = async (req, res) => {
