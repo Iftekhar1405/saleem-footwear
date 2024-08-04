@@ -28,7 +28,7 @@ function Register() {
     }
 
     try {
-      const response = await axios.post('https://your-backend-url.com/api/register', {
+      const response = await axios.post('http://localhost:7000/api/v1/auth/register', {
         name,
         email,
         password,

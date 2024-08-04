@@ -42,9 +42,10 @@ app.use("/api/v1/users", userRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
+console.log(process.env.MONGO_URI)
 const start = async () => {
   try {
-    await connectDB(process.env.MONGO_URI);
+    await connectDB("mongodb+srv://amaan_7733:amaan_db_0001111@poject01.jcifi1u.mongodb.net/saleems?retryWrites=true&w=majority&appName=poject01");
     app.listen(port, () => {
       console.log(`Server is listening in in PORT:${port}`);
     });
