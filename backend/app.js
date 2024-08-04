@@ -22,7 +22,13 @@ const userRouter = require("./routes/userRoutes");
 // middleware
 app.use(morgan("tiny"));
 app.set("trust proxy", 1);
-app.use(cors());
+app.use(
+  cors()
+  //   {
+  //   origin: "http://localhost:5173/",
+  //   credentials: true
+  // }
+);
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 
@@ -30,6 +36,10 @@ app.get("/", (req, res) => {
   res.send("Finally after so much long time....");
 });
 
+app.get("/test", (req, res) => {
+  res.cookie("token", "demotoken");
+  res.send("Finally after so much long time....");
+});
 const port = process.env.PORT || 7000;
 
 // app.listen(PORT, () => {

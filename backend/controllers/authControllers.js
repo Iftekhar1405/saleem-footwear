@@ -2,7 +2,9 @@ const { StatusCodes } = require("http-status-codes");
 const validator = require("validator");
 const User = require("../models/Users");
 const CustomError = require("../errors");
-const { createTokenUser, attach_ResTOCookie } = require("../utils");
+const { createJWT, createTokenUser, attach_ResTOCookie } = require("../utils");
+const { default: Domain } = require("twilio/lib/base/Domain");
+const { signedCookie } = require("cookie-parser");
 
 const register = async (req, res) => {
   // scopping data from upcomming request
@@ -54,9 +56,23 @@ const logIn = async (req, res) => {
     throw new CustomError.UnauthenticatedError("Invalid Password");
   }
   const userToken = createTokenUser(user);
+  const token = createJWT({ payload: userToken });
+  // console.log(token);
+  // res.cookie("jwtoken", token, {
+  //   httpOnly: true,
+  //   secure: true,
+  //   // sameSite: "None",
+  //   // path: "/",
+  //   signed: true,
+  //   // Domain: "http://localhost:5173/",
+  // });
+
   // console.log(req.signedCookies);
-  attach_ResTOCookie({ res, user: userToken });
-  res.status(StatusCodes.OK).json({ userToken });
+  // attach_ResTOCookie({ res, user: userToken });
+  // res.cookie("token", "hellotoken");
+  console.log(token);
+
+  res.status(StatusCodes.OK).json({ token });
 };
 
 const logout = async (req, res) => {
