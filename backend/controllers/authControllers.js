@@ -28,7 +28,7 @@ const register = async (req, res) => {
   // extracting user data and createing cookie for forwarding as response
   const tokenUser = createTokenUser(user);
   // console.log(tokenUser);
-  attach_ResTOCookie({ res, user: tokenUser });
+  // attach_ResTOCookie({ res, user: tokenUser });
 
   // ALhumdulillah
   res.status(StatusCodes.CREATED).json({ tokenUser });

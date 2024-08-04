@@ -2,6 +2,24 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css';
 
+
+const URL = "http://localhost:7000/api/v1";
+const registerUser = async (body) => {
+  try {
+    const response = await axios.post(`${URL}/auth/register`, body)
+    console.log(response.data)
+  } catch (error) {
+    console.log(error.response.data)
+  }
+}
+// const body_reg = {
+//   name: "Syed Amaan Ali",
+//   email: "Syedamaan@gmail.com",
+//   password: "secret",
+//   address: "dskjf",
+//   phone:"9826152780"
+// }
+// registerUser(body_reg)
 function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -19,6 +37,11 @@ function Register() {
   const handlePhoneChange = (e) => setPhone(e.target.value);
   const handleRoleChange = (e) => setRole(e.target.value);
 
+  
+
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -27,21 +50,31 @@ function Register() {
       return;
     }
 
-    try {
-      const response = await axios.post('https://your-backend-url.com/api/register', {
-        name,
-        email,
-        password,
-        address,
-        phone,
-        role
-      });
-      console.log(response.data);
-      // Handle successful registration response here
-    } catch (error) {
-      console.error('There was an error registering!', error);
-      // Handle registration error here
-    }
+    const body_reg = {
+        name: name,
+        email: email,
+        password: password,
+        address: address,
+        phone:phone
+      }
+    console.log(body_reg);
+    registerUser(body_reg)
+    
+    // try {
+    //   const response = await axios.post('https://your-backend-url.com/api/register', {
+    //     name,
+    //     email,
+    //     password,
+    //     address,
+    //     phone,
+    //     role
+    //   });
+    //   console.log(response.data);
+    //   // Handle successful registration response here
+    // } catch (error) {
+    //   console.error('There was an error registering!', error);
+    //   // Handle registration error here
+    // }
   };
 
   return (
