@@ -20,5 +20,5 @@ async function sendOTP(phone, otp) {
   }
 }
 
-sendOTP("+919238153364", 588856);
+// sendOTP("+919238153364", 588856);
 module.exports = { sendOTP };
