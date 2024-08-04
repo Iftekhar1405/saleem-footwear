@@ -2,6 +2,21 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css';
 
+
+const URL = "http://localhost:7000/api/v1";
+// login request method
+
+const loginUser = async (body) => {
+  try {
+    const response = await axios.post(`${URL}/auth/login`, body);
+    console.log("Login Successful:", response.data);
+    let token = response.data.token
+    localStorage.setItem("jwtoken",token)
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,17 +32,23 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post('https://your-backend-url.com/api/login', {
-        email,
-        password
-      });
-      console.log(response.data);
-      // Handle successful login response here
-    } catch (error) {
-      return  <h1>'There was an error logging in!'</h1>, {error}
-      // Handle login error here
+    const login_body = {
+      identifier: email,
+      password: password,
     }
+    
+    loginUser(login_body)
+    // try {
+    //   const response = await axios.post('https://your-backend-url.com/api/login', {
+    //     email,
+    //     password
+    //   });
+    //   console.log(response.data);
+    //   // Handle successful login response here
+    // } catch (error) {
+    //   return  <h1>'There was an error logging in!'</h1>, {error}
+    //   // Handle login error here
+    // }
   };
 
   return (
