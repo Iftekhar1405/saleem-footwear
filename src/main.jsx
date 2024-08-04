@@ -8,9 +8,14 @@ import Cart from './components/Cart.jsx'
 import Liked from './components/Liked.jsx'
 import Login from './components/Login.jsx'
 import Register from './components/Register.jsx'
+import Prelogin from './components/Prelogin.jsx'
+import ProductCard from './components/ProductCard.jsx'
+import Profile from './components/Profile.jsx'
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element ={<Layout/>}>
+      <Route path="product/:id" element={<ProductCard/>} />
+      <Route path="profile" element={<Profile />} />
       <Route path='' element={<App/>}/>
       <Route path='cart' element={<Cart/>}/>
       <Route path='liked' element={<Liked/>}/>
