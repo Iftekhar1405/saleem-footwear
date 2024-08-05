@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './AddProduct.css';
+import ProductGridAuth from './ProductGridAuth';
 
 function AddProduct() {
     const [product, setProduct] = useState({
@@ -76,6 +77,7 @@ function AddProduct() {
       }
 
     return (
+        <>
         <div className='add-product'>
             <h2>Add Product</h2>
             <form onSubmit={handleSubmit}>
@@ -149,6 +151,8 @@ function AddProduct() {
                 <button type='submit'>Add Product</button>
             </form>
         </div>
+        <ProductGridAuth/>
+        </>
     );
 }
 
