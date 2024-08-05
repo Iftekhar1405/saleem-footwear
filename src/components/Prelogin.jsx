@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import './Prelogin.css';
 import businessSvg from './images/businessSvg.svg';
+import { Link } from 'react-router-dom';
 
 function Prelogin() {
     
@@ -40,7 +41,9 @@ function Prelogin() {
                         <li>Secure Payment Options</li>
                         <li>Track Your Orders in Real-Time</li>
                     </ul>
+                    <Link to= '/login'>
                     <button className='login-btn' onClick={handleLoginClick}>Log-In</button>
+                    </Link>
                     <button className='login-btn'>Contact-Us</button>
                 </div>
             </div>
