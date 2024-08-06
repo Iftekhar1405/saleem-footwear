@@ -1,7 +1,5 @@
-
-import Carts from './components/Cart'
-import {BrowserRouter,Route,Router} from 'react-router-dom'
-import { useState } from 'react';
+import RoleBasedComponent from './RoleBasedComponents';
+import { Link } from 'react-router-dom';
 import Header from './components/Header';
 import Nav from './components/Nav';
 import Scroll from './components/Scroll';
@@ -16,21 +14,34 @@ function App() {
 
 
 
-  
- 
 
-  
+
+
+
   return (
     <>
       <Header />
-        <Nav/>
-        <SearchBar/>
-        <Scroll/>
-        <BrandScroller/>
-        <CategoryGrid/>
-        <ProductGrid />
+      <Nav />
+      <SearchBar />
+      <Scroll />
+      <div className="fixed-buttons">
+        <RoleBasedComponent allowedRoles={['admin', 'employee']}>
+          <Link to='/addproduct'>
+            <button className="addproduct">+ Add Products</button>
+          </Link>
+        </RoleBasedComponent>
+        <RoleBasedComponent allowedRoles={['admin']}>
+          <Link to='/admin-dashboard'>
+            <button className="admin-tools">Admin Tools</button>
+          </Link>
+        </RoleBasedComponent>
+      </div>
+      <BrandScroller />
+      <CategoryGrid />
+      <ProductGrid />
+     
     </>
-      
+
   )
 }
 
