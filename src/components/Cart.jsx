@@ -61,7 +61,7 @@ const Cart = () => {
                 <h3>{item.name}</h3>
                 <p>Brand: {item.brand}</p>
                 <p>Price: ₹{item.discountedPrice}</p>
-                <p>Sizes: {item.sizes.join(', ')}</p>
+                {/* <p>Sizes: {item.sizes.join(', ')}</p> */}
                 <button className="remove-button" onClick={() => removeFromCart(index)}>
                   Remove
                 </button>
