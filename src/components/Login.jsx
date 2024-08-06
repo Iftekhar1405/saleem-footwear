@@ -11,7 +11,10 @@ const loginUser = async (body) => {
     const response = await axios.post(`${URL}/auth/login`, body);
     console.log("Login Successful:", response.data);
     let token = response.data.token
+    let role = response.data.role
     localStorage.setItem("jwtoken",token)
+    localStorage.setItem('role', role);
+    history.push('/'); 
   } catch (error) {
     console.log(error);
   }
