@@ -72,7 +72,7 @@ const logIn = async (req, res) => {
   // res.cookie("token", "hellotoken");
   console.log(token);
 
-  res.status(StatusCodes.OK).json({ token });
+  res.status(StatusCodes.OK).json({ token, userToken });
 };
 
 const logout = async (req, res) => {

@@ -8,7 +8,7 @@ const authenticateUser = async (req, res, next) => {
     body: { token },
   } = req.body;
   // const token = req.body.token;
-  // console.log(token);
+  console.log(token);
 
   if (!token) {
     console.log("no token");
