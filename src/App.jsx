@@ -8,6 +8,7 @@ import Scroll from './components/Scroll';
 import ProductGrid from './components/ProductGrid';
 import CategoryGrid from './components/Category';
 import SearchBar from './components/SearchBar';
+import BrandScroller from './components/BrandScroller';
 
 
 
@@ -25,6 +26,7 @@ function App() {
         <Nav/>
         <SearchBar/>
         <Scroll/>
+        <BrandScroller/>
         <CategoryGrid/>
         <ProductGrid />
     </>
