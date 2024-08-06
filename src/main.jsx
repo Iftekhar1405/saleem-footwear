@@ -19,6 +19,7 @@ import AcceptedOrders from './components/Admin/AcceptedOrders.jsx'
 import PendingOrders from './components/Admin/PendingOrders.jsx'
 import RejectedOrders from './components/Admin/RejectedOrders.jsx'
 import AddProduct from './components/Authority/AddProduct.jsx';
+import AdminDashboard from './components/Admin/AdminDashboard.jsx'
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -32,7 +33,7 @@ const router = createBrowserRouter(
       <Route path="prelogin" element={<Prelogin />} />
       <Route path="admin-dashboard" element={
       <RoleBasedRoute allowedRoles={['admin']}>
-        <AdminDashboard /> {/* This route is only accessible by admins */}
+        < AdminDashboard/> {/* This route is only accessible by admins */}
       </RoleBasedRoute>
       } />
       <Route path="employees" element={
