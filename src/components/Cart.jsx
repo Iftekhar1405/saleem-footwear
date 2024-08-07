@@ -5,6 +5,80 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import axios from 'axios'
 
+const URL = "http://localhost:7000/api/v1";
+const token = localStorage.getItem('token')
+const addTOCart = async (body) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+    const response = await axios.post(`${URL}/cart/add-to-cart`, body, {headers} )
+    console.log('Response:', response.data);
+    
+  } catch (error) {
+    console.log(error)
+  }
+}
+const cartBody =
+  {  productId :"66a4e685767553806edfe885"
+    , quantity : "1"
+    , set: "[length: UK-13, size:1]"
+    , color: "black"
+    }
+
+// addTOCart(cartBody)
+
+const getCart = async () => {
+  try {
+    // const URL = "http://localhost:7000/api/v1";
+    // const token = localStorage.getItem('token')
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+    const response = await axios.get(`${URL}/cart/get-cart`, {headers})
+    console.log(response.data);
+    
+  } catch (error) {
+    console.log(error)
+  }
+}
+// getCart()
+
+  const removeItem = async(CartItemId) => {
+    try {
+      const headers = {
+        'Authorization': `Bearer ${token}`
+      };
+      const response = await axios.delete(`${URL}/cart/${CartItemId}`, {headers})
+      if(response){
+        console.log(response.data);
+      }else{
+        console.log(response);
+        
+      }
+      
+    } catch (error) {
+    console.log(error);
+    
+  }
+}
+removeItem("66b2f0d1c769deee7cf85b35")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const Cart = () => {
   const [cart, setCart] = useState(() => {

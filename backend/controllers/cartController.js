@@ -41,4 +41,43 @@ const addToCart = async (req, res) => {
   //   console.log("adding to kart");
 };
 
-module.exports = { addToCart };
+const getCart = async (req, res) => {
+  const userId = req.user.userId;
+
+  const cart = await Cart.findOne({ userId }).populate("items.productId");
+
+  if (!cart) {
+    throw new CustomError("Cart not found");
+  }
+  res.status(StatusCodes.OK).json({ data: cart });
+};
+
+const removeitem = async (req, res) => {
+  //   const { cartItemId } = req.params.id;
+  const userId = req.user.userId;
+  //   console.log(req.params.id);
+  //   console.log(userId);
+
+  // Find the user's cart
+  const cart = await Cart.findOne({ userId });
+  if (!cart) {
+    throw new Error("Cart not found");
+  }
+
+  // Find the CartItem
+  const cartItem = cart.items.id(req.params.id);
+  //   console.log(cartItem);
+
+  if (!cartItem) {
+    throw new Error("CartItem not found");
+  }
+
+  //   Remove the CartItem from the cart
+  cart.items.pull(cartItem._id);
+  cart.totalPrice -= cartItem.price;
+  cart.totalItems -= cartItem.quantity;
+
+  //   await cart.save();
+  res.status(StatusCodes.OK).json({ data: "item Romoved", cart });
+};
+module.exports = { addToCart, getCart, removeitem };
