@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 import './Login.css';
 import { Navigate } from 'react-router-dom';
 
 
 const URL = "http://localhost:7000/api/v1";
 // login request method
+
 
 const loginUser = async (body) => {
   try {
@@ -21,9 +24,11 @@ const loginUser = async (body) => {
   }
 };
 
+
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -39,20 +44,24 @@ function Login() {
     const login_body = {
       identifier: email,
       password: password,
-    }
+    };
     
-    loginUser(login_body)
-    // try {
-    //   const response = await axios.post('https://your-backend-url.com/api/login', {
-    //     email,
-    //     password
-    //   });
-    //   console.log(response.data);
-    //   // Handle successful login response here
-    // } catch (error) {
-    //   return  <h1>'There was an error logging in!'</h1>, {error}
-    //   // Handle login error here
-    // }
+    loginUser(login_body);
+  };
+
+  const loginUser = async (body) => {
+    try {
+      const response = await axios.post(`${URL}/auth/login`, body);
+      console.log("Login Successful:", response.data);
+      let token = response.data.token;
+      let role = response.data.userToken.role;
+      
+      localStorage.setItem("token", token);
+      localStorage.setItem('role', role);
+      navigate('/'); 
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -73,4 +82,4 @@ function Login() {
   );
 }
 
-export default Login
+export default Login;

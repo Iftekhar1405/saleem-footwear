@@ -34,7 +34,7 @@ const router = createBrowserRouter(
       <Route path="register" element={<Register />} />
       <Route path="prelogin" element={<Prelogin />} />
       <Route path="admin-dashboard" element={
-      <RoleBasedRoute allowedRoles={['admin']}>
+      <RoleBasedRoute allowedRoles={'admin'}>
         < AdminDashboard/> {/* This route is only accessible by admins */}
       </RoleBasedRoute>
       } />
