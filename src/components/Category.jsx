@@ -14,6 +14,7 @@ const CategoryGrid = () => {
     <div className="category-container">
       <h1>Footwear Categories</h1>
       <div className="category-buttons">
+      <button onClick={() => handleCategoryClick('all')}>All Footwears</button>
         <button onClick={() => handleCategoryClick('mens')}>Men's Footwear</button>
         <button onClick={() => handleCategoryClick('womens')}>Women's Footwear</button>
         <button onClick={() => handleCategoryClick('kids')}>Kids' Footwear</button>

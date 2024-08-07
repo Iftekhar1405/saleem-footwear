@@ -3,28 +3,10 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import './Login.css';
-import { Navigate } from 'react-router-dom';
 
 
 const URL = "http://localhost:7000/api/v1";
 // login request method
-
-
-const loginUser = async (body) => {
-  try {
-    const response = await axios.post(`${URL}/auth/login`, body);
-    console.log("Login Successful:", response.data);
-    let token = response.data.token
-    let role = response.data.role
-    localStorage.setItem("token",token)
-    localStorage.setItem('role', role);
-    // <Navigate to=''/>
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

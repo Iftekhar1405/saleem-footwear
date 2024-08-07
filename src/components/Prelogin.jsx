@@ -44,7 +44,9 @@ function Prelogin() {
                     <Link to= '/login'>
                     <button className='login-btn' onClick={handleLoginClick}>Log-In</button>
                     </Link>
+                    <Link to='/contact-us'>
                     <button className='login-btn'>Contact-Us</button>
+                    </Link>
                 </div>
             </div>
         </>

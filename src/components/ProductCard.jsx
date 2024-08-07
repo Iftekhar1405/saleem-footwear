@@ -33,7 +33,7 @@ const ProductCard = () => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(`http://localhost:7000/api/v1/products/${id}`);
-        setProduct(response.data);
+        setProduct(response.data.product);
         console.log(response.data)
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -50,16 +50,16 @@ const ProductCard = () => {
 
   return (
     <div className="product-card">
-      <img src={product.imageUrl} alt={product.name} className="product-image" />
+      <img src={product.images} alt={product.name} className="product-image" />
       <div className="product-details">
         <h2 className="product-name">{product.name}</h2>
         <p className="product-brand">{product.brand}</p>
         <div className="product-info">
           <p className="product-mrp">MRP: ₹{product.price}</p>
-          <p className="product-discount">Discount: {product.discountPercentage}%</p>
+          <p className="product-discount">Discount: {product.discount}%</p>
         </div>
         <p className="product-discounted-price">
-          Discounted Price: ₹{product.price - (product.price * product.discountPercentage / 100)}
+          Discounted Price: ₹{product.price - (product.price * product.discount / 100)}
         </p>
         <p className="product-sizes">For: {product.gender}</p>
         {/* <p className="product-sizes">
