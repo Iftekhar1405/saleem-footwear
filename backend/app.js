@@ -18,6 +18,8 @@ const connectDB = require("./db/connect");
 const authRouter = require("./routes/authRoutes");
 const productRouter = require("./routes/productRoutes");
 const userRouter = require("./routes/userRoutes");
+const orderRouter = require("./routes/orderRoutes");
+const cartRouter = require("./routes/cartRoutes");
 
 // middleware
 app.use(morgan("tiny"));
@@ -49,10 +51,12 @@ const port = process.env.PORT || 7000;
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/order", orderRouter);
+app.use("/api/v1/cart", cartRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
-console.log(process.env.MONGO_URI);
+
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);

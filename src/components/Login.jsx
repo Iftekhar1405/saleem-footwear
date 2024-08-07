@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css';
+import { Navigate } from 'react-router-dom';
 
 
 const URL = "http://localhost:7000/api/v1";
@@ -12,9 +13,9 @@ const loginUser = async (body) => {
     console.log("Login Successful:", response.data);
     let token = response.data.token
     let role = response.data.role
-    localStorage.setItem("jwtoken",token)
+    localStorage.setItem("token",token)
     localStorage.setItem('role', role);
-    history.push('/'); 
+    // <Navigate to=''/>
   } catch (error) {
     console.log(error);
   }

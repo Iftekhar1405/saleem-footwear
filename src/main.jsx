@@ -20,6 +20,7 @@ import PendingOrders from './components/Admin/PendingOrders.jsx'
 import RejectedOrders from './components/Admin/RejectedOrders.jsx'
 import AddProduct from './components/Authority/AddProduct.jsx';
 import AdminDashboard from './components/Admin/AdminDashboard.jsx'
+import Test from './components/test.jsx';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -29,6 +30,7 @@ const router = createBrowserRouter(
       <Route path="cart" element={<ProtectedRoute element={<Cart />} />} />
       <Route path="liked" element={<ProtectedRoute element={<Liked />} />} />
       <Route path="login" element={<Login />} />
+      <Route path="test" element={<Test />} />
       <Route path="register" element={<Register />} />
       <Route path="prelogin" element={<Prelogin />} />
       <Route path="admin-dashboard" element={
@@ -61,6 +63,8 @@ const router = createBrowserRouter(
         <RejectedOrders /> {/* This route is only accessible by admins */}
       </RoleBasedRoute>
       } />
+      
+
       
 
     <Route path="addproduct" element={

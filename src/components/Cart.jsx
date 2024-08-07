@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import './Cart.css';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import axios from 'axios'
+
 
 const Cart = () => {
   const [cart, setCart] = useState(() => {
