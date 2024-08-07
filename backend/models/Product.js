@@ -13,10 +13,10 @@ const setSchema = new mongoose.Schema({
 // Define a Product schema
 const productSchema = new mongoose.Schema(
   {
-    // name: {
-    //   type: String,
-    //   required: true,
-    // },
+    name: {
+      type: String,
+      required: true,
+    },
     brand: {
       type: String,
       required: true,

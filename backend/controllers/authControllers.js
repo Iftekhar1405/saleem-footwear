@@ -1,6 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const validator = require("validator");
-const User = require("../models/Users");
+const User = require("../models/User");
 const CustomError = require("../errors");
 const { createJWT, createTokenUser, attach_ResTOCookie } = require("../utils");
 const { default: Domain } = require("twilio/lib/base/Domain");
@@ -70,7 +70,7 @@ const logIn = async (req, res) => {
   // console.log(req.signedCookies);
   // attach_ResTOCookie({ res, user: userToken });
   // res.cookie("token", "hellotoken");
-  console.log(token);
+  // console.log(token);
 
   res.status(StatusCodes.OK).json({ token, userToken });
 };
