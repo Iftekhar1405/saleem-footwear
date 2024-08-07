@@ -7,6 +7,7 @@ import ProductGrid from './components/ProductGrid';
 import CategoryGrid from './components/Category';
 import SearchBar from './components/SearchBar';
 import BrandScroller from './components/BrandScroller';
+import './components/Style.css'
 
 
 

@@ -66,20 +66,6 @@ const getCart = async () => {
 }
 removeItem("66b2f0d1c769deee7cf85b35")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const Cart = () => {
   const [cart, setCart] = useState(() => {
     // Get cart data from local storage
@@ -99,6 +85,7 @@ const Cart = () => {
     setCart(updatedCart);
   };
   const handlePdfDownload = () => {
+    if(cart.length >0){
     const input = document.querySelector('.cart');
 
     // Change text color to black
@@ -118,25 +105,35 @@ const Cart = () => {
       // Revert text color back to original
       input.style.color = originalColor;
     });
+  }};
+  const deleteCart = () => {
+    if(cart.length > 0){
+    const confirmDeletion = window.confirm('Are you sure you want to delete your cart?');
+  
+    if (confirmDeletion) {
+      localStorage.removeItem('cart');
+      setCart([]); 
+    }}
   };
-
+  
 
   return (
     <div className="cart">
       <h2>Cart</h2>
       <button onClick={handlePdfDownload}>Download your Cart</button>
-
+      <button onClick={deleteCart}>Delete your Cart</button>
       {cart.length === 0 ? (
         <p>Your cart is empty</p>
       ) : (
         <ul>
           {cart.map((item, index) => (
             <li key={index} className="cart-item">
-              <img src={item.image} alt={item.name} />
+              <img src={item.images} alt={item.name} />
               <div className="cart-item-details">
                 <h3>{item.name}</h3>
                 <p>Brand: {item.brand}</p>
-                <p>Price: ₹{item.discountedPrice}</p>
+                <p>Price: ₹{item.price - item.discount * (item.price / 100)}</p>
+                <p>Quantity: {item.quantity}</p>
                 {/* <p>Sizes: {item.sizes.join(', ')}</p> */}
                 <button className="remove-button" onClick={() => removeFromCart(index)}>
                   Remove
