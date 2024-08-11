@@ -23,7 +23,7 @@ const addTOCart = async (body) => {
 const cartBody =
   {  productId :"66a4e685767553806edfe885"
     , quantity : "1"
-    , set: "[length: UK-13, size:1]"
+    , itemSet: [{}]
     , color: "black"
     }
 

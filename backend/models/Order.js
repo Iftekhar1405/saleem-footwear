@@ -1,68 +1,59 @@
 const mongoose = require("mongoose");
 
-const setSchema = new mongoose.Schema({
-  size: {
-    type: String,
-    required: [true, "Please provide set size"],
+const orderItemSchema = new mongoose.Schema(
+  {
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    itemSet: [
+      {
+        size: String,
+        lengths: Number,
+      },
+    ],
+    color: String,
   },
-  length: {
-    type: Number,
-    required: [true, "Please provide set length"],
-  },
-});
+  { _id: false }
+);
 
-const orderDetailSchema = new mongoose.Schema({
-  productId: {
+const orderSchema = new mongoose.Schema({
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Products",
+    ref: "User",
     required: true,
   },
-  quantity: {
-    type: Number,
-    required: true,
-  },
-  set: {
-    type: String, // or adjust according to your specific set requirements
-    required: true,
-  },
-  amount: {
-    type: Number,
-    required: true,
-  },
+  items: [orderItemSchema],
   totalPrice: {
     type: Number,
     required: true,
   },
-});
-
-const orderSchema = new mongoose.Schema(
-  {
-    orderId: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    orderDetail: [orderDetailSchema],
-    customerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Users",
-      required: true,
-    },
-    orderDate: {
-      type: Date,
-      default: Date.now,
-    },
-    status: {
-      type: String,
-      enum: ["Pending", "Rejected", "Confirmed"],
-      default: "Pending",
-    },
+  totalItems: {
+    type: Number,
+    required: true,
   },
-  {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  }
-);
+  status: {
+    type: String,
+    enum: ["Pending", "Processing", "Shipped", "Delivered"],
+    default: "Pending",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 module.exports = mongoose.model("Order", orderSchema);
