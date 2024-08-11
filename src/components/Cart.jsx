@@ -95,11 +95,11 @@ const Cart = () => {
         <ul>
           {cart.map((item, index) => (
             <li key={index} className="cart-item">
-              <img src={item.images} alt={item.name} />
+              <img src={item.productId.images[0]} alt={item.name} />
               <div className="cart-item-details">
-                <h3>{item.name}</h3>
-                <p>Brand: {item.brand}</p>
-                <p>Price: ₹{item.price - item.discount * (item.price / 100)}</p>
+                <h3>{item.productId.name}</h3>
+                <p>Brand: {item.productId.brand}</p>
+                <p>Price: ₹{item.productId.price}</p>
                 <p>Quantity: {item.quantity}</p>
                 <button className="remove-button" onClick={() => removeItem(item.id)}>
                   Remove
