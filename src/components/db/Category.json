@@ -2,12 +2,12 @@
     "mens": [
       {
         "id": 1,
-        "name": "Sneakers",
+        "name": "Vertex",
         "image": "https://example.com/images/mens-sneakers.jpg"
       },
       {
         "id": 2,
-        "name": "Formal Shoes",
+        "name": "Vertex +",
         "image": "https://example.com/images/mens-formal-shoes.jpg"
       },
       {
