@@ -20,7 +20,7 @@ router
 router
   .route("/:id")
   .get(getSingleProduct)
-  .patch(updateProduct)
+  .patch([authenticateUser, authorizePermission("admin")], updateProduct)
   .delete(deleteProduct);
 
 module.exports = router;
