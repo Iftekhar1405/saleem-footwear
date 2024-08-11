@@ -16,8 +16,8 @@ const createProduct = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  const products = await Product.find({}).select(
-    "name brand color price discount images set style"
+  const products = await Product.find({}).sort({createdAt:-1}).select(
+    "brand colors price images itemSet material category gender article"
   );
   console.log("OK");
 

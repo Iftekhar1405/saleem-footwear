@@ -14,6 +14,7 @@ const useFetchData = (url) => {
       try {
         const response = await axios.get(url);
         setData(response.data.products);
+        console.log(response.data.products)
       } catch (error) {
         setError(true);
       } finally {
@@ -24,6 +25,7 @@ const useFetchData = (url) => {
 
   return { data, loading, error };
 };
+
 const addTOCart = async (body) => {
   try {
     const headers = {
@@ -37,6 +39,7 @@ const addTOCart = async (body) => {
     console.log(error)
   }
 }
+
 const useLocalStorage = (key, initialValue) => {
   const [storedValue, setStoredValue] = useState(() => {
     try {
@@ -64,12 +67,10 @@ const ProductGrid = () => {
   const addToCart = (product) => {
     const existingProduct = cart.find(item => item.id === product.id);
     if (existingProduct) {
-      // Increment quantity if product is already in cart
       setCart(cart.map(item =>
         item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
       ));
     } else {
-      // Add product to cart with quantity 1 if not in cart
       setCart([...cart, { ...product, quantity: 1 }]);
     }
   };
@@ -89,19 +90,30 @@ const ProductGrid = () => {
       {products.map((product) => (
         <div className="product-card" key={product.id}>
           <Link to={`/product/${product.id}`}>
-            <img src={product.images} alt={product.name} className="product-image" />
+            <div className="product-image-gallery">
+              {product.images.map((imgUrl, index) => (
+                <img key={index} src={imgUrl} alt={`${product.brand} ${product.article}`} className="product-image" />
+              ))}
+            </div>
             <div className="product-details">
-              <h2 className="product-name">{product.name}</h2>
+              <h2 className="product-name">{product.article}</h2>
               <p className="product-brand">{product.brand}</p>
+              <p className="product-description">{product.description}</p>
               <div className="product-info">
                 <p className="product-mrp">MRP: ₹{product.price}</p>
-                <p className="product-discount">Discount: {product.discount}%</p>
+                <p className="product-material">Material: {product.material}</p>
+                <p className="product-gender">Gender: {product.gender}</p>
               </div>
-              <p className="product-discounted-price">
-                Discounted Price: ₹{product.price - product.discount * (product.price / 100)}
+              <p className="product-sizes">
+                Available Sizes: {product.itemSet && product.itemSet.length > 0 
+                  ? product.itemSet.map(item => `${item.size} (Length: ${item.lengths})`).join(', ') 
+                  : "N/A"}
               </p>
-              <p className="product-sizes">For: {product.style}</p>
-              <p className="product-sizes">Colors: {product.color.join(', ')}</p>
+              <p className="product-colors">
+                Colors: {product.colors && Object.keys(product.colors).length > 0 
+                  ? Object.keys(product.colors).join(', ') 
+                  : "N/A"}
+              </p>
             </div>
           </Link>
           <div className="buttons">
@@ -112,7 +124,9 @@ const ProductGrid = () => {
             </button>
             <span className="v-bar"> &#124;</span>
             <button onClick={() => addToCart(product)}>
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-600v-120H320v-80h120v-120h80v120h120v80H520v120h-80ZM280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+                <path d="M440-600v-120H320v-80h120v-120h80v120h120v80H520v120h-80ZM280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z" />
+              </svg>
             </button>
           </div>
         </div>
