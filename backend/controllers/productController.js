@@ -3,12 +3,13 @@ const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 
 const createProduct = async (req, res) => {
+  // console.log(req.body);
   // console.log("cookies:", req.cookies);
   // console.log(req.body.items);
-  const {
-    body: { items },
-  } = req.body;
-
+  // const {
+  //   body: { items },
+  // } = req.body;
+  const items = req.body;
   req.body.user = req.user.userId;
   const product = await Product.create(items);
   res.status(StatusCodes.CREATED).json({ product });
@@ -16,7 +17,7 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   const products = await Product.find({}).select(
-    "name brand color price discount images style"
+    "name brand color price discount images set style"
   );
   console.log("OK");
 

@@ -5,18 +5,19 @@ const setSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide set size"],
   },
-  length: {
+  lengths: {
     type: Number,
     required: [true, "Please provide set length"],
   },
+  _id: false,
 });
 // Define a Product schema
 const productSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
+    // name: {
+    //   type: String,
+    //   required: true,
+    // },
     brand: {
       type: String,
       required: true,
@@ -24,7 +25,7 @@ const productSchema = new mongoose.Schema(
     article: {
       type: String,
     },
-    set: {
+    itemSet: {
       type: [setSchema],
       required: true,
       validate: {
@@ -36,22 +37,26 @@ const productSchema = new mongoose.Schema(
     },
     description: String,
     category: String,
-    color: [String], // An array of available colors
+    colors: {
+      type: Map,
+      of: [String],
+      required: true,
+    }, // An array of available colors
     //   size: [String], // An array of available sizes
     price: {
       type: Number,
       required: true,
     },
-    discount: Number,
-    stock_quantity: {
-      type: Number,
-      default: 0,
-    },
+    // discount: Number,
+    // stock_quantity: {
+    //   type: Number,
+    //   default: 0,
+    // },
     images: [String],
     material: String,
     gender: String,
-    season: String,
-    style: String,
+    // season: String,
+    // style: String,
   },
   {
     timestamps: true,

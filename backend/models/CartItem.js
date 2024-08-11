@@ -16,10 +16,26 @@ const cartItemSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  set: {
-    type: String,
-    required: true,
-  },
+  // comments: [{ body: String, date: Date }],
+  itemSet: [
+    {
+      _id: false,
+      size: {
+        type: String,
+        required: [
+          true,
+          "Please provide proper set details before adding to cart",
+        ],
+      },
+      lengths: {
+        type: Number,
+        required: [
+          false,
+          "Please provide proper set details before adding to cart",
+        ],
+      },
+    },
+  ],
   color: {
     type: String,
     required: true,
