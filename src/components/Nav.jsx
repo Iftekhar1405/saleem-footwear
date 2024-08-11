@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Style.css';
 import { useNavigate } from 'react-router-dom';
+import logo from './images/logo.png'
 
 function Nav() {
     const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +19,7 @@ function Nav() {
     }
     return (
         <div className='Nav'>
-            <h2>Saleem Footwear</h2>
+            <h2> <img src={logo} alt=""  className='logo'/> Saleem Footwear</h2>
             <div className='hamburger' onClick={toggleMenu}>
                 &#9776; {/* Unicode character for hamburger icon */}
             </div>

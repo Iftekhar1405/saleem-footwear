@@ -46,12 +46,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 20px;
-    background-color: white;
+    padding-right:10px; 
+    background-color: black;
     color: rgb(221, 32, 44);
     position: relative;
 }
-
+.logo{
+    height: 70px;
+    vertical-align: middle;
+    border-radius: 50px;
+}
 .hamburger {
     font-size: 30px;
     cursor: pointer;

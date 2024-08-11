@@ -77,11 +77,11 @@ const ProductGrid = () => {
   const addToLiked = (product) => setLiked([...liked, product]);
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <h2>Loading...</h2>;
   }
 
   if (error) {
-    return <h1>Something went wrong</h1>;
+    return <h2>Something went wrong</h2>;
   }
 
   return (
