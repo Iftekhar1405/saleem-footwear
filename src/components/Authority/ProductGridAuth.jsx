@@ -45,7 +45,7 @@ const logoutUser = async () =>{
   }
 }
 // Envoking function
-loginUser(login_body)
+// loginUser(login_body)
 
 // const registerRes = registerUser(register_body)
 // console.log(registerRes.response)

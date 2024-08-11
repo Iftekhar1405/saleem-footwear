@@ -20,31 +20,36 @@ const addTOCart = async (body) => {
     console.log(error)
   }
 }
+
+
 const cartBody =
-  {  productId :"66a4e685767553806edfe885"
-    , quantity : "1"
-    , itemSet: [{}]
-    , color: "black"
+  {   productId: "66ae03b57fe12df8e998e449",
+    quantity: 3,
+    itemSet: [{
+        size:"UK-12",
+        lengths: 4
+    }],
+    color : "red"
     }
 
 // addTOCart(cartBody)
 
 const getCart = async () => {
   try {
-    // const URL = "http://localhost:7000/api/v1";
-    // const token = localStorage.getItem('token')
+    const URL = "http://localhost:7000/api/v1";
+    const token = localStorage.getItem('token')
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     };
-    const response = await axios.get(`${URL}/cart/get-cart`, {headers})
+    const response = await axios.get(`${URL}/cart`, {headers})
     console.log(response.data);
     
   } catch (error) {
     console.log(error)
   }
 }
-// getCart()
+getCart()
 
   const removeItem = async(CartItemId) => {
     try {
@@ -64,7 +69,7 @@ const getCart = async () => {
     
   }
 }
-removeItem("66b2f0d1c769deee7cf85b35")
+// removeItem("66b7d58ee4bd0de2d6f0d88b")
 
 const Cart = () => {
   const [cart, setCart] = useState(() => {

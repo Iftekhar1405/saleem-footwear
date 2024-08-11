@@ -62,7 +62,7 @@ const addToCart = async (req, res) => {
     res.status(StatusCodes.CREATED).json({ success: true, data: cart });
     //   console.log("adding to kart");
   } catch (error) {
-    console.log(error);
+    // console.log(error);
 
     throw new CustomError.BadRequestError(
       "Something went wrong while adding into the cart....",
