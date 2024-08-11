@@ -109,7 +109,7 @@ const ProductGrid = () => {
   return (
     <div className="product-grid">
       {products.map((product) => (
-        <div className="product-card" key={product.id}>
+        <div className="product-card" key={product.id} style={{backgroundColor:'#000'}}>
           <Link to={`/product/${product.id}`}>
             <div className="product-image-gallery">
               {product.images.map((imgUrl, index) => (

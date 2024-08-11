@@ -3,12 +3,14 @@ import './Cart.css';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const URL = "http://localhost:7000/api/v1";
 const token = localStorage.getItem('token');
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -35,7 +37,6 @@ const Cart = () => {
         'Authorization': `Bearer ${token}`
       };
       await axios.delete(`${URL}/cart/${CartItemId}`, { headers });
-      // Remove item from the local state
       setCart(cart.filter(item => item.id !== CartItemId));
     } catch (error) {
       console.error('Error removing item from cart:', error);
@@ -45,8 +46,6 @@ const Cart = () => {
   const handlePdfDownload = () => {
     if (cart.length > 0) {
       const input = document.querySelector('.cart');
-  
-      // Change text color to black
       const originalColor = input.style.color;
       input.style.color = 'black';
   
@@ -59,8 +58,6 @@ const Cart = () => {
         });
         pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
         pdf.save('Cart.pdf');
-  
-        // Revert text color back to original
         input.style.color = originalColor;
       });
     }
@@ -84,11 +81,39 @@ const Cart = () => {
     }
   };
 
+  const handleOrderNow = async () => {
+    if (cart.length > 0) {
+      try {
+        const headers = {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        };
+        const orderData = {
+          items: cart.map(item => ({
+            productId: item.productId._id,
+            quantity: item.quantity,
+          }))
+        };
+
+        const response = await axios.post(`${URL}/orders`, orderData, { headers });
+        alert('Order placed successfully!');
+        setCart([]); // Clear the cart after successful order
+        navigate('/order-summary', { state: { order: response.data.data } }); // Navigate to Order Summary
+      } catch (error) {
+        console.error('Error placing order:', error);
+        alert('Failed to place order. Please try again.');
+      }
+    } else {
+      alert('Your cart is empty.');
+    }
+  };
+
   return (
     <div className="cart">
       <h2>Cart</h2>
       <button onClick={handlePdfDownload}>Download your Cart</button>
       <button onClick={deleteCart}>Delete your Cart</button>
+      <button onClick={handleOrderNow} style={{width:'100%'}}>Order Now</button>
       {Array.isArray(cart) && cart.length === 0 ? (
         <p>Your cart is empty</p>
       ) : (
