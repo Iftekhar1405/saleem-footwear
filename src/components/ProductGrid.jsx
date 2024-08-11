@@ -4,6 +4,57 @@ import './ProductGrid.css';
 import './ProductCard.css';
 import { Link } from 'react-router-dom';
 
+
+
+
+
+
+
+
+const URL = "http://localhost:7000/api/v1";
+
+const AddToCart = async (body) => {
+  try {
+    const token = localStorage.getItem("token"); // Retrieve token from localStorage
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`, // Attach the token to the Authorization header
+      },
+    };
+
+    const cartResponse = await axios.post(`${URL}/cart`, body, config);
+    console.log(cartResponse);
+    
+  } catch (error) {
+    console.error(error.response);
+  }
+};
+
+// Example body for AddToCart function
+const body = {
+  productId: "66ae03b57fe12df8e998e449",
+  quantity: 3,
+  itemSet: [{
+    size: "UK-12",
+    lengths: 4
+  }],
+  color: "red"
+};
+
+// Call the function
+AddToCart(body);
+
+
+
+
+
+
+
+
+
+
+
 const useFetchData = (url) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);

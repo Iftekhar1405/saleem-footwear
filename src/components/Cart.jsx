@@ -49,7 +49,7 @@ const getCart = async () => {
     console.log(error)
   }
 }
-getCart()
+// getCart()
 
   const removeItem = async(CartItemId) => {
     try {
