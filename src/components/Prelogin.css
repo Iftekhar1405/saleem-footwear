@@ -8,7 +8,7 @@
 }
 
 .preloginCont div:nth-of-type(2){
-    background: #f9f9f9;
+    background: #000;
     border-radius: 16px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
@@ -17,7 +17,7 @@
     padding: 2rem;
     max-width: 400px;
     margin: auto;
-    color: black;
+    color: rgb(196, 196, 196);
 }
 .preloginCont *{
     margin: 10px 2px;
