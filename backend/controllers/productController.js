@@ -58,10 +58,54 @@ const deleteProduct = async (req, res) => {
   await Product.deleteOne({ _id: productId });
   res.status(StatusCodes.OK).json({ msg: "Product have been deleted ;)" });
 };
+
+const searchProduct = async (req, res) => {
+  try {
+    const { q, page = 1 } = req.query; // Extract 'q' and 'page' from query parameters
+
+    // Construct the search query
+    const searchQuery = {
+      $or: [
+        { brand: { $regex: q, $options: "i" } }, // Case-insensitive search in brand
+        { category: { $regex: q, $options: "i" } }, // Case-insensitive search in category
+        { article: { $regex: q, $options: "i" } }, // Case-insensitive search in article
+        { gender: { $regex: q, $options: "i" } }, // Case-insensitive search in gender
+      ],
+    };
+
+    // Pagination options
+    const limit = 10; // Number of results per page
+    const skip = (page - 1) * limit; // Calculate how many results to skip
+
+    // Execute the query with pagination
+    const products = await Product.find(searchQuery)
+      //  .select") // Only select the productName field
+      .skip(skip) // Skip the appropriate number of results
+      .limit(limit); // Limit the number of results returned
+
+    // Get the total count of matching documents
+    const total = await Product.countDocuments(searchQuery);
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(total / limit);
+
+    // Send the response with products, current page, and total pages
+    res.json({
+      products,
+      currentPage: parseInt(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   createProduct,
   getAllProducts,
   getSingleProduct,
   updateProduct,
   deleteProduct,
+  searchProduct,
 };
