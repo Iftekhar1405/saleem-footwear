@@ -23,6 +23,7 @@ import AdminDashboard from './components/Admin/AdminDashboard.jsx'
 import Test from './components/test.jsx';
 import ContactUs from './components/Contact-Us.jsx';
 import OrderSummary from './components/OrderSummary.jsx';
+import CategorizedProducts from './components/CategorizedProducts.jsx';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -33,6 +34,7 @@ const router = createBrowserRouter(
       <Route path="liked" element={<ProtectedRoute element={<Liked />} />} />
       <Route path="profile" element={<ProtectedRoute element={<Profile />} />} />
       <Route path="order-summary" element={<ProtectedRoute element={<OrderSummary />} />} />
+      <Route path="products/:category" element={<ProtectedRoute element={<CategorizedProducts />} />} />
       <Route path="login" element={<Login />} />
       <Route path="test" element={<Test />} />
       <Route path='contact-us' element = {<ContactUs/>}/>

@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 const URL = "http://localhost:7000/api/v1"
 const token = localStorage.getItem('token')
 
-const addToCart = async (product) => {
+export const addToCart = async (product) => {
   const body = {
     productId: product.id,
     quantity: 1, // Default quantity

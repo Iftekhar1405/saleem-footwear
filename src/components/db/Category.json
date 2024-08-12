@@ -2,12 +2,12 @@
     "mens": [
       {
         "id": 1,
-        "name": "Vertex",
+        "name": "Shoe",
         "image": "https://example.com/images/mens-sneakers.jpg"
       },
       {
         "id": 2,
-        "name": "Vertex +",
+        "name": "Sneekers",
         "image": "https://example.com/images/mens-formal-shoes.jpg"
       },
       {
@@ -79,6 +79,13 @@
         "name": "Slippers",
         "image": "https://example.com/images/kids-slippers.jpg"
       }
+    ],
+    "Paragon":[
+      {
+        "id":1,
+        "name":""
+      }
+
     ]
   }
   
