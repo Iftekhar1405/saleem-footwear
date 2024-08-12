@@ -8,35 +8,42 @@ const URL = "http://localhost:7000/api/v1"
 const token = localStorage.getItem('token')
 
 export const addToCart = async (product) => {
-  const body = {
-    productId: product.id,
-    quantity: 1, // Default quantity
-    itemSet: product.itemSet || [], // Default to an empty array if itemSet is not available
-    color: product.colors ? Object.keys(product.colors)[0] : "N/A" // Default to the first color or "N/A" if not available
-  };
-
   try {
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     };
-    const response = await axios.post(`${URL}/cart/add-to-cart`, body, { headers });
-    console.log('Response:', response.data);
+
+    // Fetch existing cart items
+    const cartResponse = await axios.get(`${URL}/cart`, { headers });
+    const cartItems = cartResponse.data.data.items;
+
+    const existingCartItem = cartItems.find(item => item.productId.id === product.id);
+
+    if (existingCartItem) {
+      // Product already in cart, update quantity
+      const updatedBody = {
+        productId: product.id,
+        quantity: existingCartItem.quantity + 1,
+      };
+      const response = await axios.post(`${URL}/cart/update-cart`, updatedBody, { headers });
+      console.log('Cart updated:', response.data);
+    } else {
+      // Product not in cart, add new product
+      const newBody = {
+        productId: product.id,
+        quantity: 1, // Default quantity
+        itemSet: product.itemSet || [], // Default to an empty array if itemSet is not available
+        color: product.colors ? Object.keys(product.colors)[0] : "N/A" // Default to the first color or "N/A" if not available
+      };
+      const response = await axios.post(`${URL}/cart/add-to-cart`, newBody, { headers });
+      console.log('Product added to cart:', response.data);
+    }
   } catch (error) {
     console.log(error);
   }
 };
 
-
-const cartBody =
-  {   productId: "66ae03b57fe12df8e998e449",
-    quantity: 3,
-    itemSet: [{
-        size:"UK-12",
-        lengths: 4
-    }],
-    color : "red"
-    }
 const useFetchData = (url) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,45 +66,9 @@ const useFetchData = (url) => {
   return { data, loading, error };
 };
 
-
-
-// const useLocalStorage = (key, initialValue) => {
-//   const [storedValue, setStoredValue] = useState(() => {
-//     try {
-//       const item = localStorage.getItem(key);
-//       return item ? JSON.parse(item) : initialValue;
-//     } catch (error) {
-//       console.error(error);
-//       return initialValue;
-//     }
-//   });
-
-//   useEffect(() => {
-//     localStorage.setItem(key, JSON.stringify(storedValue));
-//     window.dispatchEvent(new Event(`${key}-updated`));
-//   }, [storedValue, key]);
-
-//   return [storedValue, setStoredValue];
-// };
-
 const ProductGrid = () => {
-  const { data: products, loading, error } = useFetchData('http://localhost:7000/api/v1/products');
-  // const [cart, setCart] = useLocalStorage('cart', []);
-  // const [liked, setLiked] = useLocalStorage('liked', []);
-
-  // const addToCart = (product) => {
-  //   const existingProduct = cart.find(item => item.id === product.id);
-  //   if (existingProduct) {
-  //     setCart(cart.map(item =>
-  //       item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-  //     ));
-  //   } else {
-  //     setCart([...cart, { ...product, quantity: 1 }]);
-  //   }
-  // };
-
-  // const addToLiked = (product) => setLiked([...liked, product]);
-
+  const { data: products, loading, error } = useFetchData(`${URL}/products`);
+ 
   if (loading) {
     return <h2>Loading...</h2>;
   }

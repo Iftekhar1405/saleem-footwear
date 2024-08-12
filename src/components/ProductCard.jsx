@@ -4,8 +4,8 @@ import axios from 'axios';
 import './ProductGrid.css';
 import './ProductCard.css';
 
-// Define the function to add to cart with the selected color and size
-const addToCart = async (product, selectedColor, selectedSize) => {
+// Define the function to add to cart with the selected color, size, and quantity
+const addToCart = async (product, selectedColor, selectedSize, quantity) => {
   const token = localStorage.getItem('token');
   const headers = {
     'Content-Type': 'application/json',
@@ -17,7 +17,7 @@ const addToCart = async (product, selectedColor, selectedSize) => {
 
   const body = {
     productId: product.id,
-    quantity: 1, // or a quantity input from the user if available
+    quantity: quantity,
     itemSet: selectedItemSet ? [selectedItemSet] : [], // Only include the selected size
     color: selectedColor,
     size: selectedSize
@@ -37,6 +37,7 @@ const ProductCard = () => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
   const [sizes, setSizes] = useState([]);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -76,12 +77,23 @@ const ProductCard = () => {
     setSelectedSize(event.target.value);
   };
 
+  const handleQuantityChange = (action) => {
+    setQuantity(prevQuantity => {
+      if (action === 'increment') {
+        return prevQuantity + 1;
+      } else if (action === 'decrement' && prevQuantity > 1) {
+        return prevQuantity - 1;
+      }
+      return prevQuantity;
+    });
+  };
+
   const handleAddToCart = () => {
-    if (selectedColor && selectedSize) {
-      addToCart(product, selectedColor, selectedSize);
-      alert('Item Added to Cart Successfully')
+    if (selectedColor && selectedSize && quantity > 0) {
+      addToCart(product, selectedColor, selectedSize, quantity);
+      alert('Item Added to Cart Successfully');
     } else {
-      alert('Please select a color and a size.');
+      alert('Please select a color, size, and a valid quantity.');
     }
   };
 
@@ -133,18 +145,23 @@ const ProductCard = () => {
             )) 
             : "N/A"}
         </div>
+        <div className="quantity-selector">
+          <button onClick={() => handleQuantityChange('decrement')} >-</button>
+          <input type="number" value={quantity} readOnly  style={{margin:'5px', height:'30px'}}/>
+          <button onClick={() => handleQuantityChange('increment')} style={{marginLeft:'8px', backgroundColor:'green'}}>+</button>
+        </div>
       </div>
       <div className="buttons">
         <button>
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
-                <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z" />
-              </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
+            <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z" />
+          </svg>
         </button>
         <span className="v-bar"> &#124;</span>
         <button onClick={handleAddToCart}>
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
-                <path d="M440-600v-120H320v-80h120v-120h80v120h120v80H520v120h-80ZM280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z" />
-              </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+            <path d="M440-600v-120H320v-80h120v-120h80v120h120v80H520v120h-80ZM280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z" />
+          </svg>
         </button>
       </div>
     </div>
