@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Style.css';
 import { useNavigate } from 'react-router-dom';
 import logo from './images/logo.png'
+import RoleBasedComponent from '../RoleBasedComponents';
 
 function Nav() {
     const [isOpen, setIsOpen] = useState(false);
@@ -25,8 +26,10 @@ function Nav() {
             </div>
             <div className={`menu ${isOpen ? 'open' : ''}`}>
                 <a href='#home'>Home</a>
-                <a href='#about'>About</a>
-                <a href='#products'>Products</a>
+                <a href='/catelog'>Catelog</a>
+                <RoleBasedComponent allowedRoles={['admin']}>
+                <a href='/register'>Register Users</a>
+                </RoleBasedComponent>
                 <button onClick={logout}>Log-out</button>
             </div>
         </div>

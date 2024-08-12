@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css';
-
+import RoleBasedComponent from '../RoleBasedComponents'
 
 const URL = "http://localhost:7000/api/v1";
 const registerUser = async (body) => {
@@ -12,14 +12,7 @@ const registerUser = async (body) => {
     console.log(error.response.data)
   }
 }
-// const body_reg = {
-//   name: "Syed Amaan Ali",
-//   email: "Syedamaan@gmail.com",
-//   password: "secret",
-//   address: "dskjf",
-//   phone:"9826152780"
-// }
-// registerUser(body_reg)
+
 function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -55,26 +48,13 @@ function Register() {
         email: email,
         password: password,
         address: address,
-        phone:phone
+        phone:phone,
+        role:role || 'customer'
       }
     console.log(body_reg);
     registerUser(body_reg)
     
-    // try {
-    //   const response = await axios.post('https://your-backend-url.com/api/register', {
-    //     name,
-    //     email,
-    //     password,
-    //     address,
-    //     phone,
-    //     role
-    //   });
-    //   console.log(response.data);
-    //   // Handle successful registration response here
-    // } catch (error) {
-    //   console.error('There was an error registering!', error);
-    //   // Handle registration error here
-    // }
+    
   };
 
   return (
@@ -86,8 +66,8 @@ function Register() {
           <input type="text" id="name" value={name} onChange={handleNameChange} required />
         </div>
         <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email" value={email} onChange={handleEmailChange} required />
+          <label htmlFor="email">Shop Name</label>
+          <input type="text" id="email" value={email} onChange={handleEmailChange} required />
         </div>
         <div className="form-group">
           <label htmlFor="password">Password</label>
@@ -105,6 +85,7 @@ function Register() {
           <label htmlFor="phone">Phone</label>
           <input type="tel" id="phone" value={phone} onChange={handlePhoneChange} required />
         </div>
+        <RoleBasedComponent allowedRoles={['admin']}>
         <div className="form-group">
           <label htmlFor="role">Role</label>
           <select id="role" value={role} onChange={handleRoleChange} required>
@@ -114,6 +95,7 @@ function Register() {
             <option value="admin">Admin</option>
           </select>
         </div>
+        </RoleBasedComponent>
         <button type="submit" className="login-btn">Register</button>
       </form>
     </div>
