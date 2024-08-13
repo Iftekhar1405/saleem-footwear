@@ -87,4 +87,23 @@ const orderHistory = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, orderHistory, updateOrderStatus };
+const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
+
+    if (orders.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "No orders found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+    });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Something went wrong.");
+  }
+};
+
+module.exports = { createOrder, orderHistory, updateOrderStatus, getAllOrders };
