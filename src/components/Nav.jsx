@@ -20,12 +20,12 @@ function Nav() {
     }
     return (
         <div className='Nav'>
-            <h2> <img src={logo} alt=""  className='logo'/> Saleem Footwear</h2>
+            <h2> <img src={logo} alt=""  className='logo'/> Salim Footwear</h2>
             <div className='hamburger' onClick={toggleMenu}>
                 &#9776; {/* Unicode character for hamburger icon */}
             </div>
             <div className={`menu ${isOpen ? 'open' : ''}`}>
-                <a href='#home'>Home</a>
+                <a href='/orders'>Orders</a>
                 <a href='/catelog'>Catelog</a>
                 <RoleBasedComponent allowedRoles={['admin']}>
                 <a href='/register'>Register Users</a>

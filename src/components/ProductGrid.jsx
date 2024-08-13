@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 
 const URL = "http://localhost:7000/api/v1"
 const token = localStorage.getItem('token')
-
 export const addToCart = async (product) => {
   try {
     const headers = {
@@ -18,20 +17,23 @@ export const addToCart = async (product) => {
     const cartResponse = await axios.get(`${URL}/cart`, { headers });
     const cartItems = cartResponse.data.data.items;
 
-    const existingCartItem = cartItems.find(item => item.productId.id === product.id);
+    console.log("Cart Items:", cartItems); // Debugging
+    console.log("Product ID:", product._id); // Debugging
+
+    const existingCartItem = cartItems.find(item => item.productId._id === product._id);
 
     if (existingCartItem) {
       // Product already in cart, update quantity
       const updatedBody = {
-        productId: product.id,
+        productId: product._id,
         quantity: existingCartItem.quantity + 1,
       };
-      const response = await axios.post(`${URL}/cart/update-cart`, updatedBody, { headers });
+      const response = await axios.post(`${URL}/cart/add-to-cart`, updatedBody, { headers });
       console.log('Cart updated:', response.data);
     } else {
       // Product not in cart, add new product
       const newBody = {
-        productId: product.id,
+        productId: product._id,
         quantity: 1, // Default quantity
         itemSet: product.itemSet || [], // Default to an empty array if itemSet is not available
         color: product.colors ? Object.keys(product.colors)[0] : "N/A" // Default to the first color or "N/A" if not available
@@ -43,6 +45,7 @@ export const addToCart = async (product) => {
     console.log(error);
   }
 };
+
 
 const useFetchData = (url) => {
   const [data, setData] = useState([]);
@@ -80,8 +83,8 @@ const ProductGrid = () => {
   return (
     <div className="product-grid">
       {products.map((product) => (
-        <div className="product-card" key={product.id} style={{backgroundColor:'#000'}}>
-          <Link to={`/product/${product.id}`}>
+        <div className="product-card" key={product._id} style={{backgroundColor:'#000'}}>
+          <Link to={`/product/${product._id}`}>
             <div className="product-image-gallery">
               {product.images.map((imgUrl, index) => (
                 <img key={index} src={imgUrl} alt={`${product.brand} ${product.article}`} className="product-image" />

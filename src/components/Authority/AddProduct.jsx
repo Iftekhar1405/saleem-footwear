@@ -5,11 +5,12 @@ import ProductGridAuth from './ProductGridAuth';
 
 function AddProduct() {
     const [product, setProduct] = useState({
-        images: ['', ''], // Default images
+        images: ['', ''],
         brand: '',
         article: '',
-        colors: {}, // Colors object with color name as key and array of images as value
-        sizes: [{ size: '', length: '' }],
+        material: '', // Added material field
+        colors: {},
+        itemSet: [{ size: '', length: '' }],
         description: '',
         gender: '',
         price: '',
@@ -23,14 +24,14 @@ function AddProduct() {
     };
 
     // Handle change for default images
-    const handleimageChange = (index, e) => {
-        const newimages = [...product.images];
-        newimages[index] = e.target.value;
-        setProduct({ ...product, images: newimages });
+    const handleImageChange = (index, e) => {
+        const newImages = [...product.images];
+        newImages[index] = e.target.value;
+        setProduct({ ...product, images: newImages });
     };
 
     // Handle adding more default images (limit to 2)
-    const handleAddimage = () => {
+    const handleAddImage = () => {
         if (product.images.length < 2) {
             setProduct({ ...product, images: [...product.images, ''] });
         }
@@ -65,36 +66,47 @@ function AddProduct() {
         setProduct({ ...product, colors: { ...product.colors, '': [''] } });
     };
 
-    // Handle size and length changes
-    const handleSizeChange = (index, field, e) => {
-        const newSizes = [...product.sizes];
-        newSizes[index][field] = e.target.value;
-        setProduct({ ...product, sizes: newSizes });
+    // Handle size and length changes (aligned with schema)
+    const handleSetChange = (index, field, e) => {
+        const newSet = [...product.itemSet];
+        newSet[index][field] = e.target.value;
+        setProduct({ ...product, itemSet: newSet });
     };
 
-    const handleAddSize = () => {
-        setProduct({ ...product, sizes: [...product.sizes, { size: '', length: '' }] });
+    const handleAddSet = () => {
+        setProduct({ ...product, itemSet: [...product.itemSet, { size: '', length: '' }] });
     };
 
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Ensure colors object has no empty keys
+        const colors = Object.fromEntries(
+            Object.entries(product.colors).filter(([key, value]) => key && value.length > 0)
+        );
+
+        const productData = {
+            ...product,
+            colors,
+        };
+
         try {
-            const response = await axios.post('http://localhost:7000/api/v1/products', product);
+            const response = await axios.post('http://localhost:7000/api/v1/products', productData);
             console.log('Product added:', response.data);
             setProduct({
                 images: ['', ''],
                 brand: '',
                 article: '',
+                material: '', // Reset material field
                 colors: {},
-                sizes: [{ size: '', length: '' }],
+                itemSet: [{ size: '', length: '' }],
                 description: '',
                 gender: '',
                 price: '',
                 category: ''
             });
             alert('Product added successfully!');
-            console.log(response)
         } catch (error) {
             console.error('Error adding product:', error);
         }
@@ -112,11 +124,11 @@ function AddProduct() {
                                 <input
                                     type='text'
                                     value={imageUrl}
-                                    onChange={(e) => handleimageChange(index, e)}
+                                    onChange={(e) => handleImageChange(index, e)}
                                 />
                             </div>
                         ))}
-                        <button type='button' onClick={handleAddimage}>Add More Default Images</button>
+                        <button type='button' onClick={handleAddImage}>Add More Default Images</button>
                     </div>
                     <div className='form-group'>
                         <label>Brand:</label>
@@ -125,6 +137,10 @@ function AddProduct() {
                     <div className='form-group'>
                         <label>Article:</label>
                         <input type='text' name='article' value={product.article} onChange={handleChange} />
+                    </div>
+                    <div className='form-group'>
+                        <label>Material:</label> {/* Added input field for material */}
+                        <input type='text' name='material' value={product.material} onChange={handleChange} />
                     </div>
                     <div className='form-group'>
                         <label>Colors and Images:</label>
@@ -152,24 +168,24 @@ function AddProduct() {
                         <button type='button' onClick={handleAddColor}>Add More Colors</button>
                     </div>
                     <div className='form-group'>
-                        <label>Sizes and Lengths:</label>
-                        {product.sizes.map((size, index) => (
+                        <label>Item Sets:</label>
+                        {product.itemSet.map((set, index) => (
                             <div key={index} className='size-length'>
                                 <input
                                     type='text'
                                     placeholder='Size'
-                                    value={size.size}
-                                    onChange={(e) => handleSizeChange(index, 'size', e)}
+                                    value={set.size}
+                                    onChange={(e) => handleSetChange(index, 'size', e)}
                                 />
                                 <input
                                     type='text'
-                                    placeholder='Length'
-                                    value={size.length}
-                                    onChange={(e) => handleSizeChange(index, 'length', e)}
+                                    placeholder='Pcs'
+                                    value={set.length}
+                                    onChange={(e) => handleSetChange(index, 'length', e)}
                                 />
                             </div>
                         ))}
-                        <button type='button' onClick={handleAddSize}>Add More Sizes</button>
+                        <button type='button' onClick={handleAddSet}>Add More Item Sets</button>
                     </div>
                     <div className='form-group'>
                         <label>Description:</label>

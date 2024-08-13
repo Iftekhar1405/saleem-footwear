@@ -37,7 +37,7 @@ const Cart = () => {
         'Authorization': `Bearer ${token}`
       };
       await axios.delete(`${URL}/cart/${CartItemId}`, { headers });
-      setCart(cart.filter(item => item.id !== CartItemId));
+      setCart(cart.filter(item => item._id !== CartItemId));
     } catch (error) {
       console.error('Error removing item from cart:', error);
     }
@@ -126,7 +126,7 @@ const Cart = () => {
                 <p>Brand: {item.productId.brand}</p>
                 <p>Price: ₹{item.productId.price}</p>
                 <p>Quantity: {item.quantity}</p>
-                <button className="remove-button" onClick={() => removeItem(item.id)}>
+                <button className="remove-button" onClick={() => removeItem(item._id)}>
                   Remove
                 </button>
               </div>
