@@ -6,12 +6,16 @@ const { StatusCodes } = require("http-status-codes");
 
 const addToCart = async (req, res) => {
   const { productId, quantity, itemSet, color } = req.body;
-  console.log(itemSet);
+  // console.log(req.body);
+
+  // console.log(itemSet);
 
   const userId = req.user.userId;
   //   console.log(req.user.userId);
   try {
     const product = await Product.findById(productId);
+    // console.log(product);
+
     if (!product) {
       throw new CustomError.NotFoundError("Product not found");
     }
@@ -59,6 +63,8 @@ const addToCart = async (req, res) => {
     cart.totalItems += quantity;
 
     await cart.save();
+    console.log(cart);
+
     res.status(StatusCodes.CREATED).json({ success: true, data: cart });
     //   console.log("adding to kart");
   } catch (error) {
@@ -77,7 +83,7 @@ const getCart = async (req, res) => {
   const cart = await Cart.findOne({ userId }).populate("items.productId");
 
   if (!cart) {
-    throw new CustomError("Cart not found");
+    throw new CustomError.NotFoundError("Cart not found");
   }
   res.status(StatusCodes.OK).json({ data: cart });
 };
