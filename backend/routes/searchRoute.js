@@ -5,7 +5,10 @@ const {
   querySearch,
 } = require("../controllers/productController");
 
+
 router.get("/", searchProduct);
+
+
 router.get("/category", searchCategory);
 router.get("/q", querySearch);
 

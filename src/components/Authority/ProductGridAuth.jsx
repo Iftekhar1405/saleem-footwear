@@ -2,130 +2,154 @@ import React, { useState, useEffect } from 'react';
 import './ProductGridAuth.css';
 import './ProductCardAuth.css';
 import axios from "axios";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-const URL = "http://localhost:7000/api/v1";
-// login request method
-const login_body = {
-  identifier: "9109390639",
-  password: "secret",
-}
-const loginUser = async (body) => {
-  try {
-    const response = await axios.post(`${URL}/auth/login`, body);
-    console.log("Login Successful:", response.data);
-  } catch (error) {
-    console.log(error);
-  }
-};
+const URL = "http://localhost:7000/api/v1/products";
 
-const register_body = {
-  name:"dave",
-  phone:"0449449494",
-  email:"dave@gmail.com",
-  password:"secret"
-}
-const registerUser = async (body) => {
-  try {
-    const response = await axios.post(`${URL}/auth/register`, body)
-    console.log(response.data)
-  } catch (error) {
-    console.log(error.response.data)
-  }
-}
-
-const logoutUser = async () =>{
-  try {
-    const response = await axios.get(`${URL}/auth/logout`)
-    console.log(response.data);
-    
-  } catch (error) {
-    console.log(error);
-    
-  }
-}
-// Envoking function
-// loginUser(login_body)
-
-// const registerRes = registerUser(register_body)
-// console.log(registerRes.response)
-
-// logoutUser()
-
-
-// to accress the product
-const productBody = {
-  name: "Water melon ",
-  brand: "Paragon",
-  article: "Thor01",
-  set: [{
-      size: "US-13",
-      length:6
-  }, {"size":"UK-15", "length": 7}],
-  description: "Be Like Ironman. Fly in sky or space with these shoes.",
-  color: ["red", "black", "pink"],
-  price: 550,
-  discount: 2,
-  stock_quantity: 25,
-  images: ["https://media.gettyimages.com/id/172417586/photo/elegant-black-leather-shoes.jpg?s=612x612&w=gi&k=20&c=_HiU2PSG-krAT5-QIlDskHEhmXOTYQzSushSW51F25c=", "imahe_2.jpeg"],
-  material: "vibranium",
-  gender:"unisex",
-  season:"all-seasons",
-  style:"chapri"
-
-}
-const CreateProduct = async (body) => {
-  try {
-    const productStat = await axios.post(`${URL}/products`, body)
-    console.log(productStat);
-    
-  } catch (error) {
-    console.error(error.response);
-    
-  }
-}
-
-// envoking produts routes
-// CreateProduct(productBody)
 const ProductGridAuth = () => {
-  const [products, setProducts] = useState(() => {
-    const savedProducts = localStorage.getItem('products');
-    return savedProducts ? JSON.parse(savedProducts) : [];
-  });
+  const [products, setProducts] = useState([]);
+  const [editingProductId, setEditingProductId] = useState(null); // Track which product is being edited
+  const [editedProduct, setEditedProduct] = useState({}); // Store edited product details
 
-  const deleteProduct = (productId) => {
-    const updatedProducts = products.filter((product) => product.id !== productId);
-    setProducts(updatedProducts);
-    localStorage.setItem('products', JSON.stringify(updatedProducts));
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(URL, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setProducts(response.data.products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const startEditing = (product) => {
+    setEditingProductId(product._id);
+    setEditedProduct({ ...product });
   };
 
-  const editProduct = (productId) => {
-    // Navigate to the product edit page or show a modal with edit form
-    console.log(`Edit product with id: ${productId}`);
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditedProduct(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const saveProduct = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`${URL}/${editedProduct._id}`, editedProduct, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setProducts(products.map(product => product._id === editedProduct._id ? response.data : product));
+      setEditingProductId(null); // Exit edit mode
+    } catch (error) {
+      console.error("Error saving product:", error);
+    }
+  };
+
+  const deleteProduct = async (productId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${URL}/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setProducts(products.filter((product) => product._id !== productId));
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
   };
 
   return (
     <div className="product-grid">
       {products.map((product) => (
-        <div className="product-card" key={product.id}>
-          <Link to={`/product/${product.id}`}>
-            <img src={product.imageUrl} alt={product.name} className="product-image" />
-            <div className="product-details">
-              <h2 className="product-name">{product.name}</h2>
-              <p className="product-brand">{product.brand}</p>
-              <div className="product-info">
-                <p className="product-mrp">MRP: ₹{product.price}</p>
-                <p className="product-discount">Discount: {product.discountPercentage}%</p>
-              </div>
-              <p className="product-discounted-price">Discounted Price: ₹{product.price - (product.price * product.discountPercentage / 100)}</p>
-              <p className="product-sizes">For: {product.gender}</p>
-              <p className="product-sizes">Sizes: {product.sizes.map(size => `${size.size} (Length: ${size.length})`).join(', ')}</p>
+        <div className="product-card" key={product._id} style={{ backgroundColor: '#000' }}>
+          {editingProductId === product._id ? (
+            <div className="edit-product-form">
+              <input
+                type="text"
+                name="article"
+                value={editedProduct.article || ''}
+                onChange={handleEditChange}
+                className="edit-input"
+              />
+              <input
+                type="text"
+                name="brand"
+                value={editedProduct.brand || ''}
+                onChange={handleEditChange}
+                className="edit-input"
+              />
+              <input
+                type="text"
+                name="description"
+                value={editedProduct.description || ''}
+                onChange={handleEditChange}
+                className="edit-input"
+              />
+              <input
+                type="number"
+                name="price"
+                value={editedProduct.price || ''}
+                onChange={handleEditChange}
+                className="edit-input"
+              />
+              <input
+                type="text"
+                name="material"
+                value={editedProduct.material || ''}
+                onChange={handleEditChange}
+                className="edit-input"
+              />
+              <input
+                type="text"
+                name="gender"
+                value={editedProduct.gender || ''}
+                onChange={handleEditChange}
+                className="edit-input"
+              />
+              {/* Add other fields as needed */}
+              <button className="header-button save-button" onClick={saveProduct}>Save</button>
+              <button className="header-button cancel-button" onClick={() => setEditingProductId(null)}>Cancel</button>
             </div>
-          </Link>
-          <div className='buttons'>
-            <button className="header-button edit-button" onClick={() => editProduct(product.id)}>Edit</button>
-            <button className="header-button delete-button" onClick={() => deleteProduct(product.id)}>Delete</button>
-          </div>
+          ) : (
+            <>
+              <div className="product-image-gallery">
+                {product.images.map((imgUrl, index) => (
+                  <img key={index} src={imgUrl} alt={`${product.brand} ${product.article}`} className="product-image" />
+                ))}
+              </div>
+              <div className="product-details">
+                <h2 className="product-name">{product.article}</h2>
+                <p className="product-brand">{product.brand}</p>
+                <p className="product-description">{product.description}</p>
+                <div className="product-info">
+                  <p className="product-mrp">MRP: ₹{product.price}</p>
+                  <p className="product-material">Material: {product.material}</p>
+                  <p className="product-gender">Gender: {product.gender}</p>
+                </div>
+                <p className="product-sizes">
+                  Available Sizes: {product.itemSet && product.itemSet.length > 0 
+                    ? product.itemSet.map(item => `${item.size} (Length: ${item.lengths})`).join(', ') 
+                    : "N/A"}
+                </p>
+                <p className="product-colors">
+                  Colors: {product.colors && Object.keys(product.colors).length > 0 
+                    ? Object.keys(product.colors).join(', ') 
+                    : "N/A"}
+                </p>
+              </div>
+              <div className='buttons'>
+                {/* <button className="header-button edit-button" onClick={() => startEditing(product)}>Edit</button> */}
+                <button onClick={() => deleteProduct(product._id)}>Delete</button>
+              </div>
+            </>
+          )}
         </div>
       ))}
     </div>
