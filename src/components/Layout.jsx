@@ -4,7 +4,7 @@ import RoleBasedComponent from "../RoleBasedComponents";
 
 export function Layout() {
   const location = useLocation();
-  const hideNavbarRoutes = ['/login', '/register', '/prelogin'];
+  const hideNavbarRoutes = ['/login', '/register', '/prelogin','/contact-us'];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (

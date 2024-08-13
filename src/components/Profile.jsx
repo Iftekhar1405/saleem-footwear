@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import './Profile.css'; // Optional: Create a CSS file for styling
 
 const Profile = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfileFromLocalStorage = () => {
       try {
-        const response = await axios.get('http://localhost:7000/api/v1/profile'); // Adjust this URL to match your backend endpoint
-        setUser(response.data);
+        const token = localStorage.getItem('token'); // Adjust key if necessary
+        if (token) {
+          // Parse the token if needed (assuming it's a JSON string or JWT)
+          const userInfo = JSON.parse(atob(token.split('.')[1])); // For JWT, parsing payload
+          setUser(userInfo);
+        }
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error('Error fetching profile from local storage:', error);
       }
     };
 
-    fetchProfile();
+    fetchProfileFromLocalStorage();
   }, []);
 
   if (!user) return <div>Loading...</div>;
