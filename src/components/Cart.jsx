@@ -21,13 +21,11 @@ const Cart = () => {
         };
         const response = await axios.get(`${URL}/cart`, { headers });
         setCart(response.data.data.items || []); // Ensure cart is an array
-        console.log(response)
       } catch (error) {
         console.error('Error fetching cart data:', error);
         setCart([]); // Ensure cart is an array on error
       }
     };
-
 
     fetchCart();
   }, []);
@@ -44,12 +42,39 @@ const Cart = () => {
     }
   };
 
+  const updateQuantity = async (CartItemId, newQuantity) => {
+    if (newQuantity < 1) return;
+
+    // Optimistic UI update
+    setCart(cart.map(item =>
+      item._id === CartItemId ? { ...item, quantity: newQuantity } : item
+    ));
+
+    try {
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      };
+      await axios.patch(
+        `${URL}/cart/${CartItemId}`,
+        { quantity: newQuantity },
+        { headers }
+      );
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      // Revert state update on error
+      setCart(cart.map(item =>
+        item._id === CartItemId ? { ...item, quantity: newQuantity - 1 } : item
+      ));
+    }
+  };
+
   const handlePdfDownload = () => {
     if (cart.length > 0) {
       const input = document.querySelector('.cart');
       const originalColor = input.style.color;
       input.style.color = 'black';
-  
+
       html2canvas(input, { scale: 2, useCORS: true }).then((canvas) => {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF({
@@ -67,7 +92,7 @@ const Cart = () => {
   const deleteCart = async () => {
     if (cart.length > 0) {
       const confirmDeletion = window.confirm('Are you sure you want to delete your cart?');
-  
+
       if (confirmDeletion) {
         try {
           const headers = {
@@ -114,23 +139,32 @@ const Cart = () => {
       <h2>Cart</h2>
       <button onClick={handlePdfDownload}>Download your Cart</button>
       <button onClick={deleteCart}>Delete your Cart</button>
-      <button onClick={handleOrderNow} style={{width:'100%'}}>Order Now</button>
+      <button onClick={handleOrderNow} style={{ width: '100%' }}>Order Now</button>
       {Array.isArray(cart) && cart.length === 0 ? (
         <p>Your cart is empty</p>
       ) : (
         <ul>
           {cart.map((item, index) => (
             <li key={index} className="cart-item">
-              <img src={item.productId.images[0]} alt={item.name} />
               <div className="cart-item-details">
+                <div>
+                <img src={item.productId.images[0]} alt={item.name} />
+                </div>
+                <div>
                 <h3>{item.productId.name}</h3>
                 <p>Brand: {item.productId.brand}</p>
                 <p>Price: ₹{item.productId.price}</p>
-                <p>Quantity: {item.quantity}</p>
+                <span>Item set: {item.itemSet && item.itemSet.length > 0 
+                  ? item.itemSet.map(item => `${item.size} (Pcs: ${item.lengths})`).join(', ') 
+                  : "N/A"}</span><br />
+                <span>Quantity: {item.quantity}</span>
                 <button className="remove-button" onClick={() => removeItem(item._id)}>
                   Remove
                 </button>
-              </div>
+                </div>
+                 </div>
+                
+             
             </li>
           ))}
         </ul>

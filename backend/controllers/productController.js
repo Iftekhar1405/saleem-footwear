@@ -197,5 +197,5 @@ module.exports = {
   searchProduct,
   searchCategory,
   distinctCategory,
-  testSearch,
+  // testSearch,
 };

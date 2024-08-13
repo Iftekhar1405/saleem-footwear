@@ -10,7 +10,7 @@ function AddProduct() {
         article: '',
         material: '', // Added material field
         colors: {},
-        itemSet: [{ size: '', length: '' }],
+        itemSet: [{ size: '', lengths: '' }],
         description: '',
         gender: '',
         price: '',
@@ -74,25 +74,32 @@ function AddProduct() {
     };
 
     const handleAddSet = () => {
-        setProduct({ ...product, itemSet: [...product.itemSet, { size: '', length: '' }] });
+        setProduct({ ...product, itemSet: [...product.itemSet, { size: '', lengths: '' }] });
     };
 
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         // Ensure colors object has no empty keys
         const colors = Object.fromEntries(
             Object.entries(product.colors).filter(([key, value]) => key && value.length > 0)
         );
-
+    
         const productData = {
             ...product,
             colors,
         };
-
+    
         try {
-            const response = await axios.post('http://localhost:7000/api/v1/products', productData);
+            const token = (localStorage.getItem('token')); // Retrieve the token from local storage
+    
+            const response = await axios.post('http://localhost:7000/api/v1/products', productData, {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Include the token in the request headers
+                },
+            });
+    
             console.log('Product added:', response.data);
             setProduct({
                 images: ['', ''],
@@ -100,7 +107,7 @@ function AddProduct() {
                 article: '',
                 material: '', // Reset material field
                 colors: {},
-                itemSet: [{ size: '', length: '' }],
+                itemSet: [{ size: '', lengths: '' }],
                 description: '',
                 gender: '',
                 price: '',
@@ -109,9 +116,10 @@ function AddProduct() {
             alert('Product added successfully!');
         } catch (error) {
             console.error('Error adding product:', error);
+            console.log(product);
         }
     };
-
+    
     return (
         <>
             <div className='add-product'>
@@ -180,8 +188,8 @@ function AddProduct() {
                                 <input
                                     type='text'
                                     placeholder='Pcs'
-                                    value={set.length}
-                                    onChange={(e) => handleSetChange(index, 'length', e)}
+                                    value={set.lengths}
+                                    onChange={(e) => handleSetChange(index, 'lengths', e)}
                                 />
                             </div>
                         ))}
