@@ -90,9 +90,9 @@
 
 
 .search-container {
-    width: 100%;
-    max-width: 800px;
+    width: 90%;
     margin-top: 20px;
+    margin: 20px auto ;
 }
 
 .search-bar {
@@ -155,6 +155,7 @@ h2{
 .scroll-container img {
     flex-shrink: 0; /* Prevent images from shrinking */
     width: 80%; /* Ensure images fit within their container */
+    max-width: 450px;
     height: auto; /* Maintain aspect ratio */
     scroll-snap-align: start; /* Optional: for snapping behavior */
 }
