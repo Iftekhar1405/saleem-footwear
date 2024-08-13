@@ -4,13 +4,17 @@ const {
   createOrder,
   orderHistory,
   updateOrderStatus,
+  getAllOrders,
 } = require("../controllers/ordersController");
 const {
   authenticateUser,
   authorizePermission,
 } = require("../middleware/authentication");
 
-router.route("/").post(authenticateUser, createOrder);
+router
+  .route("/")
+  .post(authenticateUser, createOrder)
+  .get([authenticateUser, authorizePermission("admin")], getAllOrders);
 router.route("/history").get(authenticateUser, orderHistory);
 router
   .route("/status/:orderId")

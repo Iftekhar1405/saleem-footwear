@@ -90,7 +90,11 @@ function AddProduct() {
             ...product,
             colors,
         };
+<<<<<<< Updated upstream
     
+=======
+        
+>>>>>>> Stashed changes
         try {
 
             const token = (localStorage.getItem('token')); // Retrieve the token from local storage
