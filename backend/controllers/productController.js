@@ -17,11 +17,11 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   const products = await Product.find({}).select(
-    "name brand color price discount images set style"
+    "article brand color price  images itemSet category"
   );
   console.log("OK");
 
-  res.status(StatusCodes.OK).json({ products, count: products.length });
+  res.status(StatusCodes.OK).json({ count: products.length, products });
 };
 
 const getSingleProduct = async (req, res) => {
@@ -59,6 +59,7 @@ const deleteProduct = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Product have been deleted ;)" });
 };
 
+// search functionality
 const searchProduct = async (req, res) => {
   try {
     const { q, page = 1 } = req.query; // Extract 'q' and 'page' from query parameters
@@ -79,7 +80,7 @@ const searchProduct = async (req, res) => {
 
     // Execute the query with pagination
     const products = await Product.find(searchQuery)
-      //  .select") // Only select the productName field
+      .select("brand article category") // Only select the productName field
       .skip(skip) // Skip the appropriate number of results
       .limit(limit); // Limit the number of results returned
 
@@ -101,6 +102,27 @@ const searchProduct = async (req, res) => {
   }
 };
 
+const searchCategory = async (req, res) => {
+  try {
+    // Find all distinct categories in the Product collection
+    const categories = await Product.distinct("category");
+
+    // Send the list of categories as a response
+    res.status(200).json({
+      success: true,
+      categories: categories,
+    });
+  } catch (error) {
+    // Handle errors
+    console.error("Error fetching categories:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching categories",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createProduct,
   getAllProducts,
@@ -108,4 +130,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   searchProduct,
+  searchCategory,
 };

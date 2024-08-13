@@ -1,6 +1,10 @@
 const router = require("express").Router();
-const { searchProduct } = require("../controllers/productController");
+const {
+  searchProduct,
+  searchCategory,
+} = require("../controllers/productController");
 
 router.get("/", searchProduct);
+router.get("/category", searchCategory);
 
 module.exports = router;
