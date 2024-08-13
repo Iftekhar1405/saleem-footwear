@@ -5,7 +5,7 @@ import './Style.css'
 
 function Scroll(){
     return(
-            <div class="scroll-container">
+            <div className="scroll-container">
                 <img src= {mens} alt="Image 1" />
                 <img src={womens} alt="Image 2" />
                 <img src= {kids} alt="Image 3" />

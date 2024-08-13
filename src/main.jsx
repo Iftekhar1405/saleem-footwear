@@ -24,6 +24,8 @@ import Test from './components/test.jsx';
 import ContactUs from './components/Contact-Us.jsx';
 import OrderSummary from './components/OrderSummary.jsx';
 import CategorizedProducts from './components/CategorizedProducts.jsx';
+import PDFViewer from './components/PDF.jsx';
+import Orders from './components/db/Orders.jsx';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -32,6 +34,8 @@ const router = createBrowserRouter(
       <Route path="" element={<ProtectedRoute element={<App />} />} />
       <Route path="cart" element={<ProtectedRoute element={<Cart />} />} />
       <Route path="liked" element={<ProtectedRoute element={<Liked />} />} />
+      <Route path="catelog" element={<ProtectedRoute element={<PDFViewer />} />} />
+      <Route path="orders" element={<ProtectedRoute element={<Orders />} />} />
       <Route path="profile" element={<ProtectedRoute element={<Profile />} />} />
       <Route path="order-summary" element={<ProtectedRoute element={<OrderSummary />} />} />
       <Route path="products/:category" element={<ProtectedRoute element={<CategorizedProducts />} />} />
