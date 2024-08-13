@@ -2,12 +2,14 @@ const router = require("express").Router();
 const {
   searchProduct,
   searchCategory,
-  distinctCategory,
-  testSearch,
+  querySearch,
 } = require("../controllers/productController");
 
-// router.get("/", testSearch);
+
+router.get("/", searchProduct);
+
+
 router.get("/category", searchCategory);
-// router.get("")
+router.get("/q", querySearch);
 
 module.exports = router;

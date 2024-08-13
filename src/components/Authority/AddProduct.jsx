@@ -92,6 +92,7 @@ function AddProduct() {
         };
     
         try {
+
             const token = (localStorage.getItem('token')); // Retrieve the token from local storage
     
             const response = await axios.post('http://localhost:7000/api/v1/products', productData, {
@@ -100,6 +101,7 @@ function AddProduct() {
                 },
             });
     
+
             console.log('Product added:', response.data);
             setProduct({
                 images: ['', ''],

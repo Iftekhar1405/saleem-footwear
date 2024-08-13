@@ -60,6 +60,7 @@ const deleteProduct = async (req, res) => {
   await Product.deleteOne({ _id: productId });
   res.status(StatusCodes.OK).json({ msg: "Product have been deleted ;)" });
 };
+// /*
 
 // search functionality
 const searchProduct = async (req, res) => {
@@ -125,25 +126,8 @@ const searchCategory = async (req, res) => {
   }
 };
 
-const distinctCategory = async (req, res) => {
-  try {
-    // Find all distinct categories in the Product collection
-    const categories = await Product.distinct("category");
-
-    // Send the list of categories as a response
-    res.status(200).json({
-      success: true,
-      categories: categories,
-    });
-  } catch (error) {
-    // Handle errors
-    console.error("Error fetching categories:", error);
-    res.status(500).json({
-      success: false,
-      message: "An error occurred while fetching categories",
-      error: error.message,
-    });
-  }
+const querySearch = async (req, res) => {
+  res.json({ msg: "hello" });
 };
 
 const searchArticle = async (req, res) => {
@@ -196,6 +180,6 @@ module.exports = {
   deleteProduct,
   searchProduct,
   searchCategory,
-  distinctCategory,
-  // testSearch,
+  querySearch,
+
 };
