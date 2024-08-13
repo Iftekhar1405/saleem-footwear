@@ -16,11 +16,11 @@ const createProduct = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-
-  const products = await Product.find({}).sort({createdAt:-1}).select(
-    "brand colors price images itemSet material category gender article"
-
-  );
+  const products = await Product.find({})
+    .sort({ createdAt: -1 })
+    .select(
+      "brand colors price images itemSet material category gender article"
+    );
   console.log("OK");
 
   res.status(StatusCodes.OK).json({ count: products.length, products });
@@ -125,6 +125,69 @@ const searchCategory = async (req, res) => {
   }
 };
 
+const distinctCategory = async (req, res) => {
+  try {
+    // Find all distinct categories in the Product collection
+    const categories = await Product.distinct("category");
+
+    // Send the list of categories as a response
+    res.status(200).json({
+      success: true,
+      categories: categories,
+    });
+  } catch (error) {
+    // Handle errors
+    console.error("Error fetching categories:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching categories",
+      error: error.message,
+    });
+  }
+};
+
+const searchArticle = async (req, res) => {
+  try {
+    // Extract the article from the request query
+    const { article } = req.query;
+
+    // Ensure the article parameter is provided
+    if (!article) {
+      return res.status(400).json({
+        success: false,
+        message: "Article query parameter is required",
+      });
+    }
+
+    // Search for products with the matching article
+    const products = await Product.find({
+      article: { $regex: article, $options: "i" },
+    });
+
+    // Check if products were found
+    if (products.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No products found matching the article",
+      });
+    }
+
+    // Send the list of matching products as a response
+    res.status(200).json({
+      success: true,
+      products: products,
+    });
+  } catch (error) {
+    // Handle errors
+    console.error("Error searching for article:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while searching for the article",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createProduct,
   getAllProducts,
@@ -133,4 +196,6 @@ module.exports = {
   deleteProduct,
   searchProduct,
   searchCategory,
+  distinctCategory,
+  testSearch,
 };
