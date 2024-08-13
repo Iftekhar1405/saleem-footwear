@@ -20,7 +20,7 @@ export const addToCart = async (product) => {
     console.log("Cart Items:", cartItems); // Debugging
     console.log("Product ID:", product._id); // Debugging
 
-    const existingCartItem = cartItems.find(item => item.productId._id === product._id);
+    const existingCartItem = cartItems.find(item => item.productId?item.productId._id === product._id:false);
 
     if (existingCartItem) {
       // Product already in cart, update quantity
@@ -35,7 +35,7 @@ export const addToCart = async (product) => {
       const newBody = {
         productId: product._id,
         quantity: 1, // Default quantity
-        itemSet: product.itemSet || [], // Default to an empty array if itemSet is not available
+        itemSet: product.itemSet[0]|| [], // Default to an empty array if itemSet is not available
         color: product.colors ? Object.keys(product.colors)[0] : "N/A" // Default to the first color or "N/A" if not available
       };
       const response = await axios.post(`${URL}/cart/add-to-cart`, newBody, { headers });

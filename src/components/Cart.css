@@ -2,6 +2,7 @@
 
 .cart {
     padding: 20px;
+    
   }
   
   .cart-item {
@@ -19,6 +20,8 @@
   
   .cart-item-details {
     flex: 1;
+    display: flex;
+    
   }
   
   .remove-button {
@@ -28,6 +31,7 @@
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
+    margin-bottom: 30px;
   }
   
   .remove-button:hover {

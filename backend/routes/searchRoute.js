@@ -6,7 +6,7 @@ const {
   testSearch,
 } = require("../controllers/productController");
 
-router.get("/", testSearch);
+// router.get("/", testSearch);
 router.get("/category", searchCategory);
 // router.get("")
 
