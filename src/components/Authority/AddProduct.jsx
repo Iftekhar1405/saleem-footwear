@@ -187,7 +187,7 @@ function AddProduct() {
                                 />
                                 <input
                                     type='text'
-                                    placeholder='Lengths'
+                                    placeholder='Pcs'
                                     value={set.lengths}
                                     onChange={(e) => handleSetChange(index, 'lengths', e)}
                                 />
