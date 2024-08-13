@@ -16,12 +16,14 @@ const createProduct = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
+
   const products = await Product.find({}).sort({createdAt:-1}).select(
     "brand colors price images itemSet material category gender article"
+
   );
   console.log("OK");
 
-  res.status(StatusCodes.OK).json({ products, count: products.length });
+  res.status(StatusCodes.OK).json({ count: products.length, products });
 };
 
 const getSingleProduct = async (req, res) => {
@@ -58,10 +60,77 @@ const deleteProduct = async (req, res) => {
   await Product.deleteOne({ _id: productId });
   res.status(StatusCodes.OK).json({ msg: "Product have been deleted ;)" });
 };
+
+// search functionality
+const searchProduct = async (req, res) => {
+  try {
+    const { q, page = 1 } = req.query; // Extract 'q' and 'page' from query parameters
+
+    // Construct the search query
+    const searchQuery = {
+      $or: [
+        { brand: { $regex: q, $options: "i" } }, // Case-insensitive search in brand
+        { category: { $regex: q, $options: "i" } }, // Case-insensitive search in category
+        { article: { $regex: q, $options: "i" } }, // Case-insensitive search in article
+        { gender: { $regex: q, $options: "i" } }, // Case-insensitive search in gender
+      ],
+    };
+
+    // Pagination options
+    const limit = 10; // Number of results per page
+    const skip = (page - 1) * limit; // Calculate how many results to skip
+
+    // Execute the query with pagination
+    const products = await Product.find(searchQuery)
+      .select("brand article category") // Only select the productName field
+      .skip(skip) // Skip the appropriate number of results
+      .limit(limit); // Limit the number of results returned
+
+    // Get the total count of matching documents
+    const total = await Product.countDocuments(searchQuery);
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(total / limit);
+
+    // Send the response with products, current page, and total pages
+    res.json({
+      products,
+      currentPage: parseInt(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const searchCategory = async (req, res) => {
+  try {
+    // Find all distinct categories in the Product collection
+    const categories = await Product.distinct("category");
+
+    // Send the list of categories as a response
+    res.status(200).json({
+      success: true,
+      categories: categories,
+    });
+  } catch (error) {
+    // Handle errors
+    console.error("Error fetching categories:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching categories",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createProduct,
   getAllProducts,
   getSingleProduct,
   updateProduct,
   deleteProduct,
+  searchProduct,
+  searchCategory,
 };

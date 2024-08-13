@@ -47,6 +47,7 @@ export const addToCart = async (product) => {
 };
 
 
+
 const useFetchData = (url) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
