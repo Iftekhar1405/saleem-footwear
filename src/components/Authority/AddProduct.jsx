@@ -92,7 +92,12 @@ function AddProduct() {
         };
 
         try {
-            const response = await axios.post('http://localhost:7000/api/v1/products', productData);
+            const token = localStorage.getItem('token');
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              };
+            const response = await axios.post('http://localhost:7000/api/v1/products', productData,{headers});
             console.log('Product added:', response.data);
             setProduct({
                 images: ['', ''],
