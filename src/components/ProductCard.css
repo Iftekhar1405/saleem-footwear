@@ -25,11 +25,7 @@
     color: #666;
 }
 
-.product-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+
 
 .product-mrp {
     color: #ff0000;
