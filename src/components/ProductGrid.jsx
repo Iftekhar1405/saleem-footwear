@@ -102,7 +102,7 @@ const ProductGrid = () => {
               </div>
               <p className="product-sizes">
                 Available Sizes: {product.itemSet && product.itemSet.length > 0 
-                  ? product.itemSet.map(item => `${item.size} (Length: ${item.lengths})`).join(', ') 
+                  ? product.itemSet.map(item => `${item.size} (PCs: ${item.lengths})`).join(', ') 
                   : "N/A"}
               </p>
               <p className="product-colors">
