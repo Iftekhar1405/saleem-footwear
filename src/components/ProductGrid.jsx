@@ -4,7 +4,7 @@ import './ProductGrid.css';
 import './ProductCard.css';
 import { Link } from 'react-router-dom';
 
-const URL = "http://localhost:7000/api/v1"
+const URL = "https://saleem-footwear-api.vercel.app/api/v1"
 const token = localStorage.getItem('token')
 // export const addToCart = async (product) => {
 //   try {

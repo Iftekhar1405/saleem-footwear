@@ -4,7 +4,7 @@ import './Style.css';
 import axios from 'axios';
 
 
-const URL = "http://localhost:7000/api/v1";
+const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 const token = localStorage.getItem('token');
 const Header = () => {
   const [cartlength, setCartlength] = useState(0);

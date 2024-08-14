@@ -24,7 +24,7 @@ const addToCart = async (product, selectedColor, selectedSize, quantity) => {
   };
 
   try {
-    const response = await axios.post('http://localhost:7000/api/v1/cart/add-to-cart', body, { headers });
+    const response = await axios.post('https://saleem-footwear-api.vercel.app/api/v1/cart/add-to-cart', body, { headers });
     console.log('Response:', response.data);
   } catch (error) {
     console.error('Error adding to cart:', error);
@@ -42,7 +42,7 @@ const ProductCard = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:7000/api/v1/products/${id}`);
+        const response = await axios.get(`https://saleem-footwear-api.vercel.app/api/v1/products/${id}`);
         setProduct(response.data.product);
 
         // Set default color if available

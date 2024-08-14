@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
 
-const URL = "http://localhost:7000/api/v1";
+const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 // login request method
 function Login() {
   const [email, setEmail] = useState('');
