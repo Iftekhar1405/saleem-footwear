@@ -52,7 +52,7 @@ function Login() {
         <h2>Login</h2>
         <div className="form-group">
           <label htmlFor="email">Phone</label>
-          <input type="tel" id="email" value={email} onChange={handleEmailChange} required />
+          <input type="text" id="email" value={email} onChange={handleEmailChange} required />
         </div>
         <div className="form-group">
           <label htmlFor="password">Password</label>
