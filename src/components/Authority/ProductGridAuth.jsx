@@ -4,7 +4,7 @@ import './ProductCardAuth.css';
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
 
-const URL = "http://localhost:7000/api/v1/products";
+const URL = "https://saleem-footwear-api.vercel.app/api/v1/products";
 
 const ProductGridAuth = () => {
   const [products, setProducts] = useState([]);

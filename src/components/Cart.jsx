@@ -5,13 +5,15 @@ import html2canvas from 'html2canvas';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const URL = "http://localhost:7000/api/v1";
+const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 const token = localStorage.getItem('token');
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
-
+  let userId
+  let totalItems
+  let totalPrice
   useEffect(() => {
     const fetchCart = async () => {
       try {
@@ -20,6 +22,9 @@ const Cart = () => {
           'Authorization': `Bearer ${token}`
         };
         const response = await axios.get(`${URL}/cart`, { headers });
+        userId = response.data.data.userId
+        totalItems = response.data.data.totalItems
+        totalPrice = response.data.data.totalPrice
         setCart(response.data.data.items || []); // Ensure cart is an array
       } catch (error) {
         console.error('Error fetching cart data:', error);
@@ -114,17 +119,25 @@ const Cart = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         };
+
         const orderData = {
+          userId: userId, // Assuming userId is stored in localStorage
           items: cart.map(item => ({
             productId: item.productId._id,
             quantity: item.quantity,
-          }))
+            price: item.productId.price,
+            itemSet: item.itemSet, // Including itemSet details
+            color: item.color, // Including color if needed
+          })),
+          totalPrice : totalPrice,
+          totalItems : totalItems,
         };
 
-        const response = await axios.post(`${URL}/orders`, orderData, { headers });
+        const response = await axios.post(`${URL}/order`, orderData, { headers });
         alert('Order placed successfully!');
+        console.log(response)
         setCart([]); // Clear the cart after successful order
-        navigate('/order-summary', { state: { order: response.data.data } }); // Navigate to Order Summary
+        // navigate('/order-summary', { state: { order: response.data.data } }); // Navigate to Order Summary
       } catch (error) {
         console.error('Error placing order:', error);
         alert('Failed to place order. Please try again.');

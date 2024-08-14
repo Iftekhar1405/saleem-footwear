@@ -3,7 +3,7 @@ import axios from 'axios';
 import './Login.css';
 import RoleBasedComponent from '../RoleBasedComponents'
 
-const URL = "http://localhost:7000/api/v1";
+const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 const registerUser = async (body) => {
   try {
     const response = await axios.post(`${URL}/auth/register`, body)

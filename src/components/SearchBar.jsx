@@ -25,7 +25,7 @@ const useFetchData = (url) => {
 };
 
 function SearchBar() {
-    const { data: products, loading, error } = useFetchData('http://localhost:7000/api/v1/products');
+    const { data: products, loading, error } = useFetchData('https://saleem-footwear-api.vercel.app/api/v1/products');
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredResults, setFilteredResults] = useState([]);
 
@@ -63,15 +63,7 @@ function SearchBar() {
                 value={searchTerm}
                 onChange={handleSearchChange}
             />
-            <div className='search-row'>
-                <input type='text' placeholder='Search by Article' className='half-width' />
-                <select className='half-width'>
-                    <option value=''>Search by Brand</option>
-                    <option value='brand1'>Brand 1</option>
-                    <option value='brand2'>Brand 2</option>
-                    <option value='brand3'>Brand 3</option>
-                </select>
-            </div>
+            
             <div className='results-container'>
                 {filteredResults.length > 0 ? (
                     <ul>

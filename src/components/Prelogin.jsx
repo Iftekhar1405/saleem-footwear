@@ -6,21 +6,7 @@ import { Link } from 'react-router-dom';
 
 function Prelogin() {
     
-    const handleLoginClick = () => {
-        // Example API call to the backend using axios
-        axios.post('/api/login', {
-            username: 'exampleUsername',
-            password: 'examplePassword'
-        })
-        .then(response => {
-            console.log('Success:', response.data);
-            // Handle successful login response here
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            // Handle error here
-        });
-    };
+    
 
     return (
         <>
@@ -42,10 +28,10 @@ function Prelogin() {
                         <li>Track Your Orders in Real-Time</li>
                     </ul>
                     <Link to= '/login'>
-                    <button className='login-btn' onClick={handleLoginClick}>Log-In</button>
+                    <button className='login-btn' >Log-In</button>
                     </Link>
                     <Link to= '/register'>
-                    <button className='login-btn' onClick={handleLoginClick}>Register Now</button>
+                    <button className='login-btn' >Register Now</button>
                     </Link>
                     <Link to='/contact-us'>
                     <button className='login-btn'>Contact-Us</button>

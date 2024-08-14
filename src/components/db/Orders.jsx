@@ -9,7 +9,7 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:7000/api/v1/orders'); // Replace with your actual backend endpoint
+        const response = await axios.get('https://saleem-footwear-api.vercel.app/api/v1/order'); // Replace with your actual backend endpoint
         setOrders(response.data.data.items||[]);
         setLoading(false);
       } catch (err) {

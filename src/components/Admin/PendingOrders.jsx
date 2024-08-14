@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './PendingOrders.css';
+const URL = "http://localhost:7000/api/v1";
 
 function PendingOrders() {
   const [pendingOrders, setPendingOrders] = useState({});
@@ -9,9 +10,10 @@ function PendingOrders() {
     // Fetch pending orders from backend
     const fetchPendingOrders = async () => {
       try {
-        const response = await axios.get('https://your-backend-url.com/api/pending-orders');
+        const response = await axios.get(`${URL}/orders`);
         const groupedOrders = groupByCustomer(response.data);
         setPendingOrders(groupedOrders);
+        console.log(response)
       } catch (error) {
         console.error('Error fetching pending orders', error);
       }

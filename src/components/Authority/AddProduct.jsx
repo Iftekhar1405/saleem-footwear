@@ -99,7 +99,7 @@ function AddProduct() {
 
             const token = (localStorage.getItem('token')); // Retrieve the token from local storage
     
-            const response = await axios.post('http://localhost:7000/api/v1/products', productData, {
+            const response = await axios.post('https://saleem-footwear-api.vercel.app/api/v1/products', productData, {
                 headers: {
                     Authorization: `Bearer ${token}`, // Include the token in the request headers
                 },
