@@ -17,6 +17,11 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #fff;
+    
+  }
+  .order-item-details{
+    display: flex;
+    flex-direction: column;
   }
   
   .order-item button {
