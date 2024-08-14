@@ -94,9 +94,8 @@ const ProductGrid = () => {
             <div className="product-details">
               <h2 className="product-name">{product.article}</h2>
               <p className="product-brand">{product.brand}</p>
-              <p className="product-description">{product.description}</p>
               <div className="product-info">
-                <p className="product-mrp">MRP: ₹{product.price}</p>
+                <p className="product-mrp">MRP: ₹{product.price}</p><br />
                 <p className="product-material">Material: {product.material}</p>
                 <p className="product-gender">Gender: {product.gender}</p>
               </div>
