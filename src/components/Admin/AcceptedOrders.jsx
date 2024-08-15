@@ -4,14 +4,17 @@ import './AcceptedOrders.css';
 
 function AcceptedOrders() {
   const [acceptedOrders, setAcceptedOrders] = useState({});
+  const [loading,setLoading] = useState(false)
 
   useEffect(() => {
     // Fetch accepted orders from backend
     const fetchAcceptedOrders = async () => {
       try {
+        setLoading(true)
         const response = await axios.get('https://your-backend-url.com/api/accepted-orders');
         const groupedOrders = groupByCustomer(response.data);
         setAcceptedOrders(groupedOrders);
+        setLoading(false)
       } catch (error) {
         console.error('Error fetching accepted orders', error);
       }
@@ -19,6 +22,7 @@ function AcceptedOrders() {
 
     fetchAcceptedOrders();
   }, []);
+  
 
   const groupByCustomer = (orders) => {
     return orders.reduce((grouped, order) => {
@@ -36,7 +40,9 @@ function AcceptedOrders() {
     console.log(`View details for order ${orderId}`);
     // You can navigate to a details page or open a modal with order details
   };
-
+  if (loading) {
+    return <h2>Loading .....</h2>
+  }
   return (
     <div className="accepted-orders">
       <h2>Accepted Orders</h2>

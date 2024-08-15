@@ -6,11 +6,13 @@ const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 
 function PendingOrders() {
   const [pendingOrders, setPendingOrders] = useState([]);
+  const [loading,setLoading] = useState(false)
 
   useEffect(() => {
     // Fetch pending orders from backend
     const fetchPendingOrders = async () => {
       try {
+        setLoading(true)
         const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
         const response = await axios.get(`${URL}/order`, {
           headers: {
@@ -19,6 +21,7 @@ function PendingOrders() {
         });
         console.log(response)
         setPendingOrders(response.data.data);
+        setLoading(false)
       } catch (error) {
         console.error('Error fetching pending orders', error);
       }
@@ -26,6 +29,9 @@ function PendingOrders() {
 
     fetchPendingOrders();
   }, []);
+  if (loading) {
+    return <h2>Loading .....</h2>
+  }
 
   const updateOrderStatus = async (orderId, status) => {
     try {
@@ -75,8 +81,8 @@ function PendingOrders() {
                 </li>
               ))}
             </ul>
-            <button onClick={() => updateOrderStatus(order._id, 'accepted')}>Accept</button>
-            <button onClick={() => updateOrderStatus(order._id, 'rejected')}>Reject</button>
+            <button onClick={() => updateOrderStatus(order._id, 'accepted')}>Accept-All</button>
+            <button onClick={() => updateOrderStatus(order._id, 'rejected')}>Reject-All</button>
           </div>
         ))
       )}
