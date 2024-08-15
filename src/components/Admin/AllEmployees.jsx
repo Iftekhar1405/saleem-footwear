@@ -9,7 +9,11 @@ function AllEmployees() {
     // Fetch all employees from backend
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get('https://your-backend-url.com/api/employees');
+        const token = localStorage.getItem('token'); // Get the token from localStorage
+        const response = await axios.get('https://saleem-footwear-api.vercel.app/api/v1/employees', {
+          headers: { Authorization: `Bearer ${token}` } // Add token to the request headers
+        });
+        console.log(response)
         setEmployees(response.data);
       } catch (error) {
         console.error('Error fetching employees', error);
@@ -33,7 +37,10 @@ function AllEmployees() {
 
   const handleDeleteEmployee = async (employeeId) => {
     try {
-      await axios.delete(`https://your-backend-url.com/api/employees/${employeeId}`);
+      const token = localStorage.getItem('token'); // Get the token from localStorage
+      await axios.delete(`https://saleem-footwear-api.vercel.app/api/v1/employees/${employeeId}`, {
+        headers: { Authorization: `Bearer ${token}` } // Add token to the request headers
+      });
       // Remove the deleted employee from the list
       setEmployees(prevEmployees => prevEmployees.filter(emp => emp.id !== employeeId));
     } catch (error) {
