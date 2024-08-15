@@ -19,8 +19,10 @@ function Nav() {
         }
     }
     return (
+        <>
         <div className='Nav'>
-            <h2> <img src={logo} alt=""  className='logo'/> Salim Footwear</h2>
+            <div> <img src={logo} alt=""  className='logo'/> <h2 style={{display:'inline'}}>Salim Footwear
+            </h2></div>
             <div className='hamburger' onClick={toggleMenu}>
                 &#9776; {/* Unicode character for hamburger icon */}
             </div>
@@ -33,6 +35,11 @@ function Nav() {
                 <button onClick={logout}>Log-out</button>
             </div>
         </div>
+        <pre style={{fontSize:'13px',marginBottom:'5px',textAlign:'center', backgroundColor:'#000', marginTop:'0'}}>
+            Ayan-Marg Ambikapur 
+            Chhattisgarh 497001</pre>
+
+        </>
     );
 }
 

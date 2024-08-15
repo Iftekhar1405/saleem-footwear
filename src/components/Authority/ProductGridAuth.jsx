@@ -40,10 +40,28 @@ const ProductGridAuth = () => {
     }));
   };
 
+  const handleImageChange = (e, index) => {
+    const updatedImages = [...(editedProduct.images || [])];
+    updatedImages[index] = e.target.value;
+    setEditedProduct(prevState => ({
+      ...prevState,
+      images: updatedImages
+    }));
+  };
+
+  const handleColorImageChange = (e, color, index) => {
+    const updatedColors = { ...editedProduct.colors };
+    updatedColors[color][index] = e.target.value;
+    setEditedProduct(prevState => ({
+      ...prevState,
+      colors: updatedColors
+    }));
+  };
+
   const saveProduct = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put(`${URL}/${editedProduct._id}`, editedProduct, {
+      const response = await axios.patch(`${URL}/${editedProduct._id}`, editedProduct, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(products.map(product => product._id === editedProduct._id ? response.data : product));
@@ -113,15 +131,44 @@ const ProductGridAuth = () => {
                 onChange={handleEditChange}
                 className="edit-input"
               />
-              {/* Add other fields as needed */}
+
+              {/* Image URLs */}
+              <h4>Images</h4>
+              {(editedProduct.images || []).map((imgUrl, index) => (
+                <input
+                  key={`${product._id}-image-${index}`}  // Add unique key
+                  type="text"
+                  value={imgUrl}
+                  onChange={(e) => handleImageChange(e, index)}
+                  className="edit-input"
+                />
+              ))}
+
+              {/* Colors and their images */}
+              <h4>Colors and Images</h4>
+              {editedProduct.colors && Object.keys(editedProduct.colors).map((color, colorIndex) => (
+                <div key={`${product._id}-color-${colorIndex}`}>
+                  <h5>{color}</h5>
+                  {editedProduct.colors[color].map((imgUrl, index) => (
+                    <input
+                      key={`${product._id}-${color}-${index}`}  // Add unique key
+                      type="text"
+                      value={imgUrl}
+                      onChange={(e) => handleColorImageChange(e, color, index)}
+                      className="edit-input"
+                    />
+                  ))}
+                </div>
+              ))}
+
               <button className="header-button save-button" onClick={saveProduct}>Save</button>
               <button className="header-button cancel-button" onClick={() => setEditingProductId(null)}>Cancel</button>
             </div>
           ) : (
             <>
               <div className="product-image-gallery">
-                {product.images.map((imgUrl, index) => (
-                  <img key={index} src={imgUrl} alt={`${product.brand} ${product.article}`} className="product-image" />
+                {(product.images || []).map((imgUrl, index) => (
+                  <img key={`${product._id}-image-${index}`} src={imgUrl} alt={`${product.brand} ${product.article}`} className="product-image" />
                 ))}
               </div>
               <div className="product-details">
@@ -145,7 +192,7 @@ const ProductGridAuth = () => {
                 </p>
               </div>
               <div className='buttons'>
-                {/* <button className="header-button edit-button" onClick={() => startEditing(product)}>Edit</button> */}
+                <button className="header-button edit-button" onClick={() => startEditing(product)}>Edit</button>
                 <button onClick={() => deleteProduct(product._id)}>Delete</button>
               </div>
             </>
