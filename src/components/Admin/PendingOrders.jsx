@@ -17,6 +17,7 @@ function PendingOrders() {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log(response)
         setPendingOrders(response.data.data);
       } catch (error) {
         console.error('Error fetching pending orders', error);
@@ -30,7 +31,7 @@ function PendingOrders() {
     try {
       const token = localStorage.getItem('token');
       await axios.post(`${URL}/order/${orderId}`, 
-      { status }, 
+      {  status }, 
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -67,6 +68,9 @@ function PendingOrders() {
                       ? item.itemSet.map(item => `${item.size} (Pcs: ${item.lengths})`).join(', ') 
                       : "N/A"}</span><br />
                     <span>Quantity: {item.quantity}</span>
+                    
+            <button onClick={() => updateOrderStatus(item.productId, 'accepted')}>Accept</button>
+            <button onClick={() => updateOrderStatus(item.productId, 'rejected')}>Reject</button>
                   </div>
                 </li>
               ))}

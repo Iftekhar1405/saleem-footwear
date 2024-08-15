@@ -20,7 +20,6 @@ import PendingOrders from './components/Admin/PendingOrders.jsx'
 import RejectedOrders from './components/Admin/RejectedOrders.jsx'
 import AddProduct from './components/Authority/AddProduct.jsx';
 import AdminDashboard from './components/Admin/AdminDashboard.jsx'
-import Test from './components/test.jsx';
 import ContactUs from './components/Contact-Us.jsx';
 import OrderSummary from './components/OrderSummary.jsx';
 import CategorizedProducts from './components/CategorizedProducts.jsx';
@@ -40,7 +39,6 @@ const router = createBrowserRouter(
       <Route path="order-summary" element={<ProtectedRoute element={<OrderSummary />} />} />
       <Route path="products/:category" element={<ProtectedRoute element={<CategorizedProducts />} />} />
       <Route path="login" element={<Login />} />
-      <Route path="test" element={<Test />} />
       <Route path='contact-us' element = {<ContactUs/>}/>
       <Route path="register" element={<Register />} />
       <Route path="prelogin" element={<Prelogin />} />

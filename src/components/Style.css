@@ -90,32 +90,23 @@
 
 
 .search-container {
-    width: 90%;
+    width: 100vw;
     margin-top: 20px;
-    margin: 20px auto ;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .search-bar {
-    width: 100%;
+    width: 85%;
     padding: 10px;
-    margin-bottom: 10px;
     border: none;
     border-radius: 5px;
 }
 
-.search-row {
-    display: flex;
-    justify-content: space-between;
-}
 
-.half-width {
-    width: 45%;
-    padding: 10px;
-    border: none;
-    margin: 10px;
-    border-radius: 5px;
-    display: block;
-}
+
 
 @media (max-width: 768px) {
     .hamburger {
@@ -130,16 +121,9 @@
         display: flex;
     }
 
-    .search-container {
-        width: 90vw;
-        padding: 0 10px;
-    }
-
-    .half-width {
-        width: 50vw;
-    }
+    
+    
 }
-
 
 h2{
     color: rgb(221, 32, 44);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './ProductGrid.css';
-import './ProductCard.css';
+// import './ProductGrid.css';
+// import './ProductCard.css'
 import { Link } from 'react-router-dom';
 
 const URL = "https://saleem-footwear-api.vercel.app/api/v1"
@@ -94,10 +94,12 @@ const ProductGrid = () => {
             <div className="product-details">
               <h2 className="product-name">{product.article}</h2>
               <p className="product-brand">{product.brand}</p>
-              <div className="product-info">
-                <p className="product-mrp">MRP: ₹{product.price}</p><br />
+              <div className="product-info" style={{display:'flex',flexDirection:'column',alignItems:'flex-start'}}>
+                <p className="product-mrp" style={{textDecoration:'none'}}>MRP: ₹{product.price}</p>
+                <div style={{display:'flex',justifyContent:'space-between', width:'100%', margin:'0'}}>
                 <p className="product-material">Material: {product.material}</p>
                 <p className="product-gender">Gender: {product.gender}</p>
+                </div>
               </div>
               <p className="product-sizes">
                 Available Sizes: {product.itemSet && product.itemSet.length > 0 
