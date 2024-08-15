@@ -8,6 +8,7 @@ const OrderSummary = () => {
   if (!order) {
     return <p>No order details found. Please go back and try again.</p>;
   }
+  
 
   return (
     <div className="order-summary">

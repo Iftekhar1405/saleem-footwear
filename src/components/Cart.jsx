@@ -11,9 +11,11 @@ const token = localStorage.getItem('token');
 const Cart = () => {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
-  let userId
-  let totalItems
-  let totalPrice
+  const [userId, setUserId] = useState(null);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [quantityChanges, setQuantityChanges] = useState({}); // Track quantity changes
+
   useEffect(() => {
     const fetchCart = async () => {
       try {
@@ -22,9 +24,9 @@ const Cart = () => {
           'Authorization': `Bearer ${token}`
         };
         const response = await axios.get(`${URL}/cart`, { headers });
-        userId = response.data.data.userId
-        totalItems = response.data.data.totalItems
-        totalPrice = response.data.data.totalPrice
+        setUserId(response.data.data.userId);
+        setTotalItems(response.data.data.totalItems);
+        setTotalPrice(response.data.data.totalPrice);
         setCart(response.data.data.items || []); // Ensure cart is an array
       } catch (error) {
         console.error('Error fetching cart data:', error);
@@ -47,13 +49,20 @@ const Cart = () => {
     }
   };
 
-  const updateQuantity = async (CartItemId, newQuantity) => {
+  const handleQuantityChange = (CartItemId, newQuantity) => {
     if (newQuantity < 1) return;
 
-    // Optimistic UI update
-    setCart(cart.map(item =>
-      item._id === CartItemId ? { ...item, quantity: newQuantity } : item
-    ));
+    // Update the local state to track quantity changes
+    setQuantityChanges(prev => ({
+      ...prev,
+      [CartItemId]: newQuantity
+    }));
+  };
+
+  const updateQuantity = async (CartItemId) => {
+    const newQuantity = quantityChanges[CartItemId];
+
+    if (newQuantity < 1) return;
 
     try {
       const headers = {
@@ -65,12 +74,22 @@ const Cart = () => {
         { quantity: newQuantity },
         { headers }
       );
+
+      // Update the cart state with the new quantity
+      setCart(cart.map(item =>
+        item._id === CartItemId ? { ...item, quantity: newQuantity } : item
+      ));
+
+      // Clear the tracked change after successful update
+      setQuantityChanges(prev => {
+        const updatedChanges = { ...prev };
+        delete updatedChanges[CartItemId];
+        return updatedChanges;
+      });
+
     } catch (error) {
       console.error('Error updating quantity:', error);
-      // Revert state update on error
-      setCart(cart.map(item =>
-        item._id === CartItemId ? { ...item, quantity: newQuantity - 1 } : item
-      ));
+      alert('Failed to update quantity. Please try again.');
     }
   };
 
@@ -94,64 +113,50 @@ const Cart = () => {
     }
   };
 
-  const deleteCart = async () => {
-    if (cart.length > 0) {
-      const confirmDeletion = window.confirm('Are you sure you want to delete your cart?');
 
-      if (confirmDeletion) {
-        try {
-          const headers = {
-            'Authorization': `Bearer ${token}`
-          };
-          await axios.delete(`${URL}/cart`, { headers });
-          setCart([]);
-        } catch (error) {
-          console.error('Error deleting cart:', error);
-        }
-      }
-    }
-  };
 
   const handleOrderNow = async () => {
-    if (cart.length > 0) {
-      try {
-        const headers = {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        };
+    let confirm = window.confirm(`Are you sure to place this order worth of ₹${totalPrice}`);
+    if (confirm) {
+      if (cart.length > 0) {
+        try {
+          const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          };
 
-        const orderData = {
-          userId: userId, // Assuming userId is stored in localStorage
-          items: cart.map(item => ({
-            productId: item.productId._id,
-            quantity: item.quantity,
-            price: item.productId.price,
-            itemSet: item.itemSet, // Including itemSet details
-            color: item.color, // Including color if needed
-          })),
-          totalPrice : totalPrice,
-          totalItems : totalItems,
-        };
+          const orderData = {
+            userId: userId,
+            items: cart.map(item => ({
+              productId: item.productId._id,
+              quantity: item.quantity,
+              price: item.productId.price,
+              itemSet: item.itemSet, // Including itemSet details
+              color: item.color, // Including color if needed
+            })),
+            totalPrice: totalPrice,
+            totalItems: totalItems,
+          };
 
-        const response = await axios.post(`${URL}/order`, orderData, { headers });
-        alert('Order placed successfully!');
-        console.log(response)
-        setCart([]); // Clear the cart after successful order
-        navigate('/order-summary', { state: { order: response.data.data } }); // Navigate to Order Summary
-      } catch (error) {
-        console.error('Error placing order:', error);
-        alert('Failed to place order. Please try again.');
+          const response = await axios.post(`${URL}/order`, orderData, { headers });
+          alert('Order placed successfully!');
+          setCart([]); // Clear the cart after successful order
+          navigate('/order-summary', { state: { order: response.data.data } }); // Navigate to Order Summary
+        } catch (error) {
+          console.error('Error placing order:', error);
+          alert('Failed to place order. Please try again.');
+        }
+      } else {
+        alert('Your cart is empty.');
       }
-    } else {
-      alert('Your cart is empty.');
     }
   };
 
   return (
     <div className="cart">
       <h2>Cart</h2>
+      <h2>Total Cost: ₹{totalPrice}</h2>
       <button onClick={handlePdfDownload}>Download your Cart</button>
-      <button onClick={deleteCart}>Delete your Cart</button>
       <button onClick={handleOrderNow} style={{ width: '100%' }}>Order Now</button>
       {Array.isArray(cart) && cart.length === 0 ? (
         <p>Your cart is empty</p>
@@ -161,23 +166,30 @@ const Cart = () => {
             <li key={index} className="cart-item">
               <div className="cart-item-details">
                 <div>
-                <img src={item.productId.images[0]} alt={item.name} />
+                  <img src={item.productId.images[0]} alt={item.name} />
                 </div>
                 <div>
-                <h3>{item.productId.name}</h3>
-                <p>Brand: {item.productId.brand}</p>
-                <p>Price: ₹{item.productId.price}</p>
-                <span>Item set: {item.itemSet && item.itemSet.length > 0 
-                  ? item.itemSet.map(item => `${item.size} (Pcs: ${item.lengths})`).join(', ') 
-                  : "N/A"}</span><br />
-                <span>Quantity: {item.quantity}</span>
-                <button className="remove-button" onClick={() => removeItem(item._id)}>
-                  Remove
-                </button>
+                  <h3>{item.productId.name}</h3>
+                  <p>Brand: {item.productId.brand}</p>
+                  <p>Price: ₹{item.productId.price}</p>
+                  <span>Item set: {item.itemSet && item.itemSet.length > 0 
+                    ? item.itemSet.map(item => `${item.size} (Pcs: ${item.lengths})`).join(', ') 
+                    : "N/A"}</span><br />
+                  <span>Quantity: {item.quantity}</span>
+
+                  {/* Quantity Control Buttons */}
+                  {/* <div className="quantity-control">
+                    <button onClick={() => handleQuantityChange(item._id, item.quantity - 1)}>-</button>
+                    <span>{quantityChanges[item._id] ?? item.quantity}</span>
+                    <button onClick={() => handleQuantityChange(item._id, item.quantity + 1)}>+</button>
+                    <button onClick={() => updateQuantity(item._id)}>Confirm</button>
+                  </div> */}
+
+                  <button className="remove-button" onClick={() => removeItem(item._id)}>
+                    Remove
+                  </button>
                 </div>
-                 </div>
-                
-             
+              </div>
             </li>
           ))}
         </ul>

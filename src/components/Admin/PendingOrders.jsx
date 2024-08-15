@@ -19,15 +19,20 @@ function PendingOrders() {
             Authorization: `Bearer ${token}`,
           },
         });
+    
+        setLoading(false)
+        
         console.log(response)
         setPendingOrders(response.data.data);
-        setLoading(false)
+        
+        
       } catch (error) {
         console.error('Error fetching pending orders', error);
       }
     };
 
     fetchPendingOrders();
+    
   }, []);
   if (loading) {
     return <h2>Loading .....</h2>
@@ -59,12 +64,14 @@ function PendingOrders() {
         pendingOrders.map(order => (
           <div key={order._id} className="order">
             <h3>Order ID: {order._id}</h3>
-            <p>User ID: {order.userId}</p>
+            <p>User ID: {order.userId._id}</p>
+            <p>User Name: {order.userId.name}</p>
+
             <p>Total Price: {order.totalPrice}</p>
             <p>Total Items: {order.totalItems}</p>
-            <ul>
+            
               {order.items.map(item => (
-                <li key={item._id} className="order-item">
+                <div key={item.productId._id} className="order-item">
                   <div className="order-item-details" style={{color:'black'}}>
                     <h3>{item.productId.article}</h3>
                     <p>Brand: {item.productId.brand}</p>
@@ -75,12 +82,12 @@ function PendingOrders() {
                       : "N/A"}</span><br />
                     <span>Quantity: {item.quantity}</span>
                     
-            <button onClick={() => updateOrderStatus(item.productId, 'accepted')}>Accept</button>
-            <button onClick={() => updateOrderStatus(item.productId, 'rejected')}>Reject</button>
+            <button onClick={() => updateOrderStatus(item.productId._id, 'accepted')}>Accept</button>
+            <button onClick={() => updateOrderStatus(item.productId._id, 'rejected')}>Reject</button>
                   </div>
-                </li>
+                </div>
               ))}
-            </ul>
+            
             <button onClick={() => updateOrderStatus(order._id, 'accepted')}>Accept-All</button>
             <button onClick={() => updateOrderStatus(order._id, 'rejected')}>Reject-All</button>
           </div>
