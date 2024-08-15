@@ -114,7 +114,7 @@ const ProductCard = () => {
         <h2 className="product-name">{product.article}</h2>
         <p className="product-brand">{product.brand}</p>
         <p className="product-description">{product.description}</p>
-        <p className="product-mrp">MRP: ₹{product.price}</p>
+        <p className="product-mrp" style={{textDecoration:'none'}}>MRP: ₹{product.price}</p>
         <p className="product-material">Material: {product.material}</p>
         <p className="product-gender">Gender: {product.gender}</p>
         <div className="product-sizes">
