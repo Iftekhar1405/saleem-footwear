@@ -39,6 +39,7 @@ function SearchBar() {
                 product.article.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 product.brand.toLowerCase().includes(searchTerm.toLowerCase())||
                 product.gender.toLowerCase().includes(searchTerm.toLowerCase())||
+                // product.description.toLowerCase().includes(searchTerm.toLowerCase())||
                 product.price === (Number(searchTerm))
             );
             setFilteredResults(filtered);
@@ -67,7 +68,7 @@ function SearchBar() {
             
             <div className='results-container'>
                 {filteredResults.length > 0 ? (
-                    <ul>
+                    <div>
                         {filteredResults.map((product) => (
                             
                             <div className="product-card" key={product.id} style={{backgroundColor:'#EDEADE'}}>
@@ -100,7 +101,7 @@ function SearchBar() {
           </Link>
         </div> // Displaying 'name', adjust according to your data structure
                         ))}
-                    </ul>
+                    </div>
                 ) : (
                     <p>No results found</p>
                 )}

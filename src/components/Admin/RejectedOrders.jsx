@@ -2,67 +2,102 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './RejectedOrders.css';
 
+const URL = "https://saleem-footwear-api.vercel.app/api/v1";
+
 function RejectedOrders() {
-  const [rejectedOrders, setRejectedOrders] = useState({});
-  const [loading,setLoading] = useState(false)
+  const [rejectedOrders, setRejectedOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch rejected orders from backend
+    // Fetch all orders and filter by status 'rejected'
     const fetchRejectedOrders = async () => {
       try {
-        setLoading(true)
-        const response = await axios.get('https://your-backend-url.com/api/rejected-orders');
-        const groupedOrders = groupByCustomer(response.data);
-        setRejectedOrders(groupedOrders);
-        setLoading(false)
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${URL}/order`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
+        if (response.status >= 200 && response.status < 300) {
+          // Filter orders with status 'rejected'
+          const filteredOrders = response.data.data.filter(order => order.status === 'rejected');
+          setRejectedOrders(filteredOrders);
+        } else {
+          console.error('Unexpected response status:', response.status);
+        }
+        
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching rejected orders', error);
+        setLoading(false);
       }
     };
 
     fetchRejectedOrders();
+    
   }, []);
 
-  const groupByCustomer = (orders) => {
-    return orders.reduce((grouped, order) => {
-      const customerId = order.customerId;
-      if (!grouped[customerId]) {
-        grouped[customerId] = [];
+  const handleReinstateOrder = async (orderId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.patch(`${URL}/order/status/${orderId}`, 
+      { status: 'pending' }, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      // Check if the response status indicates success
+      if (response.status >= 200 && response.status < 300) {
+        console.log('Order status updated to pending:', response.data);
+  
+        // Optionally, display a success message to the user
+        alert('Order status updated to pending');
+        
+        // Update the state to remove the reinstated order from the rejected list
+        setRejectedOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
+      } else {
+        console.error('Unexpected response status:', response.status);
       }
-      grouped[customerId].push(order);
-      return grouped;
-    }, {});
+    } catch (error) {
+      console.error(`Error updating order status to pending`, error);
+    }
   };
 
-  const handleReviewOrder = (orderId) => {
-    // Logic to review or manage the rejected order
-    console.log(`Review rejected order ${orderId}`);
-    // You can navigate to a review page or open a modal with order details
-  };
   if (loading) {
-    return <h2>Loading .....</h2>
+    return <h2>Loading .....</h2>;
   }
 
   return (
     <div className="rejected-orders">
       <h2>Rejected Orders</h2>
-      {Object.keys(rejectedOrders).length === 0 ? (
+      {rejectedOrders.length === 0 ? (
         <p>No rejected orders</p>
       ) : (
-        Object.keys(rejectedOrders).map(customerId => (
-          <div key={customerId} className="customer-orders">
-            <h3>Customer ID: {customerId}</h3>
-            <ul>
-              {rejectedOrders[customerId].map(order => (
-                <li key={order.id} className="order-item">
-                  <p>Order ID: {order.id}</p>
-                  <p>Product: {order.productName}</p>
-                  <p>Quantity: {order.quantity}</p>
-                  <button onClick={() => handleReviewOrder(order.id)}>Review</button>
-                </li>
-              ))}
-            </ul>
+        rejectedOrders.map(order => (
+          <div key={order._id} className="order">
+            <h3>Order ID: {order._id}</h3>
+            <p>Total Price: {order.totalPrice}</p>
+            <p>Total Items: {order.totalItems}</p>
+            {order.items.map(item => (
+              <div key={item.productId._id} className="order-item">
+                <div className="order-item-details" style={{color:'black'}}>
+                  <h3>{item.productId.article}</h3>
+                  <p>Brand: {item.productId.brand}</p>
+                  <p>Price: ₹{item.price}</p>
+                  <p>Color: {item.color}</p>
+                  <span>Item set: {item.itemSet && item.itemSet.length > 0 
+                    ? item.itemSet.map(item => `${item.size} (Pcs: ${item.lengths})`).join(', ') 
+                    : "N/A"}</span><br />
+                  <span>Quantity: {item.quantity}</span>
+                </div>
+              </div>
+            ))}
+            <button onClick={() => handleReinstateOrder(order._id)}>Reinstate Order</button>
           </div>
         ))
       )}

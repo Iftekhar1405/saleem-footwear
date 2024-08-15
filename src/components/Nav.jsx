@@ -28,7 +28,7 @@ function Nav() {
             </div>
             <div className={`menu ${isOpen ? 'open' : ''}`}>
                 <a href='/orders'>Orders</a>
-                <a href='/catelog'>Catelog</a>
+                <a href='/catelog'>Catalogue</a>
                 <RoleBasedComponent allowedRoles={['admin']}>
                 <a href='/register'>Register Users</a>
                 </RoleBasedComponent>
