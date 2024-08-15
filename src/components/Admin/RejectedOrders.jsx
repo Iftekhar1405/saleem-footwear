@@ -4,14 +4,18 @@ import './RejectedOrders.css';
 
 function RejectedOrders() {
   const [rejectedOrders, setRejectedOrders] = useState({});
+  const [loading,setLoading] = useState(false)
 
   useEffect(() => {
     // Fetch rejected orders from backend
     const fetchRejectedOrders = async () => {
       try {
+        setLoading(true)
         const response = await axios.get('https://your-backend-url.com/api/rejected-orders');
         const groupedOrders = groupByCustomer(response.data);
         setRejectedOrders(groupedOrders);
+        setLoading(false)
+
       } catch (error) {
         console.error('Error fetching rejected orders', error);
       }
@@ -36,6 +40,9 @@ function RejectedOrders() {
     console.log(`Review rejected order ${orderId}`);
     // You can navigate to a review page or open a modal with order details
   };
+  if (loading) {
+    return <h2>Loading .....</h2>
+  }
 
   return (
     <div className="rejected-orders">

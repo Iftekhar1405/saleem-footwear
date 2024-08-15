@@ -137,7 +137,7 @@ const Cart = () => {
         alert('Order placed successfully!');
         console.log(response)
         setCart([]); // Clear the cart after successful order
-        // navigate('/order-summary', { state: { order: response.data.data } }); // Navigate to Order Summary
+        navigate('/order-summary', { state: { order: response.data.data } }); // Navigate to Order Summary
       } catch (error) {
         console.error('Error placing order:', error);
         alert('Failed to place order. Please try again.');
