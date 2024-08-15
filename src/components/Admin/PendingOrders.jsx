@@ -6,54 +6,68 @@ const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 
 function PendingOrders() {
   const [pendingOrders, setPendingOrders] = useState([]);
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch pending orders from backend
+    // Fetch all orders and filter by status 'pending'
     const fetchPendingOrders = async () => {
       try {
-        setLoading(true)
-        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+        setLoading(true);
+        const token = localStorage.getItem('token');
         const response = await axios.get(`${URL}/order`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-    
-        setLoading(false)
         
-        console.log(response)
-        setPendingOrders(response.data.data);
+        if (response.status >= 200 && response.status < 300) {
+          // Filter orders with status 'pending'
+          const filteredOrders = response.data.data.filter(order => order.status === 'pending');
+          setPendingOrders(filteredOrders);
+        } else {
+          console.error('Unexpected response status:', response.status);
+        }
         
-        
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching pending orders', error);
+        setLoading(false);
       }
     };
 
     fetchPendingOrders();
     
   }, []);
-  if (loading) {
-    return <h2>Loading .....</h2>
-  }
 
   const updateOrderStatus = async (orderId, status) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`${URL}/order/${orderId}`, 
-      {  status }, 
+      const response = await axios.patch(`${URL}/order/status/${orderId}`, 
+      { status }, 
       {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
-      // Remove the processed order from the list
-      setPendingOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
+      
+      if (response.status >= 200 && response.status < 300) {
+        console.log('Order status updated successfully:', response.data);
+        alert('Order status updated successfully');
+        
+        // Remove the processed order from the pending list
+        setPendingOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
+      } else {
+        console.error('Unexpected response status:', response.status);
+      }
     } catch (error) {
       console.error(`Error updating order status to ${status}`, error);
     }
   };
+
+  if (loading) {
+    return <h2>Loading .....</h2>;
+  }
 
   return (
     <div className="pending-orders">
@@ -64,32 +78,24 @@ function PendingOrders() {
         pendingOrders.map(order => (
           <div key={order._id} className="order">
             <h3>Order ID: {order._id}</h3>
-            <p>User ID: {order.userId._id}</p>
-            <p>User Name: {order.userId.name}</p>
-
             <p>Total Price: {order.totalPrice}</p>
             <p>Total Items: {order.totalItems}</p>
-            
-              {order.items.map(item => (
-                <div key={item.productId._id} className="order-item">
-                  <div className="order-item-details" style={{color:'black'}}>
-                    <h3>{item.productId.article}</h3>
-                    <p>Brand: {item.productId.brand}</p>
-                    <p>Price: ₹{item.price}</p>
-                    <p>Color: {item.color}</p>
-                    <span>Item set: {item.itemSet && item.itemSet.length > 0 
-                      ? item.itemSet.map(item => `${item.size} (Pcs: ${item.lengths})`).join(', ') 
-                      : "N/A"}</span><br />
-                    <span>Quantity: {item.quantity}</span>
-                    
-            <button onClick={() => updateOrderStatus(item.productId._id, 'accepted')}>Accept</button>
-            <button onClick={() => updateOrderStatus(item.productId._id, 'rejected')}>Reject</button>
-                  </div>
+            {order.items.map(item => (
+              <div key={item.productId._id} className="order-item">
+                <div className="order-item-details" style={{color:'black'}}>
+                  <h3>{item.productId.article}</h3>
+                  <p>Brand: {item.productId.brand}</p>
+                  <p>Price: ₹{item.price}</p>
+                  <p>Color: {item.color}</p>
+                  <span>Item set: {item.itemSet && item.itemSet.length > 0 
+                    ? item.itemSet.map(item => `${item.size} (Pcs: ${item.lengths})`).join(', ') 
+                    : "N/A"}</span><br />
+                  <span>Quantity: {item.quantity}</span>
                 </div>
-              ))}
-            
-            <button onClick={() => updateOrderStatus(order._id, 'accepted')}>Accept-All</button>
-            <button onClick={() => updateOrderStatus(order._id, 'rejected')}>Reject-All</button>
+              </div>
+            ))}
+            <button onClick={() => updateOrderStatus(order._id, 'accepted')}>Accept - All</button>
+            <button onClick={() => updateOrderStatus(order._id, 'rejected')}>Reject - All</button>
           </div>
         ))
       )}
