@@ -23,7 +23,6 @@ function App() {
     <>
       <Header />
       <Nav />
-      <SearchBar />
       <Scroll />
       <div className="fixed-buttons">
         <RoleBasedComponent allowedRoles={['admin', 'employee']}>
