@@ -9,7 +9,6 @@ function PendingOrders() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch all orders and filter by status 'pending'
     const fetchPendingOrders = async () => {
       try {
         setLoading(true);
@@ -21,7 +20,6 @@ function PendingOrders() {
         });
         
         if (response.status >= 200 && response.status < 300) {
-          // Filter orders with status 'pending'
           const filteredOrders = response.data.data.filter(order => order.status === 'pending');
           setPendingOrders(filteredOrders);
         } else {
@@ -55,13 +53,12 @@ function PendingOrders() {
         console.log('Order status updated successfully:', response.data);
         alert('Order status updated successfully');
         
-        // Remove the processed order from the pending list
         setPendingOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
       } else {
-        console.error('Unexpected response status:', response.status);
+        alert('Unexpected response status:', response.status);
       }
     } catch (error) {
-      console.error(`Error updating order status to ${status}`, error);
+      alert(`Error updating order status to ${status}`, error);
     }
   };
 
@@ -80,6 +77,15 @@ function PendingOrders() {
             <h3>Order ID: {order._id}</h3>
             <p>Total Price: {order.totalPrice}</p>
             <p>Total Items: {order.totalItems}</p>
+
+            {/* Displaying User Info */}
+            <div className="customer-info" style={{color: 'black'}}>
+              <h4>Customer Info:</h4>
+              <p>User ID: {order.userId?._id || 'null'}</p>
+              <p>Name: {order.userId?.name || 'null'}</p>
+              <p>Address: {order.userId?.address || 'null'}</p>
+            </div>
+
             {order.items.map(item => (
               <div key={item.productId._id} className="order-item">
                 <div className="order-item-details" style={{color:'black'}}>

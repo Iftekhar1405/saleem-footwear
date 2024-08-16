@@ -2,7 +2,7 @@ import React from "react";
 import "./BrandScroller.css";
 
 const brands = [
-  { id: 1, name: "Brand 1", image: "brand1.jpg" },
+  { id: 1, name: "Paragon", image: "./images/paragon.jpg" },
   { id: 2, name: "Brand 2", image: "brand2.jpg" },
   // Add more brand objects as needed
 ];

@@ -9,7 +9,6 @@ function AcceptedOrders() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch all orders and filter by status 'accepted'
     const fetchAcceptedOrders = async () => {
       try {
         setLoading(true);
@@ -21,16 +20,15 @@ function AcceptedOrders() {
         });
 
         if (response.status >= 200 && response.status < 300) {
-          // Filter orders with status 'accepted'
           const filteredOrders = response.data.data.filter(order => order.status === 'accepted');
           setAcceptedOrders(filteredOrders);
         } else {
-          console.error('Unexpected response status:', response.status);
+          alert('Unexpected response status: ' + response.status);
         }
         
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching accepted orders', error);
+        alert('Error fetching accepted orders: ' + error.message);
         setLoading(false);
       }
     };
@@ -51,22 +49,17 @@ function AcceptedOrders() {
         },
       });
       
-      // Check if the response status indicates success
       if (response.status >= 200 && response.status < 300) {
-        console.log('Order status updated successfully:', response.data);
-  
-        // Optionally, display a success message to the user
         alert('Order status updated successfully');
         
-        // Update the state to remove the rejected order from the accepted list
         if (status === 'rejected') {
           setAcceptedOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
         }
       } else {
-        console.error('Unexpected response status:', response.status);
+        alert('Unexpected response status: ' + response.status);
       }
     } catch (error) {
-      console.error(`Error updating order status to ${status}`, error);
+      alert(`Error updating order status to ${status}: ` + error.message);
     }
   };
 
@@ -85,6 +78,15 @@ function AcceptedOrders() {
             <h3>Order ID: {order._id}</h3>
             <p>Total Price: {order.totalPrice}</p>
             <p>Total Items: {order.totalItems}</p>
+
+            {/* Displaying User Info */}
+            <div className="customer-info" style={{color: 'black'}}>
+              <h4>Customer Info:</h4>
+              <p>User ID: {order.userId?._id || 'null'}</p>
+              <p>Name: {order.userId?.name || 'null'}</p>
+              <p>Address: {order.userId?.address || 'null'}</p>
+            </div>
+
             {order.items.map(item => (
               <div key={item.productId._id} className="order-item">
                 <div className="order-item-details" style={{color:'black'}}>

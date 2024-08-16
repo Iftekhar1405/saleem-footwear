@@ -9,7 +9,6 @@ function RejectedOrders() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch all orders and filter by status 'rejected'
     const fetchRejectedOrders = async () => {
       try {
         setLoading(true);
@@ -21,16 +20,15 @@ function RejectedOrders() {
         });
 
         if (response.status >= 200 && response.status < 300) {
-          // Filter orders with status 'rejected'
           const filteredOrders = response.data.data.filter(order => order.status === 'rejected');
           setRejectedOrders(filteredOrders);
         } else {
-          console.error('Unexpected response status:', response.status);
+          alert('Unexpected response status: ' + response.status);
         }
         
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching rejected orders', error);
+        alert('Error fetching rejected orders: ' + error.message);
         setLoading(false);
       }
     };
@@ -51,20 +49,15 @@ function RejectedOrders() {
         },
       });
       
-      // Check if the response status indicates success
       if (response.status >= 200 && response.status < 300) {
-        console.log('Order status updated to pending:', response.data);
-  
-        // Optionally, display a success message to the user
         alert('Order status updated to pending');
         
-        // Update the state to remove the reinstated order from the rejected list
         setRejectedOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
       } else {
-        console.error('Unexpected response status:', response.status);
+        alert('Unexpected response status: ' + response.status);
       }
     } catch (error) {
-      console.error(`Error updating order status to pending`, error);
+      alert('Error updating order status to pending: ' + error.message);
     }
   };
 
@@ -83,6 +76,15 @@ function RejectedOrders() {
             <h3>Order ID: {order._id}</h3>
             <p>Total Price: {order.totalPrice}</p>
             <p>Total Items: {order.totalItems}</p>
+
+            {/* Displaying User Info */}
+            <div className="customer-info" style={{color: 'black'}}>
+              <h4>Customer Info:</h4>
+              <p>User ID: {order.userId?._id || 'null'}</p>
+              <p>Name: {order.userId?.name || 'null'}</p>
+              <p>Address: {order.userId?.address || 'null'}</p>
+            </div>
+
             {order.items.map(item => (
               <div key={item.productId._id} className="order-item">
                 <div className="order-item-details" style={{color:'black'}}>

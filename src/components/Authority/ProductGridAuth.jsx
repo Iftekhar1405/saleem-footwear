@@ -19,7 +19,7 @@ const ProductGridAuth = () => {
         });
         setProducts(response.data.products);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        alert("Error fetching products:", error);
       }
     };
 
@@ -110,7 +110,7 @@ const ProductGridAuth = () => {
       setProducts(products.map(product => product._id === editedProduct._id ? response.data : product));
       setEditingProductId(null); // Exit edit mode
     } catch (error) {
-      console.error("Error saving product:", error);
+      alert("Error saving product:", error);
     }
   };
 
@@ -122,7 +122,7 @@ const ProductGridAuth = () => {
       });
       setProducts(products.filter((product) => product._id !== productId));
     } catch (error) {
-      console.error("Error deleting product:", error);
+      alert("Error deleting product:", error);
     }
   };
 
