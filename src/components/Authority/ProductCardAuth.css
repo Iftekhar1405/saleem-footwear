@@ -76,7 +76,6 @@
   }
   
   .product-mrp {
-    text-decoration: line-through;
     color: #ff0000;
     margin-right: 8px;
   }
@@ -137,16 +136,7 @@
     cursor: pointer;
   }
   
-  .edit-button {
-    background-color: #333;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-  }
   
-  .edit-button:hover {
-    background-color: #444;
-  }
   
   .delete-button {
     background-color: #dc143c;
@@ -175,4 +165,12 @@
       max-width: 100%;
     }
   }
-  
+  .edit-product-form{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .edit-product-form input{
+    padding: 10px;
+  }

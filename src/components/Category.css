@@ -37,4 +37,10 @@
   .grid-item h3 {
     margin-top: 10px;
   }
+
+  @media (width >=  700px) {
+    .category-buttons{
+      grid-template-columns: repeat(4,1fr);
+    }
+  }
   

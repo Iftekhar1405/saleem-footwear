@@ -2,16 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css';
 import RoleBasedComponent from '../RoleBasedComponents'
+import { useNavigate } from 'react-router-dom';
 
 const URL = "https://saleem-footwear-api.vercel.app/api/v1";
-const registerUser = async (body) => {
-  try {
-    const response = await axios.post(`${URL}/auth/register`, body)
-    console.log(response.data)
-  } catch (error) {
-    console.log(error.response.data)
-  }
-}
 
 function Register() {
   const [name, setName] = useState('');
@@ -20,7 +13,8 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
-  const [role, setRole] = useState('');
+  const [role, setRole] = useState(''); // Updated initial value to empty
+  const navigate = useNavigate(); // Move useNavigate inside the component
 
   const handleNameChange = (e) => setName(e.target.value);
   const handleEmailChange = (e) => setEmail(e.target.value);
@@ -30,10 +24,16 @@ function Register() {
   const handlePhoneChange = (e) => setPhone(e.target.value);
   const handleRoleChange = (e) => setRole(e.target.value);
 
-  
-
-
-
+  const registerUser = async (body) => {
+    try {
+      const response = await axios.post(`${URL}/auth/register`, body);
+      console.log(response.data);
+      navigate('/login');
+    } catch (error) {
+      alert(error.response.data.msg);
+      console.log(error);
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,17 +44,16 @@ function Register() {
     }
 
     const body_reg = {
-        name: name,
-        email: email,
-        password: password,
-        address: address,
-        phone:phone,
-        role:role || 'customer'
-      }
+      name: name,
+      shopName: email,
+      password: password,
+      address: address,
+      phone: phone,
+      role: role || 'customer' // Ensure default role if none is selected
+    };
+
     console.log(body_reg);
-    registerUser(body_reg)
-    
-    
+    registerUser(body_reg);
   };
 
   return (
@@ -86,15 +85,15 @@ function Register() {
           <input type="tel" id="phone" value={phone} onChange={handlePhoneChange} required />
         </div>
         <RoleBasedComponent allowedRoles={['admin']}>
-        <div className="form-group">
-          <label htmlFor="role">Role</label>
-          <select id="role" value={role} onChange={handleRoleChange} required>
-            <option value="" disabled>Select Role</option>
-            <option value="user">Customer</option>
-            <option value="Staff">Staff</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
+          <div className="form-group">
+            <label htmlFor="role">Role</label>
+            <select id="role" value={role} onChange={handleRoleChange} required>
+              <option value="" disabled>Select Role</option>
+              <option value="customer">Customer</option>
+              <option value="Staff">Staff</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
         </RoleBasedComponent>
         <button type="submit" className="login-btn">Register</button>
       </form>
