@@ -24,6 +24,7 @@ import CategorizedProducts from './components/CategorizedProducts.jsx';
 import PDFViewer from './components/PDF.jsx';
 import Orders from './components/Orders.jsx';
 import ProductGridAuth from './components/Authority/ProductGridAuth.jsx';
+import SearchBar from './components/SearchBar.jsx';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -35,7 +36,8 @@ const router = createBrowserRouter(
       <Route path="orders" element={<ProtectedRoute element={<Orders />} />} />
       <Route path="profile" element={<ProtectedRoute element={<Profile />} />} />
       <Route path="order-summary" element={<ProtectedRoute element={<OrderSummary />} />} />
-      <Route path="products/:category" element={<ProtectedRoute element={<CategorizedProducts />} />} />
+      <Route path="search" element={<ProtectedRoute element={<SearchBar />} />} />
+      <Route path="category-grid/:category" element={<ProtectedRoute element={<CategorizedProducts />} />} />
       <Route path="login" element={<Login />} />
       <Route path='contact-us' element = {<ContactUs/>}/>
       <Route path="register" element={<Register />} />

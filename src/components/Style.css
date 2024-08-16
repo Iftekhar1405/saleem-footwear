@@ -182,4 +182,13 @@ h2{
   .addproduct:hover, .admin-tools:hover {
     background-color: #0056b3;
   }
-  
+.nav-left{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 15vw;
+    max-width: 150px;
+}
+.nav-left svg{
+    vertical-align: middle;
+}
