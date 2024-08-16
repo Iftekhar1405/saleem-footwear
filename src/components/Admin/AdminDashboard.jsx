@@ -14,11 +14,12 @@ function AdminDashboard(){
         <Link to='/rejected-orders'>
         <div className="admin-card"><h3>Rejected Orders</h3></div>
         </Link>
-        <Link to='/employees'>
-        <div className="admin-card"><h3>All Employees</h3></div>
-        </Link>
+        
         <Link to='/customers'>
         <div className="admin-card"><h3> All Customers</h3></div>
+        </Link>
+        <Link to='/edit-products'>
+        <div className="admin-card"><h3>Edit Products</h3></div>
         </Link>
         </div>
     )

@@ -117,7 +117,7 @@ function AddProduct() {
             });
             alert('Product added successfully!');
         } catch (error) {
-            console.error('Error adding product:', error);
+            alert('Error adding product:', error);
             console.log(product);
         }
     };
@@ -222,7 +222,7 @@ function AddProduct() {
                     <button type='submit'>Add Product</button>
                 </form>
             </div>
-            <ProductGridAuth />
+            
         </>
     );
 }

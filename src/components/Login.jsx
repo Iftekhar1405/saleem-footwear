@@ -42,7 +42,7 @@ function Login() {
       localStorage.setItem('role', role);
       navigate('/'); 
     } catch (error) {
-      console.log(error);
+      alert(error.response.data.msg);
     }
   };
 

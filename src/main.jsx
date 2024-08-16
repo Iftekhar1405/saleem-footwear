@@ -12,7 +12,6 @@ import ProductCard from './components/ProductCard.jsx';
 import Profile from './components/Profile.jsx';
 import ProtectedRoute from './ProtectedRoute';
 import RoleBasedRoute from './RoleBasedRoutes.jsx';
-import AllEmployees from './components/Admin/AllEmployees.jsx'
 import AllCustomers from './components/Admin/AllCustomers.jsx'
 import AcceptedOrders from './components/Admin/AcceptedOrders.jsx'
 import PendingOrders from './components/Admin/PendingOrders.jsx'
@@ -24,6 +23,7 @@ import OrderSummary from './components/OrderSummary.jsx';
 import CategorizedProducts from './components/CategorizedProducts.jsx';
 import PDFViewer from './components/PDF.jsx';
 import Orders from './components/Orders.jsx';
+import ProductGridAuth from './components/Authority/ProductGridAuth.jsx';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -45,11 +45,7 @@ const router = createBrowserRouter(
         < AdminDashboard/> {/* This route is only accessible by admins */}
       </RoleBasedRoute>
       } />
-      <Route path="employees" element={
-      <RoleBasedRoute allowedRoles={['admin']}>
-        <AllEmployees /> {/* This route is only accessible by admins */}
-      </RoleBasedRoute>
-      } />
+      
       <Route path="customers" element={
       <RoleBasedRoute allowedRoles={['admin']}>
         <AllCustomers /> {/* This route is only accessible by admins */}
@@ -60,6 +56,12 @@ const router = createBrowserRouter(
         <AcceptedOrders /> {/* This route is only accessible by admins */}
       </RoleBasedRoute>
       } />
+      <Route path="edit-products" element={
+      <RoleBasedRoute allowedRoles={['admin']}>
+        <ProductGridAuth /> {/* This route is only accessible by admins */}
+      </RoleBasedRoute>
+      } />
+      
       <Route path="pending-orders" element={
       <RoleBasedRoute allowedRoles={['admin']}>
         <PendingOrders /> {/* This route is only accessible by admins */}
