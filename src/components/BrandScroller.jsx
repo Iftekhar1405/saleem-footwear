@@ -3,11 +3,13 @@ import "./BrandScroller.css";
 import paragon from "./images/paragon.jpg"
 import shoefact from "./images/shoefact.jpeg"
 import columbus from "./images/columbus.png"
+import shoe from "./images/shoe.jpg"
 
 const brands = [
   { id: 1, name: "Paragon", image: paragon },
   { id: 2, name: "Shoe Factory", image: shoefact },
   { id: 2, name: "Columbus", image: columbus },
+  { id: 2, name: "--Others--", image: shoe },
   // Add more brand objects as needed
 ];
 
