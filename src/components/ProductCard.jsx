@@ -92,7 +92,8 @@ const ProductCard = () => {
     if (selectedColor && selectedSize && quantity > 0) {
       addToCart(product, selectedColor, selectedSize, quantity);
       alert('Item Added to Cart Successfully');
-    } else {
+      window.dispatchEvent(new Event('cart-updated'));
+        } else {
       alert('Please select a color, size, and a valid quantity.');
     }
   };
