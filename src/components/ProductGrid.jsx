@@ -82,35 +82,46 @@ const ProductGrid = () => {
   }
 
   return (
-    <div className="product-grid">
+    <div className="product-grid" style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'0',margin:'0'
+      
+    }}>
       {products.map((product) => (
-        <div className="product-card" key={product._id} >
+        <div className="product-card" key={product._id} style={{margin:'0',borderRadius:'0',width:'50vw'}} >
           <Link to={`/product/${product._id}`}>
             <div className="product-image-gallery">
               {product.images.map((imgUrl, index) => (
                 <img key={index} src={imgUrl} alt={`${product.brand} ${product.article}`} className="product-image" />
               ))}
             </div>
-            <div className="product-details"  style={{backgroundColor:'#EDEADE'}}>
+            <div className="product-details"  style={{backgroundColor:'#EDEADE',paddingBottom:'0px',paddingRight:'10px'
+              ,marginBottom:'0'
+            }}>
+            
               <h2 className="product-name">{product.article}</h2>
               <p className="product-brand">{product.brand}</p>
-              <div className="product-info" style={{display:'flex',flexDirection:'column',alignItems:'flex-start',color:'#36454f',fontWeight:'bold'}}>
-                <p className="product-mrp" style={{textDecoration:'none'}}>MRP: ₹{product.price}</p>
-                <div style={{display:'flex',justifyContent:'space-between', width:'100%', margin:'0px'}}>
-                <p className="product-material">Material: {product.material}</p>
-                <p className="product-gender">Gender: {product.gender}</p>
-                </div>
-              </div>
-              <p className="product-sizes">
-                Available Sizes: {product.itemSet && product.itemSet.length > 0 
-                  ? product.itemSet.map(item => `${item.size} (PCs: ${item.lengths})`).join(', ') 
-                  : "N/A"}
-              </p>
-              <p className="product-colors" style={{color:'#36454f',fontWeight:'bold'}}>
+              <div className="product-info" style={{display:'flex',flexDirection:'column',alignItems:'flex-start',color:'#36454f',fontWeight:'bold'
+                ,
+              }}>
+                <span className="product-mrp" style={{textDecoration:'none',marginBottom:'5px'}}>MRP: ₹{product.price}</span>
+                <br />
+                <span className="product-colors" style={{color:'#36454f',fontWeight:'bold',fontSize:'small', opacity:'0.75'
+                }}>
                 Colors: {product.colors && Object.keys(product.colors).length > 0 
                   ? Object.keys(product.colors).join(', ') 
                   : "N/A"}
-              </p>
+              </span>
+                
+                {/* <div style={{display:'flex',justifyContent:'space-between', width:'100%', margin:'0px'}}>
+                <p className="product-material">Material: {product.material}</p>
+                <p className="product-gender">Gender: {product.gender}</p>
+                </div> */}
+              </div>
+              {/* <p className="product-sizes">
+                Available Sizes: {product.itemSet && product.itemSet.length > 0 
+                  ? product.itemSet.map(item => `${item.size} (PCs: ${item.lengths})`).join(', ') 
+                  : "N/A"}
+              </p> */}
+              
             </div>
           </Link>
           {/* <div className="buttons">
