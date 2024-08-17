@@ -111,7 +111,7 @@ const ProductCard = () => {
           <p>No images available for this color.</p>
         )}
       </div>
-      <div className="product-details" style={{color:'#36454f',fontWeight:'bold'}} >
+      <div className="product-details" style={{color:'#36454f',fontWeight:'bold',backgroundColor:'white'}} >
         <h2 className="product-name">{product.article}</h2>
         <p className="product-brand">{product.brand}</p>
         <p className="product-description">{product.description}</p>
@@ -139,7 +139,7 @@ const ProductCard = () => {
                 key={color} 
                 className={`color-button ${selectedColor === color ? 'selected' : ''}`} 
                 onClick={() => handleColorClick(color)}
-                style={{ backgroundColor: color }}
+                style={{ color: color, borderColor:color,backgroundColor:'wheat' }}
               >
                 {color}
               </button>

@@ -19,7 +19,7 @@ const CategorizedProducts = () => {
           },
           maxBodyLength: Infinity
         });
-
+        console.log(response)
         setProducts(response.data.products); // Assuming response.data.products contains the products
         setLoading(false);
       } catch (error) {

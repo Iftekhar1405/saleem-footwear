@@ -86,7 +86,7 @@ const ProductGrid = () => {
       
     }}>
       {products.map((product) => (
-        <div className="product-card" key={product._id} style={{margin:'0',borderRadius:'0',width:'50vw'}} >
+        <div className="product-card" key={product._id} style={{margin:'0',borderRadius:'0',width:'50vw',backgroundColor:'#EDEADE'}} >
           <Link to={`/product/${product._id}`}>
             <div className="product-image-gallery">
               {product.images.map((imgUrl, index) => (
