@@ -44,6 +44,8 @@ const Cart = () => {
       };
       await axios.delete(`${URL}/cart/${CartItemId}`, { headers });
       setCart(cart.filter(item => item._id !== CartItemId));
+      window.dispatchEvent(new Event('cart-updated'));
+
     } catch (error) {
       console.error('Error removing item from cart:', error);
     }
@@ -161,12 +163,12 @@ const Cart = () => {
       {Array.isArray(cart) && cart.length === 0 ? (
         <p>Your cart is empty</p>
       ) : (
-        <ul>
+        <div>
           {cart.map((item, index) => (
-            <li key={index} className="cart-item">
+            <div key={index} className="cart-item">
               <div className="cart-item-details">
                 <div>
-                  <img src={item.productId.images[0]} alt={item.name} />
+                  <img src={item.productId.images[0]} alt={item.name} style={{verticalAlign:'middle'}}/>
                 </div>
                 <div>
                   <h3>{item.productId.name}</h3>
@@ -178,21 +180,21 @@ const Cart = () => {
                   <span>Quantity: {item.quantity}</span>
 
                   {/* Quantity Control Buttons */}
-                  {/* <div className="quantity-control">
+                  <div className="quantity-control">
                     <button onClick={() => handleQuantityChange(item._id, item.quantity - 1)}>-</button>
                     <span>{quantityChanges[item._id] ?? item.quantity}</span>
                     <button onClick={() => handleQuantityChange(item._id, item.quantity + 1)}>+</button>
                     <button onClick={() => updateQuantity(item._id)}>Confirm</button>
-                  </div> */}
+                  </div>
 
                   <button className="remove-button" onClick={() => removeItem(item._id)}>
                     Remove
                   </button>
                 </div>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

@@ -17,20 +17,22 @@ const Header = () => {
           'Authorization': `Bearer ${token}`
         };
         const response = await axios.get(`${URL}/cart`, { headers });
-        setCartlength((response.data.data.items).length || 0); // Ensure cart is an array
-        console.log(response)
+        setCartlength((response.data.data.items).length || 0);
       } catch (error) {
         console.error('Error fetching cart data:', error);
-        setCart([]); // Ensure cart is an array on error
+        setCartlength(0);
       }
     };
+  
     fetchCart();
     window.addEventListener('cart-updated', fetchCart);
-
+  
     // Clean up the event listener on component unmount
     return () => window.removeEventListener('cart-updated', fetchCart);
+  }, [token]);
+  
+
     
-  }, []);
 
   
   const [LikedLength, setLikedLength] = useState(() => {
