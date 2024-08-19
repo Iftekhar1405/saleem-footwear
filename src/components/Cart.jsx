@@ -24,10 +24,18 @@ const Cart = () => {
           'Authorization': `Bearer ${token}`
         };
         const response = await axios.get(`${URL}/cart`, { headers });
+        const cartData = response.data.data.items || [];
+        
+        // Calculate total price based on itemSet lengths
+        const calculatedTotalPrice = cartData.reduce((acc, item) => {
+          const fullQuantity = item.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0);
+          return acc + (fullQuantity * item.productId.price);
+        }, 0);
+        
         setUserId(response.data.data.userId);
         setTotalItems(response.data.data.totalItems);
-        setTotalPrice(response.data.data.totalPrice);
-        setCart(response.data.data.items || []); // Ensure cart is an array
+        setTotalPrice(calculatedTotalPrice);
+        setCart(cartData);
       } catch (error) {
         console.error('Error fetching cart data:', error);
         setCart([]); // Ensure cart is an array on error
@@ -115,8 +123,6 @@ const Cart = () => {
     }
   };
 
-
-
   const handleOrderNow = async () => {
     let confirm = window.confirm(`Are you sure to place this order worth of ₹${totalPrice}`);
     if (confirm) {
@@ -131,7 +137,7 @@ const Cart = () => {
             userId: userId,
             items: cart.map(item => ({
               productId: item.productId._id,
-              quantity: item.quantity,
+              quantity: item.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0),
               price: item.productId.price,
               itemSet: item.itemSet, // Including itemSet details
               color: item.color, // Including color if needed
@@ -164,27 +170,36 @@ const Cart = () => {
         <p>Your cart is empty</p>
       ) : (
         <div>
-          {cart.map((item, index) => (
-            <div key={index} className="cart-item">
-              <div className="cart-item-details">
-                <div>
-                  <img src={item.productId.images[0]} alt={item.name} style={{verticalAlign:'middle'}}/>
+          {cart.map((item, index) => {
+            const fullQuantity = item.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0);
+            const itemTotalPrice = fullQuantity * item.productId.price;
+
+            return (
+              <div key={index} className="cart-item">
+                <div className="cart-item-details">
+                  <div>
+                    <img src={item.productId.images[0]} alt={item.name} style={{verticalAlign:'middle'}}/>
+                  </div>
+                  <div>
+                    <h3>{item.productId.name}</h3>
+                    <p>Brand: {item.productId.brand}</p>
+                    <p>Price per Unit: ₹{item.productId.price}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3>{item.productId.name}</h3>
-                  <p>Brand: {item.productId.brand}</p>
-                  <p>Price: ₹{item.productId.price}</p>
-                  <span>Item set: {item.itemSet && item.itemSet.length > 0 
-                    ? item.itemSet.map(item => `${item.size} (Pcs: ${item.lengths})`).join(', ') 
-                    : "N/A"}</span><br />
-                  <span>Quantity: {item.quantity}</span>
+                <div className='rest-details'>
+                  <div>
+                    <span>Item set: {item.itemSet && item.itemSet.length > 0 
+                      ? item.itemSet.map(setItem => `${setItem.size} (Pcs: ${setItem.lengths})`).join(', ') 
+                      : "N/A"}</span><br />
+                    <span>Quantity: {fullQuantity}</span><br />
+                    <span>Total Price: ₹{itemTotalPrice}</span>
+                  </div>
 
                   {/* Quantity Control Buttons */}
                   <div className="quantity-control">
                     <button onClick={() => handleQuantityChange(item._id, item.quantity - 1)}>-</button>
-                    <span>{quantityChanges[item._id] ?? item.quantity}</span>
-                    <button onClick={() => handleQuantityChange(item._id, item.quantity + 1)}>+</button>
-                    <br />
+                    <span>{quantityChanges[item._id] ?? fullQuantity}</span>
+                    <button onClick={() => handleQuantityChange(item._id, item.quantity + 1)} style={{marginLeft:'10px'}}>+</button>
                     <button onClick={() => updateQuantity(item._id)}>Confirm</button>
                   </div>
 
@@ -193,8 +208,8 @@ const Cart = () => {
                   </button>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
