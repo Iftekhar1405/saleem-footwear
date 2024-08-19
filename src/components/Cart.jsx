@@ -184,6 +184,7 @@ const Cart = () => {
                     <button onClick={() => handleQuantityChange(item._id, item.quantity - 1)}>-</button>
                     <span>{quantityChanges[item._id] ?? item.quantity}</span>
                     <button onClick={() => handleQuantityChange(item._id, item.quantity + 1)}>+</button>
+                    <br />
                     <button onClick={() => updateQuantity(item._id)}>Confirm</button>
                   </div>
 
