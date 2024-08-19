@@ -183,7 +183,7 @@ const Cart = () => {
                   <div>
                     <h3>{item.productId.name}</h3>
                     <p>Brand: {item.productId.brand}</p>
-                    <p>Price per Unit: ₹{item.productId.price}</p>
+                    <p style={{color:"rgb(221, 32, 44)"}}>Price per Unit: ₹{item.productId.price}</p>
                   </div>
                 </div>
                 <div className='rest-details'>
@@ -192,7 +192,7 @@ const Cart = () => {
                       ? item.itemSet.map(setItem => `${setItem.size} (Pcs: ${setItem.lengths})`).join(', ') 
                       : "N/A"}</span><br />
                     <span>Quantity: {fullQuantity}</span><br />
-                    <span>Total Price: ₹{itemTotalPrice}</span>
+                    <span style={{color:"rgb(221, 32, 44)"}}>Total Price: ₹{itemTotalPrice}</span>
                   </div>
 
                   {/* Quantity Control Buttons */}
