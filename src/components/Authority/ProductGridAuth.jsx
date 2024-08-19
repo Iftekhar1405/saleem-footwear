@@ -7,8 +7,8 @@ const URL = "https://saleem-footwear-api.vercel.app/api/v1/products";
 
 const ProductGridAuth = () => {
   const [products, setProducts] = useState([]);
-  const [editingProductId, setEditingProductId] = useState(null); // Track which product is being edited
-  const [editedProduct, setEditedProduct] = useState({}); // Store edited product details
+  const [editingProductId, setEditingProductId] = useState(null);
+  const [editedProduct, setEditedProduct] = useState({});
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -39,56 +39,72 @@ const ProductGridAuth = () => {
     }));
   };
 
-  const handleImageChange = (e, index) => {
-    const updatedImages = [...(editedProduct.images || [])];
-    updatedImages[index] = e.target.value;
-    setEditedProduct(prevState => ({
-      ...prevState,
-      images: updatedImages
-    }));
-  };
-
-  const handleImageRemove = (index) => {
-    const updatedImages = [...(editedProduct.images || [])];
-    updatedImages.splice(index, 1);
-    setEditedProduct(prevState => ({
-      ...prevState,
-      images: updatedImages
-    }));
-  };
-
-  const handleColorImageChange = (e, color, index) => {
-    const updatedColors = { ...editedProduct.colors };
-    updatedColors[color][index] = e.target.value;
-    setEditedProduct(prevState => ({
-      ...prevState,
-      colors: updatedColors
-    }));
-  };
-
-  const handleColorImageRemove = (color, index) => {
-    const updatedColors = { ...editedProduct.colors };
-    updatedColors[color].splice(index, 1);
-    setEditedProduct(prevState => ({
-      ...prevState,
-      colors: updatedColors
-    }));
-  };
-
-  const handleColorNameChange = (e, oldColor) => {
-    const newColor = e.target.value.trim();
-    const updatedColors = { ...editedProduct.colors };
-
-    if (newColor === "") {
-      delete updatedColors[oldColor];
-    } else if (oldColor !== newColor) {
-      updatedColors[newColor] = updatedColors[oldColor];
-      delete updatedColors[oldColor];
+  const handleImageChange = (e, index, type = 'default') => {
+    if (type === 'default') {
+      const updatedImages = [...(editedProduct.images || [])];
+      updatedImages[index] = e.target.value;
+      setEditedProduct(prevState => ({
+        ...prevState,
+        images: updatedImages
+      }));
+    } else {
+      const updatedColorImages = [...(editedProduct.colors[type] || [])];
+      updatedColorImages[index] = e.target.value;
+      setEditedProduct(prevState => ({
+        ...prevState,
+        colors: {
+          ...prevState.colors,
+          [type]: updatedColorImages
+        }
+      }));
     }
+  };
 
+  const addImageField = (type = 'default') => {
+    if (type === 'default') {
+      setEditedProduct(prevState => ({
+        ...prevState,
+        images: [...(prevState.images || []), '']
+      }));
+    } else {
+      setEditedProduct(prevState => ({
+        ...prevState,
+        colors: {
+          ...prevState.colors,
+          [type]: [...(prevState.colors[type] || []), '']
+        }
+      }));
+    }
+  };
+
+  const handleImageRemove = (index, type = 'default') => {
+    if (type === 'default') {
+      const updatedImages = [...(editedProduct.images || [])];
+      updatedImages.splice(index, 1);
+      setEditedProduct(prevState => ({
+        ...prevState,
+        images: updatedImages
+      }));
+    } else {
+      const updatedColorImages = [...(editedProduct.colors[type] || [])];
+      updatedColorImages.splice(index, 1);
+      setEditedProduct(prevState => ({
+        ...prevState,
+        colors: {
+          ...prevState.colors,
+          [type]: updatedColorImages
+        }
+      }));
+    }
+  };
+
+  const addColorField = () => {
     setEditedProduct(prevState => ({
       ...prevState,
-      colors: updatedColors
+      colors: {
+        ...prevState.colors,
+        [`color${Object.keys(prevState.colors || {}).length + 1}`]: []
+      }
     }));
   };
 
@@ -108,7 +124,7 @@ const ProductGridAuth = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(products.map(product => product._id === editedProduct._id ? response.data : product));
-      setEditingProductId(null); // Exit edit mode
+      setEditingProductId(null); 
     } catch (error) {
       alert("Error saving product:", error);
     }
@@ -175,8 +191,8 @@ const ProductGridAuth = () => {
                 className="edit-input"
               />
 
-              {/* Image URLs */}
-              <h4>Images</h4>
+              {/* Default Image URLs */}
+              <h4>Default Images</h4>
               {(editedProduct.images || []).map((imgUrl, index) => (
                 <div key={`${product._id}-image-${index}`}>
                   <input
@@ -188,6 +204,7 @@ const ProductGridAuth = () => {
                   <button onClick={() => handleImageRemove(index)}>Remove</button>
                 </div>
               ))}
+              <button onClick={() => addImageField()}>Add Image</button>
 
               {/* Colors and their images */}
               <h4>Colors and Images</h4>
@@ -213,8 +230,10 @@ const ProductGridAuth = () => {
                       <button onClick={() => handleColorImageRemove(color, index)}>Remove Image</button>
                     </div>
                   ))}
+                  <button onClick={() => addImageField(color)}>Add Image for {color}</button>
                 </div>
               ))}
+              <button onClick={addColorField}>Add Color</button>
 
               <button className="header-button save-button" onClick={saveProduct}>Save</button>
               <button className="header-button cancel-button" onClick={() => setEditingProductId(null)}>Cancel</button>
@@ -235,20 +254,10 @@ const ProductGridAuth = () => {
                   <p className="product-material">Material: {product.material}</p>
                   <p className="product-gender">Gender: {product.gender}</p>
                 </div>
-                <p className="product-sizes">
-                  Available Sizes: {product.itemSet && product.itemSet.length > 0 
-                    ? product.itemSet.map(item => `${item.size} (Length: ${item.lengths})`).join(', ') 
-                    : "N/A"}
-                </p>
-                <p className="product-colors">
-                  Colors: {product.colors && Object.keys(product.colors).length > 0 
-                    ? Object.keys(product.colors).join(', ') 
-                    : "N/A"}
-                </p>
-              </div>
-              <div className='buttons'>
-                <button style={{backgroundColor:'#333'}} onClick={() => startEditing(product)}>Edit</button>
-                <button onClick={() => deleteProduct(product._id)}>Delete</button>
+                <div className="product-buttons">
+                  <button className="header-button edit-button" onClick={() => startEditing(product)}>Edit</button>
+                  <button className="header-button delete-button" onClick={() => deleteProduct(product._id)}>Delete</button>
+                </div>
               </div>
             </>
           )}
