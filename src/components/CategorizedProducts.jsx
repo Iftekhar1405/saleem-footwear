@@ -41,7 +41,9 @@ const CategorizedProducts = () => {
           <Link to={`/product/${product._id}`}>
             <div className="product-image-gallery">
               {product.images.map((imgUrl, index) => (
-                <img key={index} src={imgUrl} alt={`${product.brand} ${product.article}`} className="product-image" />
+                <img key={index} src={imgUrl} alt={`${product.brand} ${product.article}`} className="product-image"
+                style={{height:'180px',
+                  width:'200px',objectFit:'cover',objectPosition:'center'}} />
               ))}
             </div>
             <div className="product-details"  style={{backgroundColor:'#EDEADE',paddingBottom:'0px',paddingRight:'10px'
