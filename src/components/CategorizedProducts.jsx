@@ -3,9 +3,27 @@ import { useParams } from 'react-router-dom';
 import './ProductCard.css';
 import { addToCart } from './ProductGrid';
 
+
+const fetchCategoriesByGender = async (category) => {
+  try {
+    const response = await axios.get(`http://localhost:7000/api/v1/search/category/specific/?category=${category}`);
+    console.log(response.data);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+  }
+};
+
+// fetchCategoriesByGender(category); // Replace 'male' with the desired gender
+
+
+
+
+
+
 const CategorizedProducts = () => {
   const { category } = useParams();
   const [products, setProducts] = useState([]);
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -17,8 +35,8 @@ const CategorizedProducts = () => {
         console.error('Error fetching products:', error);
       }
     };
-
-    fetchProducts();
+    fetchCategoriesByGender(category);
+    // fetchProducts();
   }, [category]);
 
   return (
