@@ -1,12 +1,13 @@
 .category-container {
   width: 100%;
-  overflow-x: auto; /* Enable horizontal scrolling */
+  overflow-x: scroll; /* Enable horizontal scrolling */
 }
 
 .category-list {
   display: flex;
   flex-wrap: nowrap; /* Prevent wrapping */
   padding: 10px;
+  overflow-x: scroll;
 }
 
 .category-item {
