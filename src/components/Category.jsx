@@ -30,7 +30,7 @@ const CategoryGrid = () => {
   };
 
   return (
-    <div className="category-container">
+    <>
       <h3> Explore Your Category --</h3>
       <div className="category-list">
         {categories.map((category, index) => (
@@ -43,7 +43,7 @@ const CategoryGrid = () => {
           </span>
         ))}
       </div>
-    </div>
+    </>
   );
 };
 

@@ -1,13 +1,13 @@
-.category-container {
-  width: 100%;
-  overflow-x: scroll; /* Enable horizontal scrolling */
-}
+
 
 .category-list {
+  width: 100%;
   display: flex;
   flex-wrap: nowrap; /* Prevent wrapping */
+  white-space: nowrap;
   padding: 10px;
-  overflow-x: scroll;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
 }
 
 .category-item {
@@ -19,6 +19,4 @@
   border: 1.5px solid rgb(221, 32, 44);
   border-radius: 4px;
   white-space: nowrap; /* Prevent text wrapping */
-  overflow: hidden; /* Hide overflow text */
-  text-overflow: ellipsis; /* Add ellipsis for overflow text */
 }

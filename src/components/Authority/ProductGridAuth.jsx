@@ -255,8 +255,8 @@ const ProductGridAuth = () => {
                   <p className="product-gender">Gender: {product.gender}</p>
                 </div>
                 <div className="product-buttons">
-                  <button className="header-button edit-button" onClick={() => startEditing(product)}>Edit</button>
-                  <button className="header-button delete-button" onClick={() => deleteProduct(product._id)}>Delete</button>
+                  <button className="product-discount-edit" onClick={() => startEditing(product)}>Edit</button>
+                  <button className='delete-button ' onClick={() => deleteProduct(product._id)}>Delete</button>
                 </div>
               </div>
             </>
