@@ -124,6 +124,14 @@
     
     
 }
+.brand-name{
+    font-size: 27px;
+    font-weight: 500;
+    vertical-align: middle;
+}
+img{
+    vertical-align: middle;
+}
 
 h2{
     color: rgb(221, 32, 44);

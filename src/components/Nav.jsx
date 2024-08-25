@@ -21,7 +21,7 @@ function Nav() {
     return (
         <>
         <div className='Nav'>
-            <div> <img src={logo} alt=""  className='logo'/> <h2 style={{display:'inline'}}>Salim Footwear
+            <div> <img src={logo} alt=""  className='logo'/> <h2 style={{display:'inline'} } className='brand-name'>Salim Footwear
             </h2></div>
             
             
