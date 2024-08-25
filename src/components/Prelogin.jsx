@@ -21,7 +21,9 @@ const Prelogin = () => {
     >
       <header className="header"  >
         <img src={logo} alt="" className='logo' />
-        <h2>Salim Footwear</h2>
+        <Link to="/login" ><button>Login</button></Link>
+        <Link to="/register" ><button style={{backgroundColor:'#333'}}>Register</button></Link>
+        
       </header>
 
       
