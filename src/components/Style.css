@@ -128,6 +128,9 @@
 h2{
     color: rgb(221, 32, 44);
 }
+svg{
+    vertical-align: middle;
+}
 
 .scroll-container {
     display: flex;
