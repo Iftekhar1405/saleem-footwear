@@ -21,9 +21,10 @@ const Prelogin = () => {
     >
       <header className="header"  >
         <img src={logo} alt="" className='logo' />
+        <div style={{display:'flex'}}>
         <Link to="/login" ><button>Login</button></Link>
         <Link to="/register" ><button style={{backgroundColor:'#333'}}>Register</button></Link>
-        
+        </div>
       </header>
 
       
