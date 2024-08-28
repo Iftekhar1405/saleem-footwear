@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './ProductCard.css'
+import './Cart.css'; // Reuse Cart CSS for consistent styling
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -21,8 +21,7 @@ const Orders = () => {
           'https://saleem-footwear-api.vercel.app/api/v1/order/history',
           { headers }
         );
-        console.log(response);
-        setOrders(response.data.data || []); // Set orders directly from response
+        setOrders(response.data.data || []);
         setLoading(false);
       } catch (err) {
         setError(err);
@@ -39,12 +38,12 @@ const Orders = () => {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       };
-      const response = await axios.post(
+      await axios.post(
         `https://saleem-footwear-api.vercel.app/api/v1/order/cancel/${orderId}`,
         {},
         { headers }
       );
-      // Update the orders list after cancellation
+
       setOrders((prevOrders) =>
         prevOrders.filter((order) => order._id !== orderId)
       );
@@ -64,53 +63,63 @@ const Orders = () => {
   }
 
   return (
-    <div>
+    <div className="cart">
       <h2>Your Past Orders</h2>
-      <div className="orders-container">
-        {orders.map((order) => (
-          <div key={order._id} className="order-card" style={{padding:'20px'}}>
-            <h3>Order ID: {order._id}</h3>
-            <p>Status: {order.status}</p>
-            <p>Total Price: ₹{order.totalPrice}</p>
-            <p>Total Items: {order.totalItems}</p>
-            <p>Order Date: {new Date(order.createdAt).toLocaleDateString()}</p>
-            <p>Customer: {order.userId.name}</p>
-            <div className="order-items">
-              <h4>Items:</h4>
-              <div>
-                {order.items.map((item, index) => (
-                  <div key={index} className="order-item">
-                    <img
-                      src={item.productId.images[0]}
-                      alt={item.productId.name}
-                      className="order-item-image"
-                      style={{height:'180px'}}
-                    />
-                    <div className="order-item-details">
-                      <p>Product: {item.productId.name}</p>
-                      <p>Brand: {item.productId.brand}</p>
-                      <p>Color: {item.color}</p>
-                      <p>Price: ₹{item.productId.price}</p>
-                      <p>Quantity: {item.quantity}</p>
+      {orders.length === 0 ? (
+        <p>No past orders available</p>
+      ) : (
+        <div>
+          {orders.map((order) => (
+            <div key={order._id} className="cart-item">
+              <div className="cart-item-details">
+                <div>
+                  <h3>Order ID: {order._id}</h3>
+                  <p>Status: {order.status}</p>
+                  <p>Total Price: ₹{order.totalPrice}</p>
+                  <p>Total Items: {order.totalItems}</p>
+                  <p>Order Date: {new Date(order.createdAt).toLocaleDateString()}</p>
+                </div>
+              </div>
+              <div className="rest-details">
+                <div className="order-items">
+                  <h4>Items:</h4>
+                  {order.items.map((item, index) => (
+                    <div key={index} className="">
+                      <div>
+                        <img
+                          src={item.productId.images[0]}
+                          alt={item.productId.name}
+                          className="order-item-image"
+                          style={{ verticalAlign: 'middle' }}
+                        />
+                      </div>
+                      <div className="order-item-details">
+                        <p>Product: {item.productId.name}</p>
+                        <p>Brand: {item.productId.brand}</p>
+                        <p>Color: {item.color}</p>
+                        <p>Price: ₹{item.productId.price}</p>
+                        <p>Quantity: {item.quantity}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+
+                {/* Cancel Order Section */}
+                {order.status === 'pending' ? (
+                  <button
+                    onClick={() => handleCancelOrder(order._id)}
+                    className="remove-button"
+                  >
+                    Cancel Order
+                  </button>
+                ) : (
+                  <p className="non-cancellable">Can't cancel, order already accepted</p>
+                )}
               </div>
             </div>
-            {/* Cancel Order Section */}
-            {order.status === 'pending' ? (
-              <button
-                onClick={() => handleCancelOrder(order._id)}
-                className="cancel-button"
-              >
-                Cancel Order
-              </button>
-            ) : (
-              <p className="non-cancellable">Can't cancel, order already accepted</p>
-            )}
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
