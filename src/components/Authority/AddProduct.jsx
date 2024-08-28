@@ -30,11 +30,11 @@ function AddProduct() {
     };
 
     // Handle adding more default images (limit to 2)
-    const handleAddImage = () => {
-        if (product.images.length < 2) {
-            setProduct({ ...product, images: [...product.images, ''] });
-        }
-    };
+   // Handle adding more default images (no limit)
+const handleAddImage = () => {
+    setProduct({ ...product, images: [...product.images, ''] });
+};
+
 
     // Handle color name change
    // Handle color name change
