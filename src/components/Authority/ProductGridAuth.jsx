@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './ProductGridAuth.css';
 import './ProductCardAuth.css';
 import axios from "axios";
@@ -124,7 +124,7 @@ const ProductGridAuth = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(products.map(product => product._id === editedProduct._id ? response.data : product));
-      setEditingProductId(null); 
+      setEditingProductId(null);
     } catch (error) {
       alert("Error saving product:", error);
     }
@@ -190,6 +190,14 @@ const ProductGridAuth = () => {
                 onChange={handleEditChange}
                 className="edit-input"
               />
+              <input
+                type="text"
+                name="category"
+                value={editedProduct.category || ''}
+                onChange={handleEditChange}
+                className="edit-input"
+              />
+
 
               {/* Default Image URLs */}
               <h4>Default Images</h4>
@@ -204,7 +212,7 @@ const ProductGridAuth = () => {
                   <button onClick={() => handleImageRemove(index)}>Remove</button>
                 </div>
               ))}
-              <button onClick={() => addImageField()}>Add Image</button>
+              <button onClick={() => addImageField()} style={{ width: '50%' }}>Add Image</button>
 
               {/* Colors and their images */}
               <h4>Colors and Images</h4>
@@ -233,7 +241,7 @@ const ProductGridAuth = () => {
                   <button onClick={() => addImageField(color)}>Add Image for {color}</button>
                 </div>
               ))}
-              <button onClick={addColorField}>Add Color</button>
+              <button onClick={addColorField} style={{ width: '50%' }}>Add Color</button>
 
               <button className="header-button save-button" onClick={saveProduct}>Save</button>
               <button className="header-button cancel-button" onClick={() => setEditingProductId(null)}>Cancel</button>

@@ -59,15 +59,21 @@ const Cart = () => {
     }
   };
 
-  const handleQuantityChange = (CartItemId, newQuantity) => {
-    if (newQuantity < 1) return;
-
+  const handleQuantityChange = (CartItemId, increment) => {
+    const cartItem = cart.find(item => item._id === CartItemId);
+    const itemSetLength = cartItem.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0);
+  
+    const newQuantity = (quantityChanges[CartItemId] ?? itemSetLength) + increment * itemSetLength;
+  
+    if (newQuantity < itemSetLength) return; // Prevent going below the total length of the itemSet
+  
     // Update the local state to track quantity changes
     setQuantityChanges(prev => ({
       ...prev,
       [CartItemId]: newQuantity
     }));
   };
+  
 
   const updateQuantity = async (CartItemId) => {
     const newQuantity = quantityChanges[CartItemId];
@@ -197,11 +203,12 @@ const Cart = () => {
 
                   {/* Quantity Control Buttons */}
                   <div className="quantity-control">
-                    <button onClick={() => handleQuantityChange(item._id, item.quantity - 1)}>-</button>
-                    <span>{quantityChanges[item._id] ?? fullQuantity}</span>
-                    <button onClick={() => handleQuantityChange(item._id, item.quantity + 1)} style={{marginLeft:'10px'}}>+</button>
-                    <button onClick={() => updateQuantity(item._id)}>Confirm</button>
-                  </div>
+  <button onClick={() => handleQuantityChange(item._id, -1)}>-</button>
+  <span>{quantityChanges[item._id] ?? fullQuantity}</span>
+  <button onClick={() => handleQuantityChange(item._id, 1)} style={{ marginLeft: '10px' }}>+</button>
+  <button onClick={() => updateQuantity(item._id)}>Confirm</button>
+</div>
+
 
                   <button className="remove-button" onClick={() => removeItem(item._id)}>
                     Remove
