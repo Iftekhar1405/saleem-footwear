@@ -25,13 +25,14 @@ const Cart = () => {
         };
         const response = await axios.get(`${URL}/cart`, { headers });
         const cartData = response.data.data.items || [];
-        
+        console.log(response)
+
         // Calculate total price based on itemSet lengths
         const calculatedTotalPrice = cartData.reduce((acc, item) => {
           const fullQuantity = item.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0);
           return acc + (fullQuantity * item.productId.price);
         }, 0);
-        
+
         setUserId(response.data.data.userId);
         setTotalItems(response.data.data.totalItems);
         setTotalPrice(calculatedTotalPrice);
@@ -45,6 +46,7 @@ const Cart = () => {
     fetchCart();
   }, []);
 
+  
   const removeItem = async (CartItemId) => {
     try {
       const headers = {
@@ -62,52 +64,79 @@ const Cart = () => {
   const handleQuantityChange = (CartItemId, increment) => {
     const cartItem = cart.find(item => item._id === CartItemId);
     const itemSetLength = cartItem.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0);
-  
+
     const newQuantity = (quantityChanges[CartItemId] ?? itemSetLength) + increment * itemSetLength;
-  
+
     if (newQuantity < itemSetLength) return; // Prevent going below the total length of the itemSet
-  
+
     // Update the local state to track quantity changes
     setQuantityChanges(prev => ({
       ...prev,
       [CartItemId]: newQuantity
     }));
   };
+  const updateCartSummary = (updatedCart) => {
+    const calculatedTotalPrice = updatedCart.reduce((acc, item) => {
+      const fullQuantity = item.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0);
+      return acc + (fullQuantity * item.productId.price);
+    }, 0);
   
-
+    const calculatedTotalItems = updatedCart.reduce((acc, item) => {
+      const fullQuantity = item.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0);
+      return acc + fullQuantity;
+    }, 0);
+  
+    // Update total price and total items
+    setTotalPrice(calculatedTotalPrice);
+    setTotalItems(calculatedTotalItems);
+  };
   const updateQuantity = async (CartItemId) => {
     const newQuantity = quantityChanges[CartItemId];
-
-    if (newQuantity < 1) return;
-
+  
+    if (!newQuantity) return;
+  
     try {
       const headers = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       };
+  
       await axios.patch(
         `${URL}/cart/${CartItemId}`,
-        { quantity: newQuantity },
+        { quantity: newQuantity }, 
         { headers }
       );
-
-      // Update the cart state with the new quantity
-      setCart(cart.map(item =>
+  
+      const updatedCart = cart.map(item =>
         item._id === CartItemId ? { ...item, quantity: newQuantity } : item
-      ));
-
-      // Clear the tracked change after successful update
+      );
+  
+      // Setting cart with a new array reference
+      setCart([...updatedCart]);
+  
+      // Recalculate total price and items
+      updateCartSummary(updatedCart);
+      
+  
+      // Clear tracked change for this CartItemId
       setQuantityChanges(prev => {
         const updatedChanges = { ...prev };
         delete updatedChanges[CartItemId];
         return updatedChanges;
       });
-
+  
     } catch (error) {
       console.error('Error updating quantity:', error);
       alert('Failed to update quantity. Please try again.');
     }
   };
+  useEffect(() => {
+    console.log('Cart updated:', cart);
+  }, [cart]);
+    
+  
+  
+  
 
   const handlePdfDownload = () => {
     if (cart.length > 0) {
@@ -165,6 +194,17 @@ const Cart = () => {
       }
     }
   };
+  let quantity = function(item,fullQuantity){
+    let quantity
+    if(item.quantity === 1) quantity =  fullQuantity
+    else{
+      quantity =  item.quantity - 1  
+    }
+    
+    
+    return quantity
+  } 
+  
 
   return (
     <div className="cart">
@@ -184,30 +224,30 @@ const Cart = () => {
               <div key={index} className="cart-item">
                 <div className="cart-item-details">
                   <div>
-                    <img src={item.productId.images[0]} alt={item.name} style={{verticalAlign:'middle'}}/>
+                    <img src={item.productId.images[0]} alt={item.name} style={{ verticalAlign: 'middle' }} />
                   </div>
                   <div>
                     <h3>{item.productId.name}</h3>
                     <p>Brand: {item.productId.brand}</p>
-                    <p style={{color:"rgb(221, 32, 44)"}}>Price per Unit: ₹{item.productId.price}</p>
+                    <p style={{ color: "rgb(221, 32, 44)" }}>Price per Unit: ₹{item.productId.price}</p>
                   </div>
                 </div>
                 <div className='rest-details'>
                   <div>
-                    <span>Item set: {item.itemSet && item.itemSet.length > 0 
-                      ? item.itemSet.map(setItem => `${setItem.size} (Pcs: ${setItem.lengths})`).join(', ') 
+                    <span>Item set: {item.itemSet && item.itemSet.length > 0
+                      ? item.itemSet.map(setItem => `${setItem.size} (Pcs: ${setItem.lengths})`).join(', ')
                       : "N/A"}</span><br />
-                    <span>Quantity: {fullQuantity}</span><br />
-                    <span style={{color:"rgb(221, 32, 44)"}}>Total Price: ₹{itemTotalPrice}</span>
+                    <span>Quantity: {quantity(item,fullQuantity)}</span><br />
+                    <span style={{ color: "rgb(221, 32, 44)" }}>Total Price: ₹{itemTotalPrice}</span>
                   </div>
 
                   {/* Quantity Control Buttons */}
                   <div className="quantity-control">
-  <button onClick={() => handleQuantityChange(item._id, -1)}>-</button>
-  <span>{quantityChanges[item._id] ?? fullQuantity}</span>
-  <button onClick={() => handleQuantityChange(item._id, 1)} style={{ marginLeft: '10px' }}>+</button>
-  <button onClick={() => updateQuantity(item._id)}>Confirm</button>
-</div>
+                    <button onClick={() => handleQuantityChange(item._id, -1)}>-</button>
+                    <span>{quantityChanges[item._id] ?? fullQuantity}</span>
+                    <button onClick={() => handleQuantityChange(item._id, 1)} style={{ marginLeft: '10px' }}>+</button>
+                    <button onClick={() => updateQuantity(item._id)}>Confirm</button>
+                  </div>
 
 
                   <button className="remove-button" onClick={() => removeItem(item._id)}>
