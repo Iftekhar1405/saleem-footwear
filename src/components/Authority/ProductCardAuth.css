@@ -85,11 +85,12 @@
     font-weight: bold;
   }
   
-  .product-discount-edit {
+  .product-discount-edit.product-discount-edit {
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 5px;
-    width: 100%;
+    background-color: #383838;
+  
   }
   
   .product-sizes {
