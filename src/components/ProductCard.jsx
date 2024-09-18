@@ -121,7 +121,7 @@ const ProductCard = () => {
                 key={color} 
                 className={`color-button ${selectedColor === color ? 'selected' : ''}`} 
                 onClick={() => handleColorClick(color)}
-                style={{ color: color, borderColor:color,backgroundColor:'wheat' }}
+                style={{ borderColor:color,backgroundColor:'white',color:'black' }}
               >
                 {color}
               </button>
