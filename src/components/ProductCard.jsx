@@ -114,11 +114,21 @@ const ProductCard = () => {
       </div>
       <div className="product-details" style={{color:'#36454f',fontWeight:'bold',backgroundColor:'white'}} >
         <h2 className="product-name">{product.article}</h2>
-        <p className="product-brand">{product.brand}</p>
-        <p className="product-description">{product.description}</p>
+        <div className="product-colors" style={{margin:'20px auto',width:'100vw'}}>
+          Colors: {product.colors && Object.keys(product.colors).length > 0 
+            ? Object.keys(product.colors).map(color => (
+              <button 
+                key={color} 
+                className={`color-button ${selectedColor === color ? 'selected' : ''}`} 
+                onClick={() => handleColorClick(color)}
+                style={{ borderColor:color,backgroundColor:'white',color:'black' }}
+              >
+                {color}
+              </button>
+            )) 
+            : "N/A"}
+        </div>
         <p className="product-mrp" style={{textDecoration:'none'}}>MRP: ₹{product.price}</p>
-        <p className="product-material">Material: {product.material}</p>
-        <p className="product-gender">Gender: {product.gender}</p>
         <div className="product-sizes">
           <label htmlFor="size-select">Available Sizes:</label>
           <select id="size-select" value={selectedSize} onChange={handleSizeChange}>
@@ -133,20 +143,13 @@ const ProductCard = () => {
             )}
           </select>
         </div>
-        <div className="product-colors" style={{margin:'20px auto',width:'100vw'}}>
-          Colors: {product.colors && Object.keys(product.colors).length > 0 
-            ? Object.keys(product.colors).map(color => (
-              <button 
-                key={color} 
-                className={`color-button ${selectedColor === color ? 'selected' : ''}`} 
-                onClick={() => handleColorClick(color)}
-                style={{ color: color, borderColor:color,backgroundColor:'wheat' }}
-              >
-                {color}
-              </button>
-            )) 
-            : "N/A"}
-        </div>
+
+        <p className="product-brand">{product.brand}</p>
+        <p className="product-description">{product.description}</p>
+        <p className="product-material">Material: {product.material}</p>
+        <p className="product-gender">Gender: {product.gender}</p>
+        
+        
         <div className="quantity-selector" style={{margin:'20px auto',width:'100vw'}}>
           <button onClick={() => handleQuantityChange('decrement')} >-</button>
           <input type="number" value={quantity} readOnly  style={{margin:'5px', height:'30px'}}/>
