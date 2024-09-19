@@ -26,7 +26,7 @@ const CategoryGrid = () => {
 
   const handleCategoryClick = (category) => {
     // Navigate to the category grid for the selected category
-    navigate(`/category-grid/${category}`);
+    navigate(`/category-grid/category=${category}`);
   };
 
   return (

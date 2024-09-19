@@ -4,7 +4,7 @@ import './AddProduct.css';
 
 function AddProduct() {
     const [product, setProduct] = useState({
-        images: ['', ''],
+        images: [''],
         brand: '',
         article: '',
         material: '', // Added material field
