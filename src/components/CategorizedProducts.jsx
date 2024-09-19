@@ -13,7 +13,7 @@ const CategorizedProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`https://saleem-footwear-api.vercel.app/api/v1/search/category/specific/?category=${category}`)
+        const response = await axios.get(`https://saleem-footwear-api.vercel.app/api/v1/search/category/specific/?${category}`)
           
          
         console.log(response)
