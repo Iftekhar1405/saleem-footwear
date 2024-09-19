@@ -142,6 +142,67 @@ const ProductGridAuth = () => {
     }
   };
 
+  const handleColorImageChange = (e, color, index) => {
+    const updatedColorImages = [...(editedProduct.colors[color] || [])];
+    updatedColorImages[index] = e.target.value;
+    setEditedProduct(prevState => ({
+      ...prevState,
+      colors: {
+        ...prevState.colors,
+        [color]: updatedColorImages
+      }
+    }));
+  };
+  const handleColorNameChange = (e, oldColor) => {
+    const newColor = e.target.value;
+
+    if (!newColor.trim()) {
+      // If the new color name is empty, do nothing or alert the user
+      return;
+    }
+   
+
+    setEditedProduct(prevState => {
+      const newColors = { ...prevState.colors };
+
+      // Rename the key for the color in the object
+      newColors[newColor] = newColors[oldColor];
+      delete newColors[oldColor];
+
+      return {
+        ...prevState,
+        colors: newColors
+      };
+    });
+  };
+  const handleColorImageRemove = (color, index) => {
+    setEditedProduct(prevState => {
+      const updatedColorImages = [...(prevState.colors[color] || [])];
+      updatedColorImages.splice(index, 1); // Remove the image at the specified index
+
+      return {
+        ...prevState,
+        colors: {
+          ...prevState.colors,
+          [color]: updatedColorImages
+        }
+      };
+    });
+  };
+  const handleRemoveColor = (color) => {
+    setEditedProduct(prevState => {
+      const updatedColors = { ...prevState.colors };
+
+      // Delete the color from the colors object
+      delete updatedColors[color];
+
+      return {
+        ...prevState,
+        colors: updatedColors
+      };
+    });
+  };
+
   return (
     <div className="product-grid">
       {products.map((product) => (
@@ -216,7 +277,7 @@ const ProductGridAuth = () => {
 
               {/* Colors and their images */}
               <h4>Colors and Images</h4>
-              {editedProduct.colors && Object.keys(editedProduct.colors).map((color, colorIndex) => (
+              {Object.keys(editedProduct.colors).map((color, colorIndex) => (
                 <div key={`${product._id}-color-${colorIndex}`}>
                   <h5>
                     <input
@@ -225,7 +286,7 @@ const ProductGridAuth = () => {
                       onChange={(e) => handleColorNameChange(e, color)}
                       className="edit-input"
                     />
-                    <button onClick={() => handleColorNameChange({ target: { value: '' } }, color)}>Remove Color</button>
+                    <button onClick={() => handleRemoveColor(color)}>Remove Color</button> {/* Call the function here */}
                   </h5>
                   {editedProduct.colors[color].map((imgUrl, index) => (
                     <div key={`${product._id}-${color}-${index}`}>
@@ -241,6 +302,7 @@ const ProductGridAuth = () => {
                   <button onClick={() => addImageField(color)}>Add Image for {color}</button>
                 </div>
               ))}
+
               <button onClick={addColorField} style={{ width: '50%' }}>Add Color</button>
 
               <button className="header-button save-button" onClick={saveProduct}>Save</button>
