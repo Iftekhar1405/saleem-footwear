@@ -15,6 +15,7 @@ const CategoryGrid = () => {
         const response = await axios.get(URL, {
           maxBodyLength: Infinity
         });
+        console.log(response)
         setCategories(response.data.data); // Assuming response.data contains the categories
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -34,13 +35,14 @@ const CategoryGrid = () => {
       <h3> Explore Your Category --</h3>
       <div className="category-list">
         {categories.map((category, index) => (
-          <span 
+          <div 
             key={index} 
             className="category-item" 
-            onClick={() => handleCategoryClick(category)}
+            onClick={() => handleCategoryClick(category.category)}
           >
-            {category}
-          </span>
+            <img src={category.image} alt="" style={{height:'130px'}}/>
+            {category.category}
+          </div>
         ))}
       </div>
     </>
