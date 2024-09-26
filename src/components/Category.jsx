@@ -15,7 +15,6 @@ const CategoryGrid = () => {
         const response = await axios.get(URL, {
           maxBodyLength: Infinity
         });
-        console.log(response)
         setCategories(response.data.data); // Assuming response.data contains the categories
       } catch (error) {
         console.error('Error fetching categories:', error);
