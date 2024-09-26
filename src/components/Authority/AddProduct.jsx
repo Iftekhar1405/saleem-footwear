@@ -131,11 +131,126 @@ const handleColorNameChange = (colorName, newColorName) => {
             console.log(product);
         }
     };
+
+    
+
+    const [colorFields, setColorFields] = useState([{ colorName: '', colorImages: [] }]);
+    const [primaryImages, setPrimaryImages] = useState([]);
+  
+    const handlePrimaryImagesChange = (e) => {
+      setPrimaryImages(e.target.files);
+    };
+  
+    const handleAddColorField = () => {
+      setColorFields([...colorFields, { colorName: '', colorImages: [] }]);
+    };
+  
+    const handlePhotoColorNameChange = (index, e) => {
+      const updatedColorFields = [...colorFields];
+      updatedColorFields[index].colorName = e.target.value;
+      setColorFields(updatedColorFields);
+    };
+  
+    const handleColorImagesChange = (index, e) => {
+      const updatedColorFields = [...colorFields];
+      updatedColorFields[index].colorImages = e.target.files;
+      setColorFields(updatedColorFields);
+    };
+  
+    const handlePhotoSubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+      
+        // Append primary images
+        for (let i = 0; i < primaryImages.length; i++) {
+          formData.append('primaryImages[]', primaryImages[i]);
+        }
+      
+        // Append color-specific images and color names
+        colorFields.forEach((field, index) => {
+          formData.append(`colorName[${index}]`, field.colorName);
+          for (let i = 0; i < field.colorImages.length; i++) {
+            formData.append(`colorImg[${index}][]`, field.colorImages[i]);
+          }
+        });
+      
+        try {
+          const response = await axios.post('https://saleem-footwear-api.vercel.app/api/v1/upload-img', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+      
+          // Get the uploaded image data from the response
+          const { primaryImage, colorImage } = response.data.images;
+      
+          // Prepare the updated product data with placeholders for images and colors
+          const updatedColors = {};
+          colorImage.forEach((color) => {
+            updatedColors[color.colorName] = color.images; // Set color names and their respective images
+          });
+      
+          // Update the product state with the uploaded image placeholders
+          setProduct((prevProduct) => ({
+            ...prevProduct,
+            images: primaryImage.length > 0 ? primaryImage : prevProduct.images, // If primary images exist, update them
+            colors: updatedColors, // Set colors with the uploaded color-specific images
+          }));
+      
+          console.log('Images uploaded successfully:', response.data);
+        } catch (error) {
+          console.error('Error uploading images:', error);
+        }
+      };
+      
     
     return (
         <>
             <div className='add-product'>
                 <h2>Add Product</h2>
+                <div className='form-group'>
+      <h3>Primary and Color Images</h3>
+      <form onSubmit={handlePhotoSubmit} encType="multipart/form-data">
+        <label htmlFor="primaryImages">Primary Images:</label>
+        <input type="file" name="primaryImages" id="primaryImages" multiple onChange={handlePrimaryImagesChange} /> <br /><br />
+
+        <div id="color-image-section">
+          <h4>Upload Color Specific Images:</h4>
+          
+        </div>
+
+        {colorFields.map((field, index) => (
+          <div key={index} className="color-upload-section">
+            <label htmlFor={`colorName${index}`}>Color Name:</label>
+            <br />
+            <input
+              type="text"
+              name={`colorName${index}`}
+              id={`colorName${index}`}
+              value={field.colorName}
+              onChange={(e) => handlePhotoColorNameChange(index, e)}
+              placeholder="Enter color name"
+            />
+            <br />
+            <br />
+            <label htmlFor={`colorImg${index}`}>Upload Images for this Color:</label>
+            <br />
+            <input
+              type="file"
+              name={`colorImg${index}`}
+              id={`colorImg${index}`}
+              multiple
+              onChange={(e) => handleColorImagesChange(index, e)}
+            />
+            <br /><br />
+            
+          </div>
+          
+        ))}
+    <button type="button" onClick={handleAddColorField}>Add Color</button>
+        <button type="submit">Upload</button>
+      </form>
+    </div>
                 <form onSubmit={handleSubmit}>
                     <div className='form-group'>
                         <label>Default Images:</label>
