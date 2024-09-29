@@ -1,31 +1,83 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useRef,useCallback } from 'react';
 import './ProductGridAuth.css';
 import './ProductCardAuth.css';
 import axios from "axios";
 
-const URL = "https://saleem-footwear-api.vercel.app/api/v1/products";
+const URL = "https://saleem-footwear-api.vercel.app/api/v1";
+const token = localStorage.getItem('token');
 
-const ProductGridAuth = () => {
-  const [products, setProducts] = useState([]);
-  const [editingProductId, setEditingProductId] = useState(null);
-  const [editedProduct, setEditedProduct] = useState({});
+const useFetchData = (url, limit = 20) => {
+  const [data, setData] = useState([]); // Store fetched data
+  const [loading, setLoading] = useState(false); // Track loading state
+  const [error, setError] = useState(false); // Track errors
+  const [hasMore, setHasMore] = useState(true); // Track if there's more data to load
+  const pageRef = useRef(1); // Use useRef to track the current page
 
+  const fetchData = async (page) => {
+    if (loading || !hasMore) return; // Prevent fetching when loading or no more data
+
+    setLoading(true);
+    try {
+      const response = await axios.get(url, {
+        params: { page, limit }, // Send current page and limit in the request
+      });
+
+      if (response.data.products.length === 0) {
+        setHasMore(false); // No more data to load
+      } else {
+        setData((prevData) => [...prevData, ...response.data.products]); // Append new data to the existing data
+      }
+    } catch (err) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data when the component mounts or when the page changes
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(URL, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setProducts(response.data.products);
-      } catch (error) {
-        alert("Error fetching products:", error);
+    fetchData(pageRef.current); // Fetch based on the ref value
+  }, [url]); // Only refetch if the URL changes
+
+  const handleScroll = useCallback(() => {
+    const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const currentScrollPosition = window.scrollY;
+  
+    // Check if user has scrolled near the bottom and if more data is available
+    if (currentScrollPosition >= scrollableHeight - 100 && !loading && hasMore) {
+      pageRef.current += 1; // Increment the page using the ref
+      fetchData(pageRef.current); // Fetch the next page
+    }
+  }, [loading, hasMore]);
+  
+  useEffect(() => {
+    const onScroll = () => {
+      if (hasMore) {
+        handleScroll(); // Only call the scroll handler if more data is available
+  
+
       }
     };
+    if(hasMore){     window.addEventListener('scroll', onScroll);}
+    else {window.removeEventListener('scroll', onScroll);} // Clean up event listener
+    
+  }, [handleScroll, hasMore]); // Re-run only if handleScroll or hasMore changes
+  
+  
+  
 
-    fetchProducts();
-  }, []);
+  return { data, loading, error, hasMore };
+};
 
+
+const ProductGridAuth = () => {
+  const { data: products, loading, error } = useFetchData(`${URL}/products`);
+
+
+    const [editingProductId, setEditingProductId] = useState(null);
+  const [editedProduct, setEditedProduct] = useState({});
+
+ 
   const startEditing = (product) => {
     setEditingProductId(product._id);
     setEditedProduct({ ...product });
@@ -202,7 +254,13 @@ const ProductGridAuth = () => {
       };
     });
   };
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
 
+  if (error) {
+    return <h2>Something went wrong</h2>;
+  }
   return (
     <div className="product-grid">
       {products.map((product) => (
