@@ -3,7 +3,8 @@ import './ProductGridAuth.css';
 import './ProductCardAuth.css';
 import axios from "axios";
 
-const URL = "https://saleem-footwear-api.vercel.app/api/v1";
+// const URL = "https://saleem-footwear-api.vercel.app/api/v1";
+const URL = "http://localhost:7000/api/v1"
 const token = localStorage.getItem('token');
 
 const useFetchData = (url, limit = 20) => {
@@ -76,6 +77,7 @@ const ProductGridAuth = () => {
 
     const [editingProductId, setEditingProductId] = useState(null);
   const [editedProduct, setEditedProduct] = useState({});
+  
 
  
   const startEditing = (product) => {
@@ -172,12 +174,17 @@ const ProductGridAuth = () => {
   const saveProduct = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.patch(`${URL}/${editedProduct._id}`, editedProduct, {
+      console.log(editedProduct._id);
+      
+      const response = await axios.patch(`${URL}/products/${editedProduct._id}`, editedProduct, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setProducts(products.map(product => product._id === editedProduct._id ? response.data : product));
+      // setData(products.map(product => product._id === editedProduct._id ? response.data : product));
       setEditingProductId(null);
+      console.log(response);
+      
     } catch (error) {
+      console.log(error)
       alert("Error saving product:", error);
     }
   };
@@ -188,7 +195,7 @@ const ProductGridAuth = () => {
       await axios.delete(`${URL}/${productId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setProducts(products.filter((product) => product._id !== productId));
+      // setData(products.filter((product) => product._id !== productId));
     } catch (error) {
       alert("Error deleting product:", error);
     }

@@ -183,6 +183,8 @@ const handleColorNameChange = (colorName, newColorName) => {
       
           // Get the uploaded image data from the response
           const { primaryImage, colorImage } = response.data.images;
+          console.log(response);
+          
       
           // Prepare the updated product data with placeholders for images and colors
           const updatedColors = {};
