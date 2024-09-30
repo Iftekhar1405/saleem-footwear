@@ -3,8 +3,8 @@ import './ProductGridAuth.css';
 import './ProductCardAuth.css';
 import axios from "axios";
 
-// const URL = "https://saleem-footwear-api.vercel.app/api/v1";
-const URL = "http://localhost:7000/api/v1"
+const URL = "https://saleem-footwear-api.vercel.app/api/v1";
+// const URL = "http://localhost:7000/api/v1"
 const token = localStorage.getItem('token');
 
 const useFetchData = (url, limit = 20) => {
