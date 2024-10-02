@@ -174,7 +174,7 @@ const ProductGridAuth = () => {
   const saveProduct = async () => {
     try {
       const token = localStorage.getItem('token');
-      console.log(editedProduct._id);
+      // console.log(editedProduct._id);
       
       const response = await axios.patch(`${URL}/products/${editedProduct._id}`, editedProduct, {
         headers: { Authorization: `Bearer ${token}` }
@@ -192,7 +192,7 @@ const ProductGridAuth = () => {
   const deleteProduct = async (productId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`${URL}/${productId}`, {
+      await axios.delete(`${URL}/products/${productId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // setData(products.filter((product) => product._id !== productId));
