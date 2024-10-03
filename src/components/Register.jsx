@@ -97,7 +97,7 @@ function Register() {
         </RoleBasedComponent>
         <button type="submit" className="login-btn">Register</button>
         <button className="product-discount-edit" onClick={() => navigate('/login')}>Log-in</button>
-
+// added this
       </form>
     </div>
   );
