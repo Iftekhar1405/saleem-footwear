@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import './ProductGrid.css';
 import './ProductCard.css';
@@ -38,6 +38,7 @@ const ProductCard = () => {
   const [selectedSize, setSelectedSize] = useState('');
   const [sizes, setSizes] = useState([]);
   const [quantity, setQuantity] = useState(1);
+  let navigate = useNavigate()
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -88,13 +89,19 @@ const ProductCard = () => {
     });
   };
 
+  let token = localStorage.getItem('token')
   const handleAddToCart = () => {
+    if(token){
     if (selectedColor && selectedSize && quantity > 0) {
       addToCart(product, selectedColor, selectedSize, quantity);
       alert('Item Added to Cart Successfully');
       window.dispatchEvent(new Event('cart-updated'));
         } else {
       alert('Please select a color, size, and a valid quantity.');
+    }}
+    else{
+      let nav = window.confirm('You are not logged in, to add a product to cart, you must be logged in, click on ok to move to the login page ' )
+      if(nav) navigate('/login')
     }
   };
 

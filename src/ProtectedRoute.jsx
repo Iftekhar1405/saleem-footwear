@@ -5,7 +5,7 @@ const ProtectedRoute = ({ element }) => {
   const isAuthenticated = localStorage.getItem('token'); // Or use context/state to manage authentication
 
   if (!isAuthenticated) {
-    return <Navigate to="/prelogin" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return element;

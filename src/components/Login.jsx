@@ -59,6 +59,8 @@ function Login() {
           <input type="password" id="password" value={password} onChange={handlePasswordChange} required />
         </div>
         <button type="submit" className="login-btn">Log In</button>
+        <button className="product-discount-edit" onClick={() => navigate('/register')}>register</button>
+
       </form>
     </div>
   );

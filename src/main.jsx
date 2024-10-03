@@ -28,16 +28,16 @@ import SearchBar from './components/SearchBar.jsx';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
-      <Route path="product/:id" element={<ProtectedRoute element={<ProductCard />} />} />
+      <Route path="product/:id" element={<ProductCard />} />
       <Route path="profile" element={<ProtectedRoute element={<Profile />} />} />
-      <Route path="" element={<ProtectedRoute element={<App />} />} />
+      <Route path="" element={<App />}  />
       <Route path="cart" element={<ProtectedRoute element={<Cart />} />} />
-      <Route path="catelog" element={<ProtectedRoute element={<PDFViewer />} />} />
+      <Route path="catelog"  element={<PDFViewer />}  />
       <Route path="orders" element={<ProtectedRoute element={<Orders />} />} />
       <Route path="profile" element={<ProtectedRoute element={<Profile />} />} />
       <Route path="order-summary" element={<ProtectedRoute element={<OrderSummary />} />} />
-      <Route path="search" element={<ProtectedRoute element={<SearchBar />} />} />
-      <Route path="category-grid/:category" element={<ProtectedRoute element={<CategorizedProducts />} />} />
+      <Route path="search" element={<SearchBar />}  />
+      <Route path="category-grid/:category" element={<CategorizedProducts />} />
       <Route path="login" element={<Login />} />
       <Route path='contact-us' element = {<ContactUs/>}/>
       <Route path="register" element={<Register />} />
