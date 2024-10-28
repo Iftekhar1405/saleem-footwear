@@ -18,6 +18,7 @@ function PendingOrders() {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log(response)
         
         if (response.status >= 200 && response.status < 300) {
           const filteredOrders = response.data.data.filter(order => order.status === 'pending');
@@ -87,10 +88,10 @@ function PendingOrders() {
             </div>
 
             {order.items.map(item => (
-              <div key={item.productId._id} className="order-item">
+              <div key={item.productId?item.productId._id:""} className="order-item">
                 <div className="order-item-details" style={{color:'black'}}>
-                  <h3>{item.productId.article}</h3>
-                  <p>Brand: {item.productId.brand}</p>
+                  {item.productId?(<><h3>{item.productId.article}</h3>
+                  <p>Brand: {item.productId.brand}</p></>):"N/A"}
                   <p>Price: ₹{item.price}</p>
                   <p>Color: {item.color}</p>
                   <span>Item set: {item.itemSet && item.itemSet.length > 0 

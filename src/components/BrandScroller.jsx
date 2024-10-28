@@ -9,9 +9,9 @@ import shoe from "./images/shoe.jpg"
 
 const brands = [
   { id: 1, name: "Paragon", image: paragon },
-  { id: 2, name: "Shoe Factory", image: shoefact },
-  { id: 2, name: "Columbus", image: columbus },
-  { id: 2, name: "--Others--", image: shoe },
+  { id: 3, name: "Shoe Factory", image: shoefact },
+  { id: 4, name: "Columbus", image: columbus },
+  { id: 5, name: "--Others--", image: shoe },
   // Add more brand objects as needed
 ];
 const URL = 'https://saleem-footwear-api.vercel.app/api/v1/search/brand'; // Adjust the URL if needed
