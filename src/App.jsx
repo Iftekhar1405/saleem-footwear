@@ -5,9 +5,10 @@ import Nav from './components/Nav';
 import Scroll from './components/Scroll';
 import ProductGrid from './components/ProductGrid';
 import CategoryGrid from './components/Category';
-import SearchBar from './components/SearchBar';
 import BrandScroller from './components/BrandScroller';
 import './components/Style.css'
+import { ChakraProvider } from '@chakra-ui/react';
+import React from 'react';
 
 
 
@@ -20,7 +21,7 @@ function App() {
 
 
   return (
-    <>
+    <ChakraProvider>
       <Header />
       <Nav />
       <Scroll />
@@ -40,7 +41,7 @@ function App() {
       <CategoryGrid />
       <ProductGrid />
      
-    </>
+    </ChakraProvider>
 
   )
 }
