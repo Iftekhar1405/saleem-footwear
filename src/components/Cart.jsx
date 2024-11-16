@@ -4,6 +4,7 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Box, Button, Text, Image, HStack, VStack, Divider, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, useToast } from '@chakra-ui/react';
 
 const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 const token = localStorage.getItem('token');
@@ -14,7 +15,12 @@ const Cart = () => {
   const [userId, setUserId] = useState(null);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [quantityChanges, setQuantityChanges] = useState({}); // Track quantity changes
+  const [quantityChanges, setQuantityChanges] = useState({});
+  
+  // Chakra Modal and Toast State
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [orderConfirm, setOrderConfirm] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -25,9 +31,7 @@ const Cart = () => {
         };
         const response = await axios.get(`${URL}/cart`, { headers });
         const cartData = response.data.data.items || [];
-        console.log(response)
 
-        // Calculate total price based on itemSet lengths
         const calculatedTotalPrice = cartData.reduce((acc, item) => {
           const fullQuantity = item.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0);
           return acc + (fullQuantity * item.productId.price);
@@ -39,14 +43,13 @@ const Cart = () => {
         setCart(cartData);
       } catch (error) {
         console.error('Error fetching cart data:', error);
-        setCart([]); // Ensure cart is an array on error
+        setCart([]);
       }
     };
 
     fetchCart();
   }, []);
 
-  
   const removeItem = async (CartItemId) => {
     try {
       const headers = {
@@ -55,7 +58,6 @@ const Cart = () => {
       await axios.delete(`${URL}/cart/${CartItemId}`, { headers });
       setCart(cart.filter(item => item._id !== CartItemId));
       window.dispatchEvent(new Event('cart-updated'));
-
     } catch (error) {
       console.error('Error removing item from cart:', error);
     }
@@ -67,76 +69,64 @@ const Cart = () => {
 
     const newQuantity = (quantityChanges[CartItemId] ?? itemSetLength) + increment * itemSetLength;
 
-    if (newQuantity < itemSetLength) return; // Prevent going below the total length of the itemSet
+    if (newQuantity < itemSetLength) return;
 
-    // Update the local state to track quantity changes
     setQuantityChanges(prev => ({
       ...prev,
       [CartItemId]: newQuantity
     }));
   };
+
   const updateCartSummary = (updatedCart) => {
     const calculatedTotalPrice = updatedCart.reduce((acc, item) => {
       const fullQuantity = item.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0);
       return acc + (fullQuantity * item.productId.price);
     }, 0);
-  
+
     const calculatedTotalItems = updatedCart.reduce((acc, item) => {
       const fullQuantity = item.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0);
       return acc + fullQuantity;
     }, 0);
-  
-    // Update total price and total items
+
     setTotalPrice(calculatedTotalPrice);
     setTotalItems(calculatedTotalItems);
   };
+
   const updateQuantity = async (CartItemId) => {
     const newQuantity = quantityChanges[CartItemId];
-  
+
     if (!newQuantity) return;
-  
+
     try {
       const headers = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       };
-  
+
       await axios.patch(
         `${URL}/cart/${CartItemId}`,
         { quantity: newQuantity }, 
         { headers }
       );
-  
+
       const updatedCart = cart.map(item =>
         item._id === CartItemId ? { ...item, quantity: newQuantity } : item
       );
-  
-      // Setting cart with a new array reference
+
       setCart([...updatedCart]);
-  
-      // Recalculate total price and items
       updateCartSummary(updatedCart);
-      
-  
-      // Clear tracked change for this CartItemId
+
       setQuantityChanges(prev => {
         const updatedChanges = { ...prev };
         delete updatedChanges[CartItemId];
         return updatedChanges;
       });
-  
+
     } catch (error) {
       console.error('Error updating quantity:', error);
       alert('Failed to update quantity. Please try again.');
     }
   };
-  useEffect(() => {
-    console.log('Cart updated:', cart);
-  }, [cart]);
-    
-  
-  
-  
 
   const handlePdfDownload = () => {
     if (cart.length > 0) {
@@ -158,108 +148,129 @@ const Cart = () => {
     }
   };
 
-  const handleOrderNow = async () => {
-    let confirm = window.confirm(`Are you sure to place this order worth of ₹${totalPrice}`);
-    if (confirm) {
+  const handleOrderNow = () => {
+    onOpen();  // Open the Chakra confirmation modal
+  };
+
+  const confirmOrder = async () => {
+    onClose(); // Close the modal after confirmation
+
+    try {
       if (cart.length > 0) {
-        try {
-          const headers = {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          };
+        const headers = {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        };
 
-          const orderData = {
-            userId: userId,
-            items: cart.map(item => ({
-              productId: item.productId._id,
-              quantity: item.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0),
-              price: item.productId.price,
-              itemSet: item.itemSet, // Including itemSet details
-              color: item.color, // Including color if needed
-            })),
-            totalPrice: totalPrice,
-            totalItems: totalItems,
-          };
+        const orderData = {
+          userId: userId,
+          items: cart.map(item => ({
+            productId: item.productId._id,
+            quantity: item.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0),
+            price: item.productId.price,
+            itemSet: item.itemSet,
+            color: item.color,
+          })),
+          totalPrice: totalPrice,
+          totalItems: totalItems,
+        };
 
-          const response = await axios.post(`${URL}/order`, orderData, { headers });
-          alert('Order placed successfully!');
-          setCart([]); // Clear the cart after successful order
-          navigate('/order-summary', { state: { order: response.data.data } }); // Navigate to Order Summary
-        } catch (error) {
-          console.error('Error placing order:', error);
-          alert('Failed to place order. Please try again.');
-        }
+        const response = await axios.post(`${URL}/order`, orderData, { headers });
+
+        // Show success toast
+        toast({
+          title: "Order placed.",
+          description: `Your order of ₹${totalPrice} has been placed successfully!`,
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+
+        // Clear cart after successful order
+        setCart([]);
+        navigate('/order-summary', { state: { order: response.data.data } });
       } else {
-        alert('Your cart is empty.');
+        toast({
+          title: "Cart is empty.",
+          description: "Please add items to your cart before placing an order.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       }
+    } catch (error) {
+      console.error('Error placing order:', error);
+
+      // Show error toast
+      toast({
+        title: "Order failed.",
+        description: "Failed to place the order. Please try again.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
-  let quantity = function(item,fullQuantity){
-    let quantity
-    if(item.quantity === 1) quantity =  fullQuantity
-    else{
-      quantity =  item.quantity - 1  
-    }
-    
-    
-    return quantity
-  } 
-  
+
+  const quantity = (item, fullQuantity) => {
+    return item.quantity === 1 ? fullQuantity : item.quantity - 1;
+  };
 
   return (
-    <div className="cart">
-      <h2>Cart</h2>
-      <h2>Total Cost: ₹{totalPrice}</h2>
-      <button onClick={handlePdfDownload}>Download your Cart</button>
-      <button onClick={handleOrderNow} style={{ width: '100%' }}>Order Now</button>
-      {Array.isArray(cart) && cart.length === 0 ? (
-        <p>Your cart is empty</p>
+    <Box className="cart" p={4}>
+      <Text fontSize="2xl" fontWeight="bold" color="red.500">Cart</Text>
+      <Text fontSize="xl" color="black">Total Cost: ₹{totalPrice}</Text>
+      
+      <HStack spacing={4} mt={4}>
+        <Button colorScheme="red" width="100%" onClick={handleOrderNow}>Order Now</Button>
+      </HStack>
+
+      {cart.length === 0 ? (
+        <Text>Your cart is empty</Text>
       ) : (
-        <div>
+        <Box mt={4}>
           {cart.map((item, index) => {
             const fullQuantity = item.itemSet.reduce((sum, setItem) => sum + setItem.lengths, 0);
             const itemTotalPrice = fullQuantity * item.productId.price;
 
             return (
-              <div key={index} className="cart-item">
-                <div className="cart-item-details">
-                  <div>
-                    <img src={item.productId.images[0]} alt={item.name} style={{ verticalAlign: 'middle' }} />
-                  </div>
-                  <div>
-                    <h3>{item.productId.name}</h3>
-                    <p>Brand: {item.productId.brand}</p>
-                    <p style={{ color: "rgb(221, 32, 44)" }}>Price per Unit: ₹{item.productId.price}</p>
-                  </div>
-                </div>
-                <div className='rest-details'>
-                  <div>
-                    <span>Item set: {item.itemSet && item.itemSet.length > 0
-                      ? item.itemSet.map(setItem => `${setItem.size} (Pcs: ${setItem.lengths})`).join(', ')
-                      : "N/A"}</span><br />
-                    <span>Quantity: {quantity(item,fullQuantity)}</span><br />
-                    <span style={{ color: "rgb(221, 32, 44)" }}>Total Price: ₹{itemTotalPrice}</span>
-                  </div>
-
-                  {/* Quantity Control Buttons */}
-                  <div className="quantity-control">
-                    <button onClick={() => handleQuantityChange(item._id, -1)}>-</button>
-                    <span>{quantityChanges[item._id] ?? fullQuantity}</span>
-                    <button onClick={() => handleQuantityChange(item._id, 1)} style={{ marginLeft: '10px' }}>+</button>
-                    <button onClick={() => updateQuantity(item._id)}>Confirm</button>
-                  </div>
-
-
-                  <button className="remove-button" onClick={() => removeItem(item._id)}>
-                    Remove
-                  </button>
-                </div>
-              </div>
+              <Box key={index} p={4} borderWidth={1} borderRadius="md" mb={4}>
+                <HStack spacing={4}>
+                  <Image src={item.productId.images[0]} alt={item.productId.name} boxSize="100px" />
+                  <VStack align="start" spacing={1}>
+                    <Text fontWeight="bold" fontSize="lg">{item.productId.name}</Text>
+                    <Text>Brand: {item.productId.brand}</Text>
+                    <Text>Price: ₹{itemTotalPrice}</Text>
+                  </VStack>
+                </HStack>
+                <HStack spacing={4} mt={2}>
+                  <Button size="sm" onClick={() => handleQuantityChange(item._id, -1)}>-</Button>
+                  <Text>{quantityChanges[item._id] ?? fullQuantity}</Text>
+                  <Button size="sm" onClick={() => handleQuantityChange(item._id, 1)}>+</Button>
+                  <Button size="sm" colorScheme="green" onClick={() => updateQuantity(item._id)}>Confirm</Button>
+                  <Button size="sm" colorScheme="red" onClick={() => removeItem(item._id)}>Remove</Button>
+                </HStack>
+              </Box>
             );
           })}
-        </div>
+        </Box>
       )}
-    </div>
+
+      {/* Confirmation Modal */}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm Order</ModalHeader>
+          <ModalBody>
+            <Text>Are you sure you want to place the order worth ₹{totalPrice}?</Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="red" onClick={onClose}>Cancel</Button>
+            <Button colorScheme="green" onClick={confirmOrder} ml={3}>Confirm</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </Box>
   );
 };
 

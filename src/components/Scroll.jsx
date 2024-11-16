@@ -2,7 +2,7 @@ import mens from './images/Men.webp'
 import womens from './images/women.webp'
 import kids from './images/Kids.webp'
 import './Style.css'
-
+import React from 'react'
 function Scroll(){
     return(
             <div className="scroll-container">

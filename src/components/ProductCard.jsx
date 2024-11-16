@@ -1,26 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import './ProductGrid.css';
-import './ProductCard.css';
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  Heading,
+  Image,
+  Select,
+  Text,
+  Badge,
+  Spinner,
+  Input,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+} from '@chakra-ui/react';
 
-// Define the function to add to cart with the selected color, size, and quantity
 const addToCart = async (product, selectedColor, selectedSize, quantity) => {
   const token = localStorage.getItem('token');
   const headers = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    Authorization: `Bearer ${token}`,
   };
 
-  // Find the selected size item from the itemSet
-  const selectedItemSet = product.itemSet.find(item => item.size === selectedSize);
+  const selectedItemSet = product.itemSet.find((item) => item.size === selectedSize);
 
   const body = {
     productId: product.id,
     quantity: quantity,
     itemSet: selectedItemSet ? [selectedItemSet] : [], // Only include the selected size
     color: selectedColor,
-    size: selectedSize
+    size: selectedSize,
   };
 
   try {
@@ -38,7 +54,12 @@ const ProductCard = () => {
   const [selectedSize, setSelectedSize] = useState('');
   const [sizes, setSizes] = useState([]);
   const [quantity, setQuantity] = useState(1);
-  let navigate = useNavigate()
+  const navigate = useNavigate();
+
+  // Chakra UI AlertDialog state
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [dialogMessage, setDialogMessage] = useState('');
+  const cancelRef = React.useRef();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -46,12 +67,10 @@ const ProductCard = () => {
         const response = await axios.get(`https://saleem-footwear-api.vercel.app/api/v1/products/${id}`);
         setProduct(response.data.product);
 
-        // Set default color if available
         if (response.data.product.colors && Object.keys(response.data.product.colors).length > 0) {
           setSelectedColor(Object.keys(response.data.product.colors)[0]);
         }
 
-        // Populate sizes
         if (response.data.product.itemSet) {
           setSizes(response.data.product.itemSet);
           if (response.data.product.itemSet.length > 0) {
@@ -68,7 +87,7 @@ const ProductCard = () => {
     fetchProduct();
   }, [id]);
 
-  if (!product) return <div>Loading...</div>;
+  if (!product) return <Spinner size="xl" />; // Show loading spinner while fetching
 
   const handleColorClick = (color) => {
     setSelectedColor(color);
@@ -79,7 +98,7 @@ const ProductCard = () => {
   };
 
   const handleQuantityChange = (action) => {
-    setQuantity(prevQuantity => {
+    setQuantity((prevQuantity) => {
       if (action === 'increment') {
         return prevQuantity + 1;
       } else if (action === 'decrement' && prevQuantity > 1) {
@@ -89,89 +108,131 @@ const ProductCard = () => {
     });
   };
 
-  let token = localStorage.getItem('token')
+  const token = localStorage.getItem('token');
   const handleAddToCart = () => {
-    if(token){
-    if (selectedColor && selectedSize && quantity > 0) {
-      addToCart(product, selectedColor, selectedSize, quantity);
-      alert('Item Added to Cart Successfully');
-      window.dispatchEvent(new Event('cart-updated'));
-        } else {
-      alert('Please select a color, size, and a valid quantity.');
-    }}
-    else{
-      let nav = window.confirm('You are not logged in, to add a product to cart, you must be logged in, click on ok to move to the login page ' )
-      if(nav) navigate('/login')
+    if (token) {
+      if (selectedColor && selectedSize && quantity > 0) {
+        addToCart(product, selectedColor, selectedSize, quantity);
+        setDialogMessage('Item Added to Cart Successfully');
+        onOpen();
+        window.dispatchEvent(new Event('cart-updated'));
+      } else {
+        setDialogMessage('Please select a color, size, and a valid quantity.');
+        onOpen();
+      }
+    } else {
+      setDialogMessage('You are not logged in. To add a product to the cart, you must be logged in.');
+      onOpen();
     }
+  };
+
+  const handleNavigateLogin = () => {
+    onClose();
+    navigate('/login');
   };
 
   const imagesToShow = selectedColor ? product.colors[selectedColor] : product.images;
 
   return (
-    <div>
-      <div className="product-image-gallery">
-        {imagesToShow && imagesToShow.length > 0 ? (
-          imagesToShow.map((imgUrl, index) => (
-            <img key={index} src={imgUrl} alt={`${product.brand} ${product.article} ${selectedColor}`} className="product-image" 
-            style={{width:'100%'}}/>
-          ))
-        ) : (
-          <p>No images available for this color.</p>
-        )}
-      </div>
-      <div className="product-details" style={{color:'#36454f',fontWeight:'bold',backgroundColor:'white'}} >
-        <h2 className="product-name">{product.article}</h2>
-        <div className="product-colors" style={{margin:'20px auto',width:'100vw'}}>
-          Colors: {product.colors && Object.keys(product.colors).length > 0 
-            ? Object.keys(product.colors).map(color => (
-              <button 
-                key={color} 
-                className={`color-button ${selectedColor === color ? 'selected' : ''}`} 
-                onClick={() => handleColorClick(color)}
-                style={{ borderColor:color,backgroundColor:'white',color:'black' }}
-              >
-                {color}
-              </button>
-            )) 
-            : "N/A"}
-        </div>
-        <p className="product-mrp" style={{textDecoration:'none'}}>MRP: ₹{product.price}</p>
-        <div className="product-sizes">
-          <label htmlFor="size-select">Available Sizes:</label>
-          <select id="size-select" value={selectedSize} onChange={handleSizeChange}>
-            {sizes.length > 0 ? (
-              sizes.map((item, index) => (
-                <option key={index} value={item.size}>
-                  {item.size} (PCs: {item.lengths})
-                </option>
-              ))
-            ) : (
-              <option value="">N/A</option>
-            )}
-          </select>
-        </div>
+    <Flex direction={{ base: 'column', md: 'row' }} p={2} gap={8} alignItems="center">
+      {/* Product Image Gallery */}
+      <Box flex="1" maxWidth="400px">
+        <Flex wrap="wrap" gap={4}>
+          {imagesToShow && imagesToShow.length > 0 ? (
+            imagesToShow.map((imgUrl, index) => (
+              <Image key={index} src={imgUrl} alt={`${product.brand} ${product.article} ${selectedColor}`} borderRadius="md" />
+            ))
+          ) : (
+            <Text>No images available for this color.</Text>
+          )}
+        </Flex>
+      </Box>
 
-        <p className="product-brand">{product.brand}</p>
-        <p className="product-description">{product.description}</p>
-        <p className="product-material">Material: {product.material}</p>
-        <p className="product-gender">Gender: {product.gender}</p>
+      {/* Product Details */}
+      <Box flex="2" p={2} bg="white" borderRadius="md" shadow="md" width={'full'}>
+        <Heading as="h2" size="lg">{product.article}</Heading>
+        <Text fontSize="lg" color="gray.600">{product.brand}</Text>
+
+        <Badge colorScheme="green" fontSize="md" mt={2}>{product.condition}</Badge>
         
-        
-        <div className="quantity-selector" style={{margin:'20px auto',width:'100vw'}}>
-          <button onClick={() => handleQuantityChange('decrement')} >-</button>
-          <input type="number" value={quantity} readOnly  style={{margin:'5px', height:'30px'}}/>
-          <button onClick={() => handleQuantityChange('increment')} style={{marginLeft:'8px'}}>+</button>
-        </div>
-      </div>
-      <div className="buttons" style={{width:'100vw'}}>
-        <button onClick={handleAddToCart} style={{width :'90%', display: 'flex',alignItems:'center',justifyContent:'center',gap:'15px'}}>
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
-            <path d="M440-600v-120H320v-80h120v-120h80v120h120v80H520v120h-80ZM280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z" />
-          </svg>
-          <span>Add To Cart</span>
-        </button>
-      </div>
-    </div>
+        <Text fontSize="2xl" fontWeight="bold" color="red" mt={2}>MRP: ₹{product.price}</Text>
+
+        <Text color="gray.700" mt={2}>{product.description}</Text>
+
+        {/* Color Selection */}
+        <Text fontSize="md" fontWeight="bold" mt={4}>Colors:</Text>
+        <Flex mt={2}>
+          {product.colors && Object.keys(product.colors).map(color => (
+            <Button
+              key={color}
+              variant={selectedColor === color ? "solid" : "outline"}
+              colorScheme="red"
+              onClick={() => handleColorClick(color)}
+              mr={2}
+            >
+              {color}
+            </Button>
+          ))}
+        </Flex>
+
+        {/* Size Selection */}
+        <Text fontSize="md" fontWeight="bold" mt={4}>Available Sizes:</Text>
+        <Select id="size-select" value={selectedSize} onChange={handleSizeChange} mt={2}>
+          {sizes.length > 0 ? (
+            sizes.map((item, index) => (
+              <option key={index} value={item.size}>
+                {item.size} (PCs: {item.lengths})
+              </option>
+            ))
+          ) : (
+            <option value="">N/A</option>
+          )}
+        </Select>
+
+        {/* Quantity Selector */}
+        <Flex alignItems="center" mt={4}>
+          <Button onClick={() => handleQuantityChange('decrement')}>-</Button>
+          <Input type="number" value={quantity} readOnly textAlign="center" width="50px" mx={2} />
+          <Button onClick={() => handleQuantityChange('increment')}>+</Button>
+        </Flex>
+
+        {/* Add to Cart Button */}
+        <Button
+          onClick={handleAddToCart}
+          colorScheme="red"
+          width="full"
+          mt={6}
+        >
+          Add To Cart
+        </Button>
+
+        {/* Chakra UI AlertDialog */}
+        <AlertDialog
+          isOpen={isOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onClose}
+          colorScheme='red'
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader>Notification</AlertDialogHeader>
+              <AlertDialogBody>{dialogMessage}</AlertDialogBody>
+              <AlertDialogFooter>
+                {dialogMessage.includes('logged in') ? (
+                  <Button colorScheme="red" onClick={handleNavigateLogin}>
+                    Go to Login
+                  </Button>
+                ) : (
+                  <Button ref={cancelRef} onClick={onClose} colorScheme='red'>
+                    OK
+                  </Button>
+                )}
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+      </Box>
+    </Flex>
   );
 };
 

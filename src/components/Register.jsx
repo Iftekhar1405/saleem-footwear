@@ -1,10 +1,22 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './Login.css';
-import RoleBasedComponent from '../RoleBasedComponents'
 import { useNavigate } from 'react-router-dom';
+import { Box, Button, FormControl, FormLabel, Heading, Input, Select, VStack, ChakraProvider, extendTheme, Flex } from '@chakra-ui/react';
 
+// Define API URL
 const URL = "https://saleem-footwear-api.vercel.app/api/v1";
+
+// Custom theme with red background
+const theme = extendTheme({
+  styles: {
+    global: {
+      body: {
+        bg: 'red.100', // Light red background
+        color: 'gray.800', // Darker text for better readability
+      },
+    },
+  },
+});
 
 function Register() {
   const [name, setName] = useState('');
@@ -13,27 +25,8 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
-  const [role, setRole] = useState(''); // Updated initial value to empty
-  const navigate = useNavigate(); // Move useNavigate inside the component
-
-  const handleNameChange = (e) => setName(e.target.value);
-  const handleEmailChange = (e) => setEmail(e.target.value);
-  const handlePasswordChange = (e) => setPassword(e.target.value);
-  const handleConfirmPasswordChange = (e) => setConfirmPassword(e.target.value);
-  const handleAddressChange = (e) => setAddress(e.target.value);
-  const handlePhoneChange = (e) => setPhone(e.target.value);
-  const handleRoleChange = (e) => setRole(e.target.value);
-
-  const registerUser = async (body) => {
-    try {
-      const response = await axios.post(`${URL}/auth/register`, body);
-      console.log(response.data);
-      navigate('/login');
-    } catch (error) {
-      alert(error.response.data.msg);
-      console.log(error);
-    }
-  }
+  const [role, setRole] = useState('customer');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,63 +36,127 @@ function Register() {
       return;
     }
 
-    const body_reg = {
-      name: name,
+    const body = {
+      name,
       shopName: email,
-      password: password,
-      address: address,
-      phone: phone,
-      role: role || 'customer' // Ensure default role if none is selected
+      password,
+      address,
+      phone,
+      role,
     };
 
-    console.log(body_reg);
-    registerUser(body_reg);
+    try {
+      const response = await axios.post(`${URL}/auth/register`, body);
+      console.log(response.data);
+      navigate('/login');
+    } catch (error) {
+      alert(error.response?.data?.msg || 'Error registering user');
+      console.error(error);
+    }
   };
 
   return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Register</h2>
-        <div className="form-group">
-          <label htmlFor="name">Name</label>
-          <input type="text" id="name" value={name} onChange={handleNameChange} required />
-        </div>
-        <div className="form-group">
-          <label htmlFor="email">Shop Name</label>
-          <input type="text" id="email" value={email} onChange={handleEmailChange} required />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input type="password" id="password" value={password} onChange={handlePasswordChange} required />
-        </div>
-        <div className="form-group">
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" value={confirmPassword} onChange={handleConfirmPasswordChange} required />
-        </div>
-        <div className="form-group">
-          <label htmlFor="address">Address</label>
-          <input type="text" id="address" value={address} onChange={handleAddressChange} required />
-        </div>
-        <div className="form-group">
-          <label htmlFor="phone">Phone</label>
-          <input type="tel" id="phone" value={phone} onChange={handlePhoneChange} required />
-        </div>
-        <RoleBasedComponent allowedRoles={['admin']}>
-          <div className="form-group">
-            <label htmlFor="role">Role</label>
-            <select id="role" value={role} onChange={handleRoleChange} required>
-              <option value="" disabled>Select Role</option>
-              <option value="customer">Customer</option>
-              <option value="Staff">Staff</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-        </RoleBasedComponent>
-        <button type="submit" className="login-btn">Register</button>
-        <button className="product-discount-edit" onClick={() => navigate('/login')}>Log-in</button>
-// added this
-      </form>
-    </div>
+    <ChakraProvider theme={theme}>
+      <Flex justify="center" align="center" minH="100vh" py={8} px={4}>
+        <Box
+          w="full"
+          maxW="500px"
+          bg="white"
+          p={8}
+          borderRadius="lg"
+          boxShadow="lg"
+        >
+          <Heading textAlign="center" color="red.500" mb={6}>
+            Register
+          </Heading>
+          <form onSubmit={handleSubmit}>
+            <VStack spacing={4}>
+              <FormControl isRequired>
+                <FormLabel>Name</FormLabel>
+                <Input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  focusBorderColor="red.500"
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Shop Name</FormLabel>
+                <Input
+                  type="text"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  focusBorderColor="red.500"
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  focusBorderColor="red.500"
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Confirm Password</FormLabel>
+                <Input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  focusBorderColor="red.500"
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Address</FormLabel>
+                <Input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  focusBorderColor="red.500"
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Phone</FormLabel>
+                <Input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  focusBorderColor="red.500"
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Role</FormLabel>
+                <Select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  focusBorderColor="red.500"
+                >
+                  <option value="customer">Customer</option>
+                  <option value="staff">Staff</option>
+                  <option value="admin">Admin</option>
+                </Select>
+              </FormControl>
+              <Button
+                type="submit"
+                colorScheme="red"
+                w="full"
+              >
+                Register
+              </Button>
+              <Button
+                variant="outline"
+                colorScheme="red"
+                w="full"
+                onClick={() => navigate('/login')}
+              >
+                Log-in
+              </Button>
+            </VStack>
+          </form>
+        </Box>
+      </Flex>
+    </ChakraProvider>
   );
 }
 

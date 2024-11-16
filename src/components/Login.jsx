@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
-import './Login.css';
-
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Text,
+  useToast,
+  ChakraProvider,
+} from '@chakra-ui/react';
 
 const URL = "https://saleem-footwear-api.vercel.app/api/v1";
-// login request method
+
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate(); // Initialize useNavigate
+  const toast = useToast(); // Toast for notifications
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -27,7 +37,7 @@ function Login() {
       identifier: email,
       password: password,
     };
-    
+
     loginUser(login_body);
   };
 
@@ -37,35 +47,101 @@ function Login() {
       console.log("Login Successful:", response.data);
       let token = response.data.token;
       let role = response.data.userToken.role;
-      
+
       localStorage.setItem("token", token);
       localStorage.setItem('role', role);
-      navigate('/'); 
+
+      toast({
+        title: "Login Successful",
+        description: "You have been successfully logged in.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      navigate('/'); // Navigate to the home page
     } catch (error) {
-      alert(error.response.data.msg);
+      toast({
+        title: "Login Failed",
+        description: error.response?.data?.msg || "Something went wrong.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
   return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Login</h2>
-        <div className="form-group">
-          <label htmlFor="email">Phone</label>
-          <input type="tel" id="email" value={email} onChange={handleEmailChange} required />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input type="password" id="password" value={password} onChange={handlePasswordChange} required />
-        </div>
-        <button type="submit" className="login-btn">Log In</button>
-        <button className="product-discount-edit" onClick={() => navigate('/register')}>register</button>
-
-      </form>
-    </div>
+    <ChakraProvider>
+      <Flex
+        minHeight="100vh"
+        align="center"
+        justify="center"
+        bgGradient="linear(to-br, red.500, red.300, white)"
+        p={4}
+      >
+        <Box
+          maxWidth="400px"
+          width="full"
+          p={8}
+          bg="white"
+          borderRadius="md"
+          boxShadow="2xl"
+        >
+          <Heading as="h2" size="lg" textAlign="center" mb={6} color="red.600">
+            Welcome Back
+          </Heading>
+          <form onSubmit={handleSubmit}>
+            <FormControl mb={4} isRequired>
+              <FormLabel color="red.600">Phone</FormLabel>
+              <Input
+                type="tel"
+                value={email}
+                onChange={handleEmailChange}
+                placeholder="Enter your phone number"
+                bg="gray.50"
+                focusBorderColor="red.400"
+              />
+            </FormControl>
+            <FormControl mb={4} isRequired>
+              <FormLabel color="red.600">Password</FormLabel>
+              <Input
+                type="password"
+                value={password}
+                onChange={handlePasswordChange}
+                placeholder="Enter your password"
+                bg="gray.50"
+                focusBorderColor="red.400"
+              />
+            </FormControl>
+            <Button
+              type="submit"
+              colorScheme="red"
+              width="full"
+              mt={4}
+              _hover={{ bg: "red.500" }}
+            >
+              Log In
+            </Button>
+          </form>
+          <Flex justify="center" mt={4} align='center'>
+            <Text fontSize="sm" color="gray.600" mr={2}>
+              Don&apos;t have an account?
+            </Text>
+            <Button
+              variant="outline"
+              colorScheme="red"
+              fontWeight="bold"
+              
+              onClick={() => navigate('/register')}
+            >
+              Register
+            </Button>
+          </Flex>
+        </Box>
+      </Flex>
+    </ChakraProvider>
   );
 }
 
-
 export default Login;
-

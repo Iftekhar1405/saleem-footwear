@@ -25,6 +25,7 @@ import PDFViewer from './components/PDF.jsx';
 import Orders from './components/Orders.jsx';
 import ProductGridAuth from './components/Authority/ProductGridAuth.jsx';
 import SearchBar from './components/SearchBar.jsx';
+import { ChakraProvider } from '@chakra-ui/react';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -89,6 +90,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
+  <ChakraProvider>
   <RouterProvider router={router} />
+  </ChakraProvider>
   // </React.StrictMode>,
 );
