@@ -137,16 +137,24 @@ const ProductCard = () => {
     <Flex direction={{ base: 'column', md: 'row' }} p={2} gap={8} alignItems="center">
       {/* Product Image Gallery */}
       <Box flex="1" maxWidth="400px">
-        <Flex wrap="wrap" gap={4}>
-          {imagesToShow && imagesToShow.length > 0 ? (
-            imagesToShow.map((imgUrl, index) => (
-              <Image key={index} src={imgUrl} alt={`${product.brand} ${product.article} ${selectedColor}`} borderRadius="md" />
-            ))
-          ) : (
-            <Text>No images available for this color.</Text>
-          )}
-        </Flex>
-      </Box>
+  <Flex overflowX="auto" gap={4} height="250px">
+    {imagesToShow && imagesToShow.length > 0 ? (
+      imagesToShow.map((imgUrl, index) => (
+        <Image
+          key={index}
+          src={imgUrl}
+          alt={`${product.brand} ${product.article} ${selectedColor}`}
+          borderRadius="md"
+          objectFit="cover"
+          width="200px" // Adjust as needed
+        />
+      ))
+    ) : (
+      <Text>No images available for this color.</Text>
+    )}
+  </Flex>
+</Box>
+
 
       {/* Product Details */}
       <Box flex="2" p={2} bg="white" borderRadius="md" shadow="md" width={'full'}>
@@ -161,19 +169,18 @@ const ProductCard = () => {
 
         {/* Color Selection */}
         <Text fontSize="md" fontWeight="bold" mt={4}>Colors:</Text>
-        <Flex mt={2}>
-          {product.colors && Object.keys(product.colors).map(color => (
-            <Button
-              key={color}
-              variant={selectedColor === color ? "solid" : "outline"}
-              colorScheme="red"
-              onClick={() => handleColorClick(color)}
-              mr={2}
-            >
-              {color}
-            </Button>
-          ))}
-        </Flex>
+<Grid templateColumns="repeat(2, 1fr)" gap={2} mt={2}>
+  {product.colors && Object.keys(product.colors).map((color) => (
+    <Button
+      key={color}
+      variant={selectedColor === color ? "solid" : "outline"}
+      colorScheme="red"
+      onClick={() => handleColorClick(color)}
+    >
+      {color}
+    </Button>
+  ))}
+</Grid>
 
         {/* Size Selection */}
         <Text fontSize="md" fontWeight="bold" mt={4}>Available Sizes:</Text>
