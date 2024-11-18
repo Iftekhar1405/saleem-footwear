@@ -149,7 +149,7 @@ const SearchBar = () => {
     };
 
     return (
-        <Box bg="red.50" p={4}>
+        <Box bg="red.50" p={4} mt={8}>
             <SearchInput searchTerm={searchTerm} onSearchChange={handleSearchChange} />
             <SearchResults filteredResults={filteredResults} loading={loading} error={error} />
         </Box>
