@@ -118,7 +118,8 @@ function RejectedOrders() {
       ) : (
         rejectedOrders.map(order => (
           <Box key={order._id} mb={8}>
-            <Text fontSize="xl" fontWeight="bold">Order ID: {order._id}</Text>
+            <Text fontSize="xl" fontWeight="bold">Order ID: {order._id}<br/>
+            Customer : {order.userId.name}</Text>
             <Box overflowX="auto">
               <Table variant="simple" mt={4}>
                 <Thead>
