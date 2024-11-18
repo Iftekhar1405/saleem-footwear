@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './PendingOrders.css';
+import {
+  Box,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Button,
+  Spinner,
+  Text,
+  Divider,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 
 const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 
@@ -18,15 +31,14 @@ function PendingOrders() {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response)
-        
+
         if (response.status >= 200 && response.status < 300) {
           const filteredOrders = response.data.data.filter(order => order.status === 'pending');
           setPendingOrders(filteredOrders);
         } else {
           console.error('Unexpected response status:', response.status);
         }
-        
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching pending orders', error);
@@ -35,25 +47,22 @@ function PendingOrders() {
     };
 
     fetchPendingOrders();
-    
   }, []);
 
   const updateOrderStatus = async (orderId, status) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.patch(`${URL}/order/status/${orderId}`, 
-      { status }, 
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      
+      const response = await axios.patch(`${URL}/order/status/${orderId}`,
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
       if (response.status >= 200 && response.status < 300) {
-        console.log('Order status updated successfully:', response.data);
         alert('Order status updated successfully');
-        
         setPendingOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
       } else {
         alert('Unexpected response status:', response.status);
@@ -63,50 +72,98 @@ function PendingOrders() {
     }
   };
 
+  const updateItemStatus = async (orderId, itemId, status) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.patch(`${URL}/order/item/${orderId}/status`, 
+        {
+          itemId,
+          status
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+      if (response.status >= 200 && response.status < 300) {
+        const updatedOrders = pendingOrders.map(order => {
+          if (order._id === orderId) {
+            return {
+              ...order,
+              items: order.items.filter(item => item._id !== itemId)
+            };
+          }
+          return order;
+        });
+        setPendingOrders(updatedOrders);
+        alert('Item status updated successfully');
+      } else {
+        alert('Unexpected response status:', response.status);
+      }
+    } catch (error) {
+      alert(`Error updating item status for ${itemId} to ${status}`, error);
+    }
+  };
+
   if (loading) {
-    return <h2>Loading .....</h2>;
+    return <Spinner size="xl" />;
   }
 
   return (
-    <div className="pending-orders">
-      <h2>Pending Orders</h2>
+    <Box p={4}>
+      <Text fontSize="2xl" mb={4}>Pending Orders</Text>
       {pendingOrders.length === 0 ? (
-        <p>No pending orders</p>
+        <Text>No pending orders</Text>
       ) : (
         pendingOrders.map(order => (
-          <div key={order._id} className="order">
-            <h3>Order ID: {order._id}</h3>
-            <p>Total Price: {order.totalPrice}</p>
-            <p>Total Items: {order.totalItems}</p>
-
-            {/* Displaying User Info */}
-            <div className="customer-info" style={{color: 'black'}}>
-              <h4>Customer Info:</h4>
-              <p>User ID: {order.userId?._id || 'null'}</p>
-              <p>Name: {order.userId?.name || 'null'}</p>
-              <p>Address: {order.userId?.address || 'null'}</p>
-            </div>
-
-            {order.items.map(item => (
-              <div key={item.productId?item.productId._id:""} className="order-item">
-                <div className="order-item-details" style={{color:'black'}}>
-                  {item.productId?(<><h3>{item.productId.article}</h3>
-                  <p>Brand: {item.productId.brand}</p></>):"N/A"}
-                  <p>Price: ₹{item.price}</p>
-                  <p>Color: {item.color}</p>
-                  <span>Item set: {item.itemSet && item.itemSet.length > 0 
-                    ? item.itemSet.map(item => `${item.size} (Pcs: ${item.lengths})`).join(', ') 
-                    : "N/A"}</span><br />
-                  <span>Quantity: {item.quantity}</span>
-                </div>
-              </div>
-            ))}
-            <button onClick={() => updateOrderStatus(order._id, 'accepted')}>Accept - All</button>
-            <button onClick={() => updateOrderStatus(order._id, 'rejected')}>Reject - All</button>
-          </div>
+          <Box key={order._id} mb={8}>
+            <Text fontSize="xl" fontWeight="bold">Order ID: {order._id}</Text>
+            <Box overflowX="auto"> {/* Enable horizontal scrolling */}
+              <Table variant="simple" mt={4}>
+                <Thead>
+                  <Tr>
+                    <Th>Product ID</Th>
+                    <Th>Article</Th>
+                    <Th>Brand</Th>
+                    <Th>Price</Th>
+                    <Th>Color</Th>
+                    <Th>Item Set</Th>
+                    <Th>Quantity</Th>
+                    <Th>Actions</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {order.items.map(item => (
+                    <Tr key={item._id}>
+                      <Td>{item.productId ? item.productId._id : "N/A"}</Td>
+                      <Td>{item.productId?.article || "N/A"}</Td>
+                      <Td>{item.productId?.brand || "N/A"}</Td>
+                      <Td>₹{item.price}</Td>
+                      <Td>{item.color}</Td>
+                      <Td>{item.itemSet && item.itemSet.length > 0
+                        ? item.itemSet.map(i => `${i.size} (Pcs: ${i.lengths})`).join(', ')
+                        : "N/A"}</Td>
+                      <Td>{item.quantity}</Td>
+                      <Td>
+                        <Button colorScheme="green" size="sm" onClick={() => updateItemStatus(order._id, item._id, 'accepted')}>Accept</Button>
+                        <Button colorScheme="red" size="sm" ml={2} onClick={() => updateItemStatus(order._id, item._id, 'rejected')}>Reject</Button>
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
+            <Box mt={4}>
+              <Button colorScheme="green" onClick={() => updateOrderStatus(order._id, 'accepted')}>Accept All</Button>
+              <Button colorScheme="red" ml={2} onClick={() => updateOrderStatus(order._id, 'rejected')}>Reject All</Button>
+            </Box>
+            <Divider my={4} />
+          </Box>
         ))
       )}
-    </div>
+    </Box>
   );
 }
 
