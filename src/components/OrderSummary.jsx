@@ -1,19 +1,16 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import {
   Box,
   Button,
-  Heading,
-  Text,
-  VStack,
-  HStack,
   Divider,
-  Image,
+  Heading,
+  HStack,
+  Text,
   useToast,
-  useBreakpointValue,
-  Stack,
-} from '@chakra-ui/react';
+  VStack,
+} from "@chakra-ui/react";
+import axios from "axios";
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const OrderSummary = () => {
   const location = useLocation();
@@ -27,7 +24,7 @@ const OrderSummary = () => {
 
   const handleCancelOrder = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await axios.patch(
         `https://your-backend-url/api/v1/orders/${order._id}/cancel`,
         {},
@@ -38,28 +35,28 @@ const OrderSummary = () => {
 
       if (response.data.success) {
         toast({
-          title: 'Order Canceled.',
-          description: 'Your order has been canceled successfully.',
-          status: 'success',
+          title: "Order Canceled.",
+          description: "Your order has been canceled successfully.",
+          status: "success",
           duration: 4000,
           isClosable: true,
         });
-        navigate('/orders'); // Redirect to the orders page or another appropriate page
+        navigate("/orders"); // Redirect to the orders page or another appropriate page
       } else {
         toast({
-          title: 'Failed to cancel order.',
-          description: 'There was an issue canceling your order.',
-          status: 'error',
+          title: "Failed to cancel order.",
+          description: "There was an issue canceling your order.",
+          status: "error",
           duration: 4000,
           isClosable: true,
         });
       }
     } catch (error) {
-      console.error('Error canceling order:', error);
+      console.error("Error canceling order:", error);
       toast({
-        title: 'Error.',
-        description: 'An error occurred while canceling the order.',
-        status: 'error',
+        title: "Error.",
+        description: "An error occurred while canceling the order.",
+        status: "error",
         duration: 4000,
         isClosable: true,
       });
@@ -107,12 +104,14 @@ const OrderSummary = () => {
                   Price per Unit: ₹{item.productId.price}
                 </Text>
                 <Text>
-                  Item Set:{' '}
+                  Item Set:{" "}
                   {item.itemSet &&
                     item.itemSet.length > 0 &&
                     item.itemSet
-                      .map((setItem) => `${setItem.size} (Pcs: ${setItem.lengths})`)
-                      .join(', ')}
+                      .map(
+                        (setItem) => `${setItem.size} (Pcs: ${setItem.lengths})`
+                      )
+                      .join(", ")}
                 </Text>
                 <Text>
                   Quantity: <strong>{item.quantity}</strong>
@@ -127,13 +126,23 @@ const OrderSummary = () => {
       </VStack>
 
       <Box mt={6} p={4} borderWidth={1} borderRadius="md" boxShadow="md">
-        
         <Text fontSize="lg" mb={4}>
           Total Items: {order.totalItems}
         </Text>
 
-        <HStack spacing={4}>
-          <Button onClick={() => window.print()} colorScheme="blue" width="full">
+        <HStack
+          spacing={4}
+          sx={{
+            "@media print": {
+              display: "none",
+            },
+          }}
+        >
+          <Button
+            onClick={() => window.print()}
+            colorScheme="blue"
+            width="full"
+          >
             Print Summary
           </Button>
           <Button
