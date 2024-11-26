@@ -1,5 +1,4 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 :root {
   line-height: 1.5;
   font-weight: 400;
@@ -13,7 +12,6 @@
   margin-top: 70px;
   font-family: "Plus Jakarta Sans", sans-serif;
   font-optical-sizing: auto;
-
 }
 
 a {
@@ -21,8 +19,7 @@ a {
   text-decoration: inherit;
 }
 
-
-body{
+body {
   margin-left: 0px;
   margin-top: 0px;
   margin-right: 0px;
@@ -63,5 +60,13 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+@media print {
+  button {
+    display: none;
+  }
+  div {
+    overflow-x: visible;
   }
 }
