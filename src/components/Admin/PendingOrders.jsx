@@ -151,6 +151,8 @@ function PendingOrders() {
                 Order ID: {order._id}
                 <br />
                 Customer : {order.userId.name}
+                <br />
+                Phone : {order.userId.phone}
               </Text>
               <IconButton icon={<BiPrinter />} onClick={handlePrint} />
             </HStack>
