@@ -156,7 +156,7 @@ function RejectedOrders() {
               <IconButton icon={<BiPrinter />} onClick={handlePrint} />
             </HStack>
             <Box overflowX="auto" className="overflow">
-              <Table variant="simple" mt={4}>
+              <Table variant="striped" mt={4}>
                 <Thead>
                   <Tr>
                     <Th
