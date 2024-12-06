@@ -125,18 +125,7 @@ function Register() {
                   focusBorderColor="red.500"
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel>Role</FormLabel>
-                <Select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  focusBorderColor="red.500"
-                >
-                  <option value="customer">Customer</option>
-                  <option value="staff">Staff</option>
-                  <option value="admin">Admin</option>
-                </Select>
-              </FormControl>
+             
               <Button
                 type="submit"
                 colorScheme="red"
