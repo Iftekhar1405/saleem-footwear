@@ -1,4 +1,5 @@
 import {
+  Alert,
   AlertDialog,
   AlertDialogBody,
   AlertDialogContent,
@@ -8,59 +9,38 @@ import {
   Badge,
   Box,
   Button,
+  Container,
   Flex,
   Grid,
   Heading,
+  IconButton,
   Image,
-  Input,
-  Select,
   Spinner,
+  Stack,
   Text,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  AddIcon,
+  MinusIcon,
+} from "@chakra-ui/icons";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-const addToCart = async (product, selectedColor, selectedSize, quantity) => {
-  const token = localStorage.getItem("token");
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-
-  const selectedItemSet = product.itemSet.find(
-    (item) => item.size === selectedSize
-  );
-
-  const body = {
-    productId: product.id,
-    quantity: quantity,
-    itemSet: selectedItemSet ? [selectedItemSet] : [], // Only include the selected size
-    color: selectedColor,
-    size: selectedSize,
-  };
-
-  try {
-    const response = await axios.post(
-      "https://saleem-footwear-api.vercel.app/api/v1/cart/add-to-cart",
-      body,
-      { headers }
-    );
-    console.log("Response:", response.data);
-  } catch (error) {
-    console.error("Error adding to cart:", error);
-  }
-};
 
 const ProductCard = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
-  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedSize, setSelectedSize] = useState({});
   const [sizes, setSizes] = useState([]);
   const [quantity, setQuantity] = useState(1);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const navigate = useNavigate();
+  const toast = useToast();
 
   // Chakra UI AlertDialog state
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -74,224 +54,364 @@ const ProductCard = () => {
           `https://saleem-footwear-api.vercel.app/api/v1/products/${id}`
         );
         setProduct(response.data.product);
-
-        // if (
-        //   response.data.product.colors &&
-        //   Object.keys(response.data.product.colors).length > 0
-        // ) {
-        //   setSelectedColor(Object.keys(response.data.product.colors)[0]);
-        // }
-
         if (response.data.product.itemSet) {
-          setSizes(response.data.product.itemSet);
           if (response.data.product.itemSet.length > 0) {
-            setSelectedSize(response.data.product.itemSet[0].size); // Set default size
+            setSelectedSize({
+              size: response.data.product.itemSet[0].size,
+              lengths: response.data.product.itemSet[0].lengths,
+            });
           }
         }
-
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching product:", error);
+        toast({
+          title: "Error fetching product",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
       }
     };
-
     fetchProduct();
-  }, [id]);
+  }, [id, toast]);
 
-  if (!product) return <Spinner size="xl" />; // Show loading spinner while fetching
+  const addToCart = async (product, selectedColor, selectedSize, quantity) => {
+    try {
+      // Construct the request body
+      const requestBody = {
+        productId: product.id, // Assuming `product.id` contains the product ID
+        quantity: quantity,
+        itemSet: [
+          {
+            size: selectedSize.size,
+            lengths: selectedSize.lengths, // Update this value as needed or make it dynamic
+          },
+        ],
+        color: selectedColor,
+      };
 
-  const handleColorClick = (color) => {
-    setSelectedColor(color);
-  };
-
-  const handleSizeChange = (event) => {
-    setSelectedSize(event.target.value);
-  };
-
-  const handleQuantityChange = (action) => {
-    setQuantity((prevQuantity) => {
-      if (action === "increment") {
-        return prevQuantity + 1;
-      } else if (action === "decrement" && prevQuantity > 1) {
-        return prevQuantity - 1;
-      }
-      return prevQuantity;
-    });
-  };
-
-  const token = localStorage.getItem("token");
-  const handleAddToCart = () => {
-    if (token) {
-      if (selectedColor && selectedSize && quantity > 0) {
-        addToCart(product, selectedColor, selectedSize, quantity);
-        setDialogMessage("Item Added to Cart Successfully");
-        onOpen();
-        window.dispatchEvent(new Event("cart-updated"));
-      } else {
-        setDialogMessage("Please select a color, size, and a valid quantity.");
-        onOpen();
-      }
-    } else {
-      setDialogMessage(
-        "You are not logged in. To add a product to the cart, you must be logged in."
+      // Make the POST request
+      const response = await axios.post(
+        "https://saleem-footwear-api.vercel.app/api/v1/cart/add-to-cart", // Replace with your actual endpoint
+        requestBody,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Attach token for authentication
+            "Content-Type": "application/json",
+          },
+        }
       );
-      onOpen();
+
+      return response.data; // Return the response from the server
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      throw error; // Re-throw the error to handle it in the calling function
     }
   };
 
-  const handleNavigateLogin = () => {
-    onClose();
-    navigate("/login");
+  const handleAddToCart = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setDialogMessage("Please log in to add items to your cart");
+      onOpen();
+      return;
+    }
+
+    if (!selectedColor || !selectedSize) {
+      toast({
+        title: "Selection Required",
+        description: "Please select both color and size",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    try {
+      await addToCart(product, selectedColor, selectedSize, quantity);
+      toast({
+        title: "Success",
+        description: "Item added to cart",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      window.dispatchEvent(new Event("cart-updated"));
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+  const imagesToShow = selectedColor
+    ? product?.colors[selectedColor] ?? []
+    : product?.images ?? [];
+
+  console.log(product);
+  const nextImage = () => {
+    if (imagesToShow?.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % imagesToShow.length);
+    }
   };
 
-  const imagesToShow = selectedColor
-    ? product.colors[selectedColor]
-    : product.images;
+  const prevImage = () => {
+    if (imagesToShow?.length > 0) {
+      setCurrentImageIndex(
+        (prev) => (prev - 1 + imagesToShow.length) % imagesToShow.length
+      );
+    }
+  };
+
+  if (!product) {
+    return (
+      <Flex height="100vh" justify="center" align="center">
+        <Box textAlign="center">
+          <Spinner size="xl" color="red.500" thickness="4px" />
+        </Box>
+      </Flex>
+    );
+  }
 
   return (
-    <Flex
-      direction={{ base: "column", md: "row" }}
-      p={2}
-      gap={8}
-      alignItems="center"
-    >
-      {/* Product Image Gallery */}
-      <Box flex="1" maxWidth="400px">
-        <Flex overflowX="auto" gap={4} height="250px">
-          {imagesToShow && imagesToShow.length > 0 ? (
-            imagesToShow.map((imgUrl, index) => {
-              console.log(imagesToShow, imgUrl);
-              return (
+    <Container maxW="container.xl" py={8}>
+      <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={8}>
+        {/* Image Gallery */}
+        <Box
+          position="relative"
+          borderRadius="lg"
+          overflow="hidden"
+          bg="gray.50"
+        >
+          <Box position="relative" paddingBottom="">
+            {imagesToShow && imagesToShow.length > 0 ? (
+              <Box position="relative">
                 <Image
-                  key={index}
-                  src={imgUrl}
-                  alt={`${product.brand} ${product.article} ${selectedColor}`}
-                  borderRadius="md"
+                  src={imagesToShow[currentImageIndex]}
+                  alt={`${product.brand} ${product.article}`}
                   objectFit="cover"
-                  width="100vh"
-                  maxW="600px"
+                  w="100%"
+                  h="100%"
+                  position="relative"
+                  top="0"
+                  left="0"
                 />
-              );
-            })
-          ) : (
-            <Text>No images available for this color.</Text>
-          )}
-        </Flex>
-      </Box>
+                <IconButton
+                  icon={<ChevronLeftIcon />}
+                  border={"1px solid rgb(174, 191, 221)"}
+                  position="absolute"
+                  left={2}
+                  top="50%"
+                  transform="translateY(-50%)"
+                  onClick={prevImage}
+                  bg="white"
+                  _hover={{ bg: "gray.100" }}
+                  isRound
+                />
+                <IconButton
+                  icon={<ChevronRightIcon />}
+                  border={"1px solid rgb(174, 191, 221)"}
+                  position="absolute"
+                  right={2}
+                  top="50%"
+                  transform="translateY(-50%)"
+                  onClick={nextImage}
+                  bg="white"
+                  _hover={{ bg: "gray.100" }}
+                  isRound
+                />
+              </Box>
+            ) : (
+              <Flex h="100%" align="center" justify="center">
+                <Text>No images available</Text>
+              </Flex>
+            )}
+          </Box>
 
-      {/* Product Details */}
-      <Box
-        flex="2"
-        p={2}
-        bg="white"
-        borderRadius="md"
-        shadow="md"
-        width={"full"}
-      >
-        <Heading as="h2" size="lg">
-          {product.article}
-        </Heading>
-        <Text fontSize="lg" color="gray.600">
-          {product.brand}
-        </Text>
-
-        <Badge colorScheme="green" fontSize="md" mt={2}>
-          {product.condition}
-        </Badge>
-
-        <Text fontSize="2xl" fontWeight="bold" color="red" mt={2}>
-          MRP: ₹{product.price}
-        </Text>
-
-        <Text color="gray.700" mt={2}>
-          {product.description}
-        </Text>
-
-        {/* Color Selection */}
-        <Text fontSize="md" fontWeight="bold" mt={4}>
-          Colors:
-        </Text>
-        <Grid templateColumns="repeat(2, 1fr)" gap={2} mt={2}>
-          {product.colors &&
-            Object.keys(product.colors).map((color) => (
-              <Button
-                key={color}
-                variant={selectedColor === color ? "solid" : "outline"}
-                colorScheme="red"
-                onClick={() => handleColorClick(color)}
+          {/* Thumbnails */}
+          <Flex mt={4} gap={2} overflowX="auto" p={2}>
+            {imagesToShow?.map((img, idx) => (
+              <Box
+                key={idx}
+                as="button"
+                flexShrink={0}
+                w="16"
+                h="16"
+                borderRadius="md"
+                overflow="hidden"
+                border={currentImageIndex === idx ? "2px solid" : "none"}
+                borderColor="red.500"
+                onClick={() => setCurrentImageIndex(idx)}
               >
-                {color}
-              </Button>
+                <Image
+                  src={img}
+                  alt={`Thumbnail ${idx + 1}`}
+                  objectFit="cover"
+                  w="100%"
+                  h="100%"
+                />
+              </Box>
             ))}
-        </Grid>
+          </Flex>
+        </Box>
 
-        {/* Size Selection */}
-        <Text fontSize="md" fontWeight="bold" mt={4}>
-          Available Sizes:
-        </Text>
-        <Select
-          id="size-select"
-          value={selectedSize}
-          onChange={handleSizeChange}
-          mt={2}
-        >
-          {sizes.length > 0 ? (
-            sizes.map((item, index) => (
-              <option key={index} value={item.size}>
-                {item.size} (PCs: {item.lengths})
-              </option>
-            ))
-          ) : (
-            <option value="">N/A</option>
-          )}
-        </Select>
+        {/* Product Details */}
+        <Stack spacing={6}>
+          <Box>
+            <Heading as="h1" size="xl">
+              {product.article}
+            </Heading>
+            <Text fontSize="lg" color="gray.600" mt={1}>
+              {product.brand}
+            </Text>
+            <Badge colorScheme="green" mt={2}>
+              {product.condition}
+            </Badge>
+          </Box>
 
-        {/* Quantity Selector */}
-        <Flex alignItems="center" mt={4}>
-          <Button onClick={() => handleQuantityChange("decrement")}>-</Button>
-          <Input
-            type="number"
-            value={quantity}
-            readOnly
-            textAlign="center"
-            width="50px"
-            mx={2}
-          />
-          <Button onClick={() => handleQuantityChange("increment")}>+</Button>
-        </Flex>
+          <Box>
+            <Text fontSize="3xl" fontWeight="bold" color="red.600">
+              ₹{product.price}
+            </Text>
+            <Text color="gray.600" mt={2}>
+              {product.description}
+            </Text>
+          </Box>
 
-        {/* Add to Cart Button */}
-        <Button onClick={handleAddToCart} colorScheme="red" width="full" mt={6}>
-          Add To Cart
-        </Button>
+          {/* Color Selection */}
+          <Box>
+            <Text fontWeight="semibold" mb={2}>
+              Select Color
+            </Text>
+            <Flex wrap="wrap" gap={2}>
+              {product.colors &&
+                Object.keys(product.colors).map((color) => (
+                  <Button
+                    key={color}
+                    variant={selectedColor === color ? "solid" : "outline"}
+                    colorScheme="red"
+                    onClick={() => setSelectedColor(color)}
+                    px={6}
+                  >
+                    {color}
+                  </Button>
+                ))}
+            </Flex>
+          </Box>
 
-        {/* Chakra UI AlertDialog */}
-        <AlertDialog
-          isOpen={isOpen}
-          leastDestructiveRef={cancelRef}
-          onClose={onClose}
-          colorScheme="red"
-        >
-          <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader>Notification</AlertDialogHeader>
-              <AlertDialogBody>{dialogMessage}</AlertDialogBody>
-              <AlertDialogFooter>
-                {dialogMessage.includes("logged in") ? (
-                  <Button colorScheme="red" onClick={handleNavigateLogin}>
+          {/* Size Selection */}
+          <Box>
+            <Text fontWeight="semibold" mb={2}>
+              Select Size
+            </Text>
+            <Grid
+              templateColumns="repeat(auto-fill, minmax(80px, 1fr))"
+              gap={2}
+            >
+              {product.itemSet.map((item, index) => (
+                <Button
+                  key={index}
+                  variant={selectedSize === item.size ? "solid" : "outline"}
+                  colorScheme="red"
+                  onClick={() =>
+                    setSelectedSize({ size: item.size, lengths: item.lengths })
+                  }
+                  position="relative"
+                >
+                  {item.size}
+                  <Badge
+                    padding={".5em .7em"}
+                    position="absolute"
+                    top="-3"
+                    right="-5"
+                    colorScheme="red"
+                    fontSize="sm"
+                    borderRadius="full"
+                  >
+                    {`${item.lengths}Pc`}
+                  </Badge>
+                </Button>
+              ))}
+            </Grid>
+          </Box>
+
+          {/* Quantity Selector */}
+          <Flex align="center" gap={4}>
+            <Text fontWeight="semibold">Quantity:</Text>
+            <Flex align="center" gap={2}>
+              <IconButton
+                icon={<MinusIcon />}
+                onClick={() => quantity > 1 && setQuantity((q) => q - 1)}
+                colorScheme="red"
+                variant="outline"
+                size="sm"
+              />
+              <Text fontWeight="medium" w="8" textAlign="center">
+                {quantity}
+              </Text>
+              <IconButton
+                icon={<AddIcon />}
+                onClick={() => setQuantity((q) => q + 1)}
+                colorScheme="red"
+                variant="outline"
+                size="sm"
+              />
+            </Flex>
+          </Flex>
+
+          {/* Add to Cart Button */}
+          <Button
+            colorScheme="red"
+            size="lg"
+            onClick={handleAddToCart}
+            w="100%"
+            h="14"
+            fontSize="lg"
+          >
+            Add to Cart
+          </Button>
+        </Stack>
+      </Grid>
+
+      {/* Alert Dialog */}
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader>Notice</AlertDialogHeader>
+            <AlertDialogBody>{dialogMessage}</AlertDialogBody>
+            <AlertDialogFooter>
+              {dialogMessage.includes("log in") ? (
+                <>
+                  <Button ref={cancelRef} onClick={onClose}>
+                    Cancel
+                  </Button>
+                  <Button
+                    colorScheme="red"
+                    onClick={() => navigate("/login")}
+                    ml={3}
+                  >
                     Go to Login
                   </Button>
-                ) : (
-                  <Button ref={cancelRef} onClick={onClose} colorScheme="red">
-                    OK
-                  </Button>
-                )}
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
-      </Box>
-    </Flex>
+                </>
+              ) : (
+                <Button colorScheme="red" onClick={onClose}>
+                  OK
+                </Button>
+              )}
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </Container>
   );
 };
 

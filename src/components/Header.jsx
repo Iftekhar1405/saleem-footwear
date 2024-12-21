@@ -25,13 +25,12 @@ const Header = () => {
         setCartlength(0);
       }
     };
-
     fetchCart();
     window.addEventListener('cart-updated', fetchCart);
 
     // Clean up the event listener on component unmount
     return () => window.removeEventListener('cart-updated', fetchCart);
-  }, [token]);
+  }, [token,cartlength]);
 
   // Handle back button click to navigate to the previous page
   const handleBack = () => {
