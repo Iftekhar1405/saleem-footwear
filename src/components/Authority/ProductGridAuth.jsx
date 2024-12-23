@@ -1,7 +1,27 @@
-import React,{ useState, useEffect,useRef,useCallback } from 'react';
-import './ProductGridAuth.css';
-import './ProductCardAuth.css';
+import { AddIcon, CloseIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import {
+  Badge,
+  Box,
+  Button,
+  Card,
+  CardBody,
+  FormControl,
+  FormLabel,
+  Grid,
+  Heading,
+  HStack,
+  IconButton,
+  Image,
+  Input,
+  Select,
+  SimpleGrid,
+  Text,
+  VStack
+} from '@chakra-ui/react';
 import axios from "axios";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import './ProductCardAuth.css';
+import './ProductGridAuth.css';
 
 const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 // const URL = "http://localhost:7000/api/v1"
@@ -269,136 +289,259 @@ const ProductGridAuth = () => {
     return <h2>Something went wrong</h2>;
   }
   return (
-    <div className="product-grid">
+    <Box p={6}>
+    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
       {products.map((product) => (
-        <div className="product-card" key={product._id} style={{ backgroundColor: '#000' }}>
+        <Card
+          key={product._id}
+          overflow="hidden"
+          variant="outline"
+          borderRadius="lg"
+          boxShadow="sm"
+          _hover={{ boxShadow: 'md' }}
+          bg="white"
+        >
           {editingProductId === product._id ? (
-            <div className="edit-product-form">
-              <input
-                type="text"
-                name="article"
-                value={editedProduct.article || ''}
-                onChange={handleEditChange}
-                className="edit-input"
-              />
-              <input
-                type="text"
-                name="brand"
-                value={editedProduct.brand || ''}
-                onChange={handleEditChange}
-                className="edit-input"
-              />
-              <input
-                type="text"
-                name="description"
-                value={editedProduct.description || ''}
-                onChange={handleEditChange}
-                className="edit-input"
-              />
-              <input
-                type="number"
-                name="price"
-                value={editedProduct.price || ''}
-                onChange={handleEditChange}
-                className="edit-input"
-              />
-              <input
-                type="text"
-                name="material"
-                value={editedProduct.material || ''}
-                onChange={handleEditChange}
-                className="edit-input"
-              />
-              <input
-                type="text"
-                name="gender"
-                value={editedProduct.gender || ''}
-                onChange={handleEditChange}
-                className="edit-input"
-              />
-              <input
-                type="text"
-                name="category"
-                value={editedProduct.category || ''}
-                onChange={handleEditChange}
-                className="edit-input"
-              />
+            <VStack spacing={4} p={6}>
+              <Heading size="md" color="red.600" mb={2}>Edit Product</Heading>
+              
+              {/* Basic Details */}
+              <FormControl>
+                <FormLabel>Article</FormLabel>
+                <Input
+                  name="article"
+                  value={editedProduct.article || ''}
+                  onChange={handleEditChange}
+                />
+              </FormControl>
 
+              <FormControl>
+                <FormLabel>Brand</FormLabel>
+                <Input
+                  name="brand"
+                  value={editedProduct.brand || ''}
+                  onChange={handleEditChange}
+                />
+              </FormControl>
 
-              {/* Default Image URLs */}
-              <h4>Default Images</h4>
-              {(editedProduct.images || []).map((imgUrl, index) => (
-                <div key={`${product._id}-image-${index}`}>
-                  <input
-                    type="text"
-                    value={imgUrl}
-                    onChange={(e) => handleImageChange(e, index)}
-                    className="edit-input"
+              <FormControl>
+                <FormLabel>Description</FormLabel>
+                <Input
+                  name="description"
+                  value={editedProduct.description || ''}
+                  onChange={handleEditChange}
+                />
+              </FormControl>
+
+              <Grid templateColumns="repeat(2, 1fr)" gap={4} width="full">
+                <FormControl>
+                  <FormLabel>Price</FormLabel>
+                  <Input
+                    type="number"
+                    name="price"
+                    value={editedProduct.price || ''}
+                    onChange={handleEditChange}
                   />
-                  <button onClick={() => handleImageRemove(index)}>Remove</button>
-                </div>
-              ))}
-              <button onClick={() => addImageField()} style={{ width: '50%' }}>Add Image</button>
+                </FormControl>
 
-              {/* Colors and their images */}
-              <h4>Colors and Images</h4>
-              {Object.keys(editedProduct.colors).map((color, colorIndex) => (
-                <div key={`${product._id}-color-${colorIndex}`}>
-                  <h5>
-                    <input
-                      type="text"
-                      value={color}
-                      onChange={(e) => handleColorNameChange(e, color)}
-                      className="edit-input"
-                    />
-                    <button onClick={() => handleRemoveColor(color)}>Remove Color</button> {/* Call the function here */}
-                  </h5>
-                  {editedProduct.colors[color].map((imgUrl, index) => (
-                    <div key={`${product._id}-${color}-${index}`}>
-                      <input
-                        type="text"
+                <FormControl>
+                  <FormLabel>Material</FormLabel>
+                  <Input
+                    name="material"
+                    value={editedProduct.material || ''}
+                    onChange={handleEditChange}
+                  />
+                </FormControl>
+              </Grid>
+
+              <Grid templateColumns="repeat(2, 1fr)" gap={4} width="full">
+                <FormControl>
+                  <FormLabel>Gender</FormLabel>
+                  <Select
+                    name="gender"
+                    value={editedProduct.gender || ''}
+                    onChange={handleEditChange}
+                  >
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="unisex">Unisex</option>
+                    <option value="kids">Kids</option>
+                  </Select>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Category</FormLabel>
+                  <Input
+                    name="category"
+                    value={editedProduct.category || ''}
+                    onChange={handleEditChange}
+                  />
+                </FormControl>
+              </Grid>
+
+              {/* Default Images Section */}
+              <Box width="full">
+                <Text fontWeight="bold" mb={2}>Default Images</Text>
+                <VStack spacing={2} align="stretch">
+                  {(editedProduct.images || []).map((imgUrl, index) => (
+                    <HStack key={`${product._id}-image-${index}`}>
+                      <Input
                         value={imgUrl}
-                        onChange={(e) => handleColorImageChange(e, color, index)}
-                        className="edit-input"
+                        onChange={(e) => handleImageChange(e, index)}
+                        size="sm"
                       />
-                      <button onClick={() => handleColorImageRemove(color, index)}>Remove Image</button>
-                    </div>
+                      <IconButton
+                        icon={<CloseIcon />}
+                        onClick={() => handleImageRemove(index)}
+                        colorScheme="red"
+                        size="sm"
+                      />
+                    </HStack>
                   ))}
-                  <button onClick={() => addImageField(color)}>Add Image for {color}</button>
-                </div>
-              ))}
+                  <Button
+                    leftIcon={<AddIcon />}
+                    onClick={() => addImageField()}
+                    size="sm"
+                    colorScheme="blue"
+                    variant="ghost"
+                  >
+                    Add Image
+                  </Button>
+                </VStack>
+              </Box>
 
-              <button onClick={addColorField} style={{ width: '50%' }}>Add Color</button>
+              {/* Colors Section */}
+              <Box width="full">
+                <Text fontWeight="bold" mb={2}>Colors and Images</Text>
+                <VStack spacing={4} align="stretch">
+                  {Object.keys(editedProduct.colors).map((color, colorIndex) => (
+                    <Card key={`${product._id}-color-${colorIndex}`} variant="outline" p={4}>
+                      <VStack spacing={2} align="stretch">
+                        <HStack>
+                          <Input
+                            value={color}
+                            onChange={(e) => handleColorNameChange(e, color)}
+                            placeholder="Color name"
+                            size="sm"
+                          />
+                          <IconButton
+                            icon={<DeleteIcon />}
+                            onClick={() => handleRemoveColor(color)}
+                            colorScheme="red"
+                            size="sm"
+                          />
+                        </HStack>
+                        
+                        {editedProduct.colors[color].map((imgUrl, index) => (
+                          <HStack key={`${product._id}-${color}-${index}`}>
+                            <Input
+                              value={imgUrl}
+                              onChange={(e) => handleColorImageChange(e, color, index)}
+                              size="sm"
+                            />
+                            <IconButton
+                              icon={<CloseIcon />}
+                              onClick={() => handleColorImageRemove(color, index)}
+                              colorScheme="red"
+                              size="sm"
+                            />
+                          </HStack>
+                        ))}
+                        <Button
+                          leftIcon={<AddIcon />}
+                          onClick={() => addImageField(color)}
+                          size="sm"
+                          colorScheme="blue"
+                          variant="ghost"
+                        >
+                          Add Image
+                        </Button>
+                      </VStack>
+                    </Card>
+                  ))}
+                  <Button
+                    leftIcon={<AddIcon />}
+                    onClick={addColorField}
+                    colorScheme="blue"
+                    variant="ghost"
+                  >
+                    Add Color
+                  </Button>
+                </VStack>
+              </Box>
 
-              <button className="header-button save-button" onClick={saveProduct}>Save</button>
-              <button className="header-button cancel-button" onClick={() => setEditingProductId(null)}>Cancel</button>
-            </div>
+              <HStack spacing={4} width="full" justify="flex-end">
+                <Button onClick={() => setEditingProductId(null)} variant="outline">
+                  Cancel
+                </Button>
+                <Button onClick={saveProduct} colorScheme="green">
+                  Save Changes
+                </Button>
+              </HStack>
+            </VStack>
           ) : (
             <>
-              <div className="product-image-gallery">
-                {(product.images || []).map((imgUrl, index) => (
-                  <img key={`${product._id}-image-${index}`} src={imgUrl} alt={`${product.brand} ${product.article}`} className="product-image" />
-                ))}
-              </div>
-              <div className="product-details">
-                <h2 className="product-name">{product.article}</h2>
-                <p className="product-brand">{product.brand}</p>
-                <p className="product-description">{product.description}</p>
-                <div className="product-info">
-                  <p className="product-mrp">MRP: ₹{product.price}</p>
-                  <p className="product-material">Material: {product.material}</p>
-                  <p className="product-gender">Gender: {product.gender}</p>
-                </div>
-                <div className="product-buttons">
-                  <button className="product-discount-edit" onClick={() => startEditing(product)}>Edit</button>
-                  <button className='delete-button ' onClick={() => deleteProduct(product._id)}>Delete</button>
-                </div>
-              </div>
+              <Box position="relative" height="200px">
+                <Image
+                  src={product.images[0]}
+                  alt={product.article}
+                  objectFit="cover"
+                  width="100%"
+                  height="100%"
+                />
+                <HStack
+                  position="absolute"
+                  top={2}
+                  right={2}
+                  spacing={2}
+                >
+                  <IconButton
+                    icon={<EditIcon />}
+                    onClick={() => startEditing(product)}
+                    colorScheme="blue"
+                    size="sm"
+                    variant="solid"
+                  />
+                  <IconButton
+                    icon={<DeleteIcon />}
+                    onClick={() => deleteProduct(product._id)}
+                    colorScheme="red"
+                    size="sm"
+                    variant="solid"
+                  />
+                </HStack>
+              </Box>
+
+              <CardBody>
+                <VStack align="stretch" spacing={3}>
+                  <Heading size="md" noOfLines={1}>{product.article}</Heading>
+                  <Text color="gray.600" fontSize="sm" fontWeight="bold">
+                    {product.brand}
+                  </Text>
+                  <Text noOfLines={2} color="gray.600">
+                    {product.description}
+                  </Text>
+                  
+                  <HStack justify="space-between">
+                    <Badge colorScheme="red" fontSize="md" px={2} py={1}>
+                      ₹{product.price}
+                    </Badge>
+                    <Badge colorScheme="blue" fontSize="sm">
+                      {product.gender}
+                    </Badge>
+                  </HStack>
+                  
+                  <Text fontSize="sm" color="gray.600">
+                    Material: {product.material}
+                  </Text>
+                </VStack>
+              </CardBody>
             </>
           )}
-        </div>
+        </Card>
       ))}
-    </div>
+    </SimpleGrid>
+  </Box>
   );
 };
 
