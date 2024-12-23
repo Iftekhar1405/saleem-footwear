@@ -331,7 +331,7 @@ const ProductCard = () => {
                     fontSize="sm"
                     borderRadius="full"
                   >
-                    {`${item.lengths}Pc`}
+                    {`${item.lengths}Pcs`}
                   </Badge>
                 </Button>
               ))}
