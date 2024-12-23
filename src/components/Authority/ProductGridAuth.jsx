@@ -1,10 +1,17 @@
 import { AddIcon, CloseIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Badge,
   Box,
   Button,
   Card,
   CardBody,
+  Flex,
   FormControl,
   FormLabel,
   Grid,
@@ -15,7 +22,10 @@ import {
   Input,
   Select,
   SimpleGrid,
+  Spinner,
   Text,
+  useDisclosure,
+  useToast,
   VStack
 } from '@chakra-ui/react';
 import axios from "axios";
@@ -33,6 +43,8 @@ const useFetchData = (url, limit = 20) => {
   const [error, setError] = useState(false); // Track errors
   const [hasMore, setHasMore] = useState(true); // Track if there's more data to load
   const pageRef = useRef(1); // Use useRef to track the current page
+
+
 
   const fetchData = async (page) => {
     if (loading || !hasMore) return; // Prevent fetching when loading or no more data
@@ -93,11 +105,17 @@ const useFetchData = (url, limit = 20) => {
 
 const ProductGridAuth = () => {
   const { data: products, loading, error } = useFetchData(`${URL}/products`);
-
-
-    const [editingProductId, setEditingProductId] = useState(null);
+  const [editingProductId, setEditingProductId] = useState(null);
   const [editedProduct, setEditedProduct] = useState({});
+  const [deletingProductId, setDeletingProductId] = useState(null);
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure(); 
+  const cancelRef = useRef();
   
+  const toast = useToast()
 
  
   const startEditing = (product) => {
@@ -202,25 +220,58 @@ const ProductGridAuth = () => {
       // setData(products.map(product => product._id === editedProduct._id ? response.data : product));
       setEditingProductId(null);
       console.log(response);
+      toast({
+        title: "Product updated.",
+        description: "The product was successfully updated.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
       
     } catch (error) {
       console.log(error)
       alert("Error saving product:", error);
-    }
-  };
-
-  const deleteProduct = async (productId) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`${URL}/products/${productId}`, {
-        headers: { Authorization: `Bearer ${token}` }
+      toast({
+        title: "Error updating product.",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
       });
-      // setData(products.filter((product) => product._id !== productId));
-    } catch (error) {
-      alert("Error deleting product:", error);
     }
   };
 
+ 
+  const confirmDeleteProduct = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${URL}/products/${deletingProductId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast({
+        title: "Product deleted.",
+        description: "The product was successfully deleted.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      setDeletingProductId(null);
+      onDeleteClose();
+    } catch (error) {
+      toast({
+        title: "Error deleting product.",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeletingProductId(null);
+    onDeleteClose();
+  };
   const handleColorImageChange = (e, color, index) => {
     const updatedColorImages = [...(editedProduct.colors[color] || [])];
     updatedColorImages[index] = e.target.value;
@@ -281,12 +332,23 @@ const ProductGridAuth = () => {
       };
     });
   };
+ 
   if (loading) {
-    return <h2>Loading...</h2>;
+    return (
+      <Flex justify="center" align="center" h="100vh">
+        <Spinner size="xl" />
+      </Flex>
+    );
   }
 
   if (error) {
-    return <h2>Something went wrong</h2>;
+    return (
+      <Flex justify="center" align="center" h="100vh">
+        <Heading size="lg" color="red.500">
+          Something went wrong
+        </Heading>
+      </Flex>
+    );
   }
   return (
     <Box p={6}>
@@ -504,7 +566,10 @@ const ProductGridAuth = () => {
                   />
                   <IconButton
                     icon={<DeleteIcon />}
-                    onClick={() => deleteProduct(product._id)}
+                    onClick={() => {
+                      setDeletingProductId(product._id);
+                      onDeleteOpen();
+                    }}
                     colorScheme="red"
                     size="sm"
                     variant="solid"
@@ -541,6 +606,35 @@ const ProductGridAuth = () => {
         </Card>
       ))}
     </SimpleGrid>
+    <AlertDialog
+        isOpen={isDeleteOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={cancelDelete}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Product
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              Are you sure you want to delete this product? This action cannot
+              be undone.
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={cancelDelete}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={confirmDeleteProduct}
+                ml={3}
+              >
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
   </Box>
   );
 };
