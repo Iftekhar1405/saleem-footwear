@@ -1,11 +1,11 @@
-import React,{useState,useEffect} from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./BrandScroller.css";
-import axios from "axios";
-import paragon from "./images/paragon.jpg"
-import shoefact from "./images/shoefact.jpeg"
-import columbus from "./images/columbus.png"
-import shoe from "./images/shoe.jpg"
+import columbus from "./images/columbus.png";
+import paragon from "./images/paragon.jpg";
+import shoe from "./images/shoe.jpg";
+import shoefact from "./images/shoefact.jpeg";
 
 const brands = [
   { id: 1, name: "Paragon", image: paragon },
@@ -43,11 +43,11 @@ const BrandScroller = () => {
 
   return (
     <div className="brand-cont"> 
-    <h3>Brands We Deal in --</h3>
+    <h3>Brands We Deal in:</h3>
     <div className="brand-container">
       
       {brands.map((brand) => (
-        <div key={brand.id} className="brand-card" onClick={ () => handleCategoryClick(brand.name.toUpperCase())}>
+        <div key={brand.id} className="brand-card" >
           <img src={brand.image} alt={brand.name} />
           <p>{brand.name}</p>
         </div>

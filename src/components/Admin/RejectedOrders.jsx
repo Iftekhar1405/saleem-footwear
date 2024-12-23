@@ -136,7 +136,7 @@ function RejectedOrders() {
   }
 
   return (
-    <Box p={4}>
+    <Box p={4} >
       <Text fontSize="2xl" mb={4}>
         Rejected Orders
       </Text>
@@ -150,6 +150,8 @@ function RejectedOrders() {
                 Order ID: {order._id}
                 <br />
                 Customer : {order.userId.name}
+                <br />
+                Shop : {order.userId.shopName}
                 <br />
                 Phone : {order.userId.phone}
               </Text>

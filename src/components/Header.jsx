@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Box, Button, IconButton, Text, HStack, VStack } from '@chakra-ui/react';
-import { SearchIcon, PhoneIcon, ArrowBackIcon } from '@chakra-ui/icons';
+import { ArrowBackIcon, PhoneIcon, SearchIcon } from '@chakra-ui/icons';
+import { Box, Button, HStack, IconButton, Text } from '@chakra-ui/react';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 const token = localStorage.getItem('token');
@@ -47,7 +47,8 @@ const Header = () => {
       left={0} 
       right={0} 
       zIndex={1000}
-    >
+    borderBottom={'1px solid gray'}
+>
       <HStack spacing={4} justify="space-between" align="center" maxW="1200px" mx="auto">
         {/* Back Button */}
         <IconButton

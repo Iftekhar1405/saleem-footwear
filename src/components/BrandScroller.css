@@ -1,23 +1,30 @@
 .brand-cont{
   background-color: white;
+  margin: 10px 0
 }
 .brand-container {
     display: flex;
+    justify-content: space-evenly;
     overflow-x: auto;
     white-space: nowrap;
-    padding: 10px;
+    padding: 20px 10px;
     scroll-behavior: smooth;
-    color: rgb(221, 32, 44);
+    color: rgb(48, 37, 37);
     font-weight: bold;
+    align-items: center;
   }
   h3{
-    color: rgb(221, 32, 44);
+    color: rgb(24, 24, 31);
     padding-left: 10px;
+    font-weight: 700;
   }
   .brand-card {
-    flex: 0 0 auto;
     margin-right: 15px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
   }
   
   .brand-card img {

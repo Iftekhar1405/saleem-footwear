@@ -1,9 +1,9 @@
+import { HamburgerIcon } from '@chakra-ui/icons';
+import { Box, Button, Flex, IconButton, Image, Text, useBreakpointValue } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Box, Flex, Image, IconButton, Button, Text, useBreakpointValue, Center } from '@chakra-ui/react';
-import { HamburgerIcon } from '@chakra-ui/icons';
-import logo from './images/logo.png';
 import RoleBasedComponent from '../RoleBasedComponents';
+import logo from './images/logo.png';
 
 function Nav() {
   let token = localStorage.getItem('token');
@@ -33,8 +33,8 @@ function Nav() {
       <Box p={4} bg="black" color="white">
         <Flex align="center" justify="space-between" maxW="1200px" mx="auto">
           <Flex align="center">
-            <Image src={logo} alt="Logo" boxSize="70px" />
-            <Text ml={3} fontSize="xl" fontWeight="bold" className="brand-name">Salim Footwear</Text>
+            <Image src={logo} alt="Logo"  h={'60px'} />
+            <Text  fontSize="xl" fontWeight="bold" color={'gray.200'} letterSpacing={3}>SALIM FOOTWEAR</Text>
           </Flex>
 
           {/* Hamburger Menu for smaller screens */}
