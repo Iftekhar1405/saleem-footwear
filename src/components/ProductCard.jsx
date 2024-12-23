@@ -1,5 +1,10 @@
 import {
-  Alert,
+  AddIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MinusIcon,
+} from "@chakra-ui/icons";
+import {
   AlertDialog,
   AlertDialogBody,
   AlertDialogContent,
@@ -19,14 +24,8 @@ import {
   Stack,
   Text,
   useDisclosure,
-  useToast,
+  useToast
 } from "@chakra-ui/react";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  AddIcon,
-  MinusIcon,
-} from "@chakra-ui/icons";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -234,14 +233,14 @@ const ProductCard = () => {
           </Box>
 
           {/* Thumbnails */}
-          <Flex mt={4} gap={2} overflowX="auto" p={2}>
+          <Flex mt={1} gap={2} overflowX="auto" p={1}>
             {imagesToShow?.map((img, idx) => (
               <Box
                 key={idx}
                 as="button"
                 flexShrink={0}
-                w="16"
-                h="16"
+                w="14"
+                h="14"
                 borderRadius="md"
                 overflow="hidden"
                 border={currentImageIndex === idx ? "2px solid" : "none"}
@@ -261,24 +260,21 @@ const ProductCard = () => {
         </Box>
 
         {/* Product Details */}
-        <Stack spacing={6}>
+        <Stack >
           <Box>
-            <Heading as="h1" size="xl">
+            <Heading  size="lg">
               {product.article}
             </Heading>
-            <Text fontSize="lg" color="gray.600" mt={1}>
+            <Text fontSize="md" color="gray.600" >
               {product.brand}
             </Text>
-            <Badge colorScheme="green" mt={2}>
-              {product.condition}
-            </Badge>
-          </Box>
+          
 
-          <Box>
-            <Text fontSize="3xl" fontWeight="bold" color="red.600">
+          
+            <Text fontSize="xl" fontWeight="bold" color="red.600" mt={1}>
               ₹{product.price}
             </Text>
-            <Text color="gray.600" mt={2}>
+            <Text color="gray.600" >
               {product.description}
             </Text>
           </Box>
@@ -294,9 +290,11 @@ const ProductCard = () => {
                   <Button
                     key={color}
                     variant={selectedColor === color ? "solid" : "outline"}
-                    colorScheme="red"
+                    colorScheme='red'
+                    borderBottomColor={color}
                     onClick={() => setSelectedColor(color)}
                     px={6}
+                    size={'sm'}
                   >
                     {color}
                   </Button>
