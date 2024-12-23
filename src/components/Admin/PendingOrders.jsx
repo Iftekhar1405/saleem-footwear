@@ -152,6 +152,8 @@ function PendingOrders() {
                 <br />
                 Customer : {order.userId.name}
                 <br />
+                Shop : {order.userId.shopName}
+                <br />
                 Phone : {order.userId.phone}
               </Text>
               <IconButton icon={<BiPrinter />} onClick={handlePrint} />
