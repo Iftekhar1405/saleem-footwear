@@ -202,8 +202,10 @@ const ProductCard = () => {
                 />
                 <IconButton
                   icon={<ChevronLeftIcon />}
+                  opacity={0}
                   border={"1px solid rgb(174, 191, 221)"}
                   position="absolute"
+                  height={"100%"}
                   left={2}
                   top="50%"
                   transform="translateY(-50%)"
@@ -216,6 +218,8 @@ const ProductCard = () => {
                   icon={<ChevronRightIcon />}
                   border={"1px solid rgb(174, 191, 221)"}
                   position="absolute"
+                  opacity={0}
+                  height={"100%"}
                   right={2}
                   top="50%"
                   transform="translateY(-50%)"
