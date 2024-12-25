@@ -24,7 +24,7 @@ import {
   Stack,
   Text,
   useDisclosure,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -178,7 +178,7 @@ const ProductCard = () => {
   }
 
   return (
-    <Container maxW="container.xl" py={8}>
+    <Container maxW="container.xl" py={4}>
       <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={8}>
         {/* Image Gallery */}
         <Box
@@ -194,8 +194,9 @@ const ProductCard = () => {
                   src={imagesToShow[currentImageIndex]}
                   alt={`${product.brand} ${product.article}`}
                   objectFit="cover"
-                  w="100%"
-                  h="100%"
+                  w="80%"
+                  h="80%"
+                  margin={"0 auto"}
                   position="relative"
                   top="0"
                   left="0"
@@ -264,25 +265,7 @@ const ProductCard = () => {
         </Box>
 
         {/* Product Details */}
-        <Stack >
-          <Box>
-            <Heading  size="lg">
-              {product.article}
-            </Heading>
-            <Text fontSize="md" color="gray.600" >
-              {product.brand}
-            </Text>
-          
-
-          
-            <Text fontSize="xl" fontWeight="bold" color="red.600" mt={1}>
-              ₹{product.price}
-            </Text>
-            <Text color="gray.600" >
-              {product.description}
-            </Text>
-          </Box>
-
+        <Stack>
           {/* Color Selection */}
           <Box>
             <Text fontWeight="semibold" mb={2}>
@@ -294,16 +277,28 @@ const ProductCard = () => {
                   <Button
                     key={color}
                     variant={selectedColor === color ? "solid" : "outline"}
-                    colorScheme='red'
+                    colorScheme="red"
                     borderBottomColor={color}
                     onClick={() => setSelectedColor(color)}
                     px={6}
-                    size={'sm'}
+                    size={"sm"}
                   >
                     {color}
                   </Button>
                 ))}
             </Flex>
+          </Box>
+
+          <Box>
+            <Heading size="lg">{product.article}</Heading>
+            <Text fontSize="md" color="gray.600">
+              {product.brand}
+            </Text>
+
+            <Text fontSize="xl" fontWeight="bold" color="red.600" mt={1}>
+              ₹{product.price}
+            </Text>
+            <Text color="gray.600">{product.description}</Text>
           </Box>
 
           {/* Size Selection */}
