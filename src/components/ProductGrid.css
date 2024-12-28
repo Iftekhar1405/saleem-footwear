@@ -1,13 +1,18 @@
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-top: 20px;
-}
-
-@media (max-width: 768px) {
-    .product-grid {
-        grid-template-columns: repeat(2.1fr);
-        
+.chakra-image {
+    will-change: transform;
+  }
+  
+  a {
+    text-decoration: none;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
     }
-}
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }

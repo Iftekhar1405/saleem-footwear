@@ -144,9 +144,9 @@ const CategoryGrid = () => {
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
       variants={containerVariants}
-      mt={5}
+      mt={1}
       boxShadow="lg"
-      p={5}
+      p={3}
       borderRadius="md"
       bg="gray.50"
     >
@@ -176,7 +176,7 @@ const CategoryGrid = () => {
         px={2}
         css={{
           "&::-webkit-scrollbar": {
-            height: "8px",
+            height: "1px",
           },
           "&::-webkit-scrollbar-track": {
             background: "#f1f1f1",
