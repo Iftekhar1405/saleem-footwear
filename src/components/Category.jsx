@@ -1,40 +1,38 @@
-import { 
-  Box, 
-  Button, 
-  Center, 
-  Divider, 
-  Flex, 
-  Heading, 
-  HStack, 
-  Image, 
-  Skeleton, 
+import {
+  Box,
+  Button,
+  Center,
+  Divider,
+  Flex,
+  Grid,
+  HStack,
+  Image,
+  Skeleton,
   SkeletonText,
-  Spinner, 
+  Spinner,
   Text,
-  useBreakpointValue
-} from '@chakra-ui/react';
-import { motion, useInView } from 'framer-motion';
-import axios from 'axios';
-import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Category.css';
+  useBreakpointValue,
+} from "@chakra-ui/react";
+import { motion, useInView } from "framer-motion";
+import axios from "axios";
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
-const URL = 'https://saleem-footwear-api.vercel.app/api/v1/search/category';
-const CATEGORIES_PER_PAGE = 10;
+const URL = "https://saleem-footwear-api.vercel.app/api/v1/search/category";
 
 const MotionBox = motion(Box);
 const MotionDivider = motion(Divider);
+const MotionGrid = motion(Grid);
 
 const CategorySkeleton = () => (
-  <Box 
-    flexShrink={0} 
-    borderWidth="1px" 
-    borderRadius="md" 
-    overflow="hidden" 
-    boxShadow="sm" 
-    bg="white" 
-    p={3} 
-    width="200px"
+  <Box
+    borderWidth="1px"
+    borderRadius="md"
+    overflow="hidden"
+    boxShadow="sm"
+    bg="white"
+    p={3}
+    width="100%"
   >
     <Skeleton height="130px" borderRadius="sm" mb={2} />
     <SkeletonText mt="2" noOfLines={1} spacing="4" />
@@ -43,78 +41,61 @@ const CategorySkeleton = () => (
 
 const DecorativeDivider = ({ isTop = true }) => (
   <Flex align="center" my={4}>
-    <MotionDivider 
-      borderColor="red.400" 
+    <MotionDivider
+      borderColor="slate.400"
       borderWidth="2px"
       initial={{ width: 0 }}
       animate={{ width: "100%" }}
-      transition={{ duration: 1, delay: 0.2 }}
+      transition={{ duration: 2.4, delay: 0.6 }}
     />
-    <Box 
-      bg="red.500" 
-      w={3} 
-      h={3} 
-      borderRadius="full" 
+    <Box
+      bg="black"
+      w={3}
+      h={3}
+      borderRadius="full"
       mx={2}
       transform={isTop ? "translateY(1px)" : "translateY(-1px)"}
     />
-    <MotionDivider 
-      borderColor="red.400" 
+    <MotionDivider
+      borderColor="slate.400"
       borderWidth="2px"
       initial={{ width: 0 }}
       animate={{ width: "100%" }}
-      transition={{ duration: 1, delay: 0.2 }}
+      transition={{ duration: 2.4, delay: 0.6 }}
     />
   </Flex>
 );
 
 const CategoryGrid = () => {
   const [categories, setCategories] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: false, margin: "-100px" });
   const navigate = useNavigate();
 
-  const fetchCategories = async (page) => {
-    if (loadingMore) return;
-    
-    if (page === 1) {
-      setInitialLoading(true);
-    } else {
-      setLoadingMore(true);
-    }
-
+  const fetchCategories = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(URL, {
-        params: {
-          page,
-          limit: CATEGORIES_PER_PAGE
-        }
-      });
-      
-      setCategories((prevCategories) => [...prevCategories, ...response.data.data]);
-      setHasMore(response.data.data.length === CATEGORIES_PER_PAGE);
+      const response = await axios.get(URL);
+      setCategories(response.data.data);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.error("Error fetching categories:", error);
     } finally {
-      setInitialLoading(false);
-      setLoadingMore(false);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCategories(currentPage);
-  }, [currentPage]);
-
-  const handleLoadMore = () => {
-    setCurrentPage((prevPage) => prevPage + 1);
-  };
+    fetchCategories();
+  }, []);
 
   const handleCategoryClick = (category) => {
     navigate(`/category-grid/category=${category}`);
+  };
+
+  const handleSeeMore = () => {
+    setShowAll(true);
   };
 
   const containerVariants = {
@@ -122,9 +103,9 @@ const CategoryGrid = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const itemVariants = {
@@ -133,10 +114,12 @@ const CategoryGrid = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.5
-      }
-    }
+        duration: 0.5,
+      },
+    },
   };
+
+  const displayCategories = showAll ? categories : categories.slice(0, 2);
 
   return (
     <MotionBox
@@ -157,93 +140,77 @@ const CategoryGrid = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <Heading 
-          as="h3" 
-          size="md" 
-          mb={4} 
-          textAlign="left"
-          bgGradient="linear(to-r, red.500, red.300)"
-          bgClip="text"
+        <motion.h3
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: "bold",
+            marginBottom: "1rem",
+            color: "#2D3748"
+          }}
         >
           Explore Your Category:
-        </Heading>
+        </motion.h3>
       </motion.div>
 
-      <HStack
-        spacing={4}
-        overflowX="auto"
-        py={4}
+      <MotionGrid
+        templateColumns="repeat(2, 1fr)"
+        gap={4}
         px={2}
-        css={{
-          "&::-webkit-scrollbar": {
-            height: "1px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "#f1f1f1",
-            borderRadius: "8px",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "#e53e3e",
-            borderRadius: "8px",
-          },
-        }}
+        py={4}
+        variants={containerVariants}
       >
-        {initialLoading ? (
-          [...Array(5)].map((_, index) => (
-            <CategorySkeleton key={`skeleton-${index}`} />
-          ))
-        ) : (
-          categories.map((category, index) => (
-            <MotionBox
-              key={index}
-              variants={itemVariants}
-              flexShrink={0}
-              borderWidth="1px"
-              borderRadius="md"
-              overflow="hidden"
-              boxShadow="sm"
-              bg="white"
-              p={3}
-              textAlign="center"
-              cursor="pointer"
-              whileHover={{ 
-                scale: 1.05, 
-                boxShadow: "xl",
-                transition: { duration: 0.2 }
-              }}
-              onClick={() => handleCategoryClick(category.category)}
-            >
-              <Image
-                src={category.image}
-                alt={category.category}
-                h="130px"
-                w="200px"
-                objectFit="contain"
-                mb={2}
-                borderRadius="sm"
-              />
-              <Text 
-                fontWeight="bold" 
-                bgGradient="linear(to-r, red.500, red.300)"
-                bgClip="text"
+        {loading
+          ? [...Array(2)].map((_, index) => (
+              <CategorySkeleton key={`skeleton-${index}`} />
+            ))
+          : displayCategories.map((category, index) => (
+              <MotionBox
+                key={index}
+                variants={itemVariants}
+                borderWidth="1px"
+                borderRadius="md"
+                overflow="hidden"
+                boxShadow="sm"
+                bg="white"
+                p={3}
+                textAlign="center"
+                cursor="pointer"
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "xl",
+                  transition: { duration: 0.2 },
+                }}
+                onClick={() => handleCategoryClick(category.category)}
               >
-                {category.category}
-              </Text>
-            </MotionBox>
-          ))
-        )}
-        {loadingMore && <CategorySkeleton />}
-      </HStack>
+                <Image
+                  src={category.image}
+                  alt={category.category}
+                  h="130px"
+                  w="100%"
+                  objectFit="contain"
+                  mb={2}
+                  borderRadius="sm"
+                />
+                <Text
+                  fontWeight="bold"
+                  bgGradient="linear(to-r, red.500, red.300)"
+                  bgClip="text"
+                >
+                  {category.category}
+                </Text>
+              </MotionBox>
+            ))}
+      </MotionGrid>
 
-      <Flex justifyContent="center" mt={6}>
-        {hasMore && !initialLoading && !loadingMore && (
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+      {!showAll && !loading && categories.length > 2 && (
+        <Flex justifyContent="center" mt={6}>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               colorScheme="red"
-              onClick={handleLoadMore}
+              onClick={handleSeeMore}
               size="md"
               px={8}
               shadow="md"
@@ -252,21 +219,11 @@ const CategoryGrid = () => {
                 shadow: "lg",
               }}
             >
-              Load More
+              See More
             </Button>
           </motion.div>
-        )}
-        {loadingMore && (
-          <Center>
-            <Spinner 
-              size="md" 
-              color="red.500" 
-              thickness="3px"
-              speed="0.8s"
-            />
-          </Center>
-        )}
-      </Flex>
+        </Flex>
+      )}
 
       <DecorativeDivider isTop={false} />
     </MotionBox>
