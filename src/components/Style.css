@@ -168,6 +168,52 @@ svg{
 .scroll-container::-webkit-scrollbar-thumb:hover {
     background: #555; 
 }
+
+
+
+
+/* Overall carousel container */
+.carousel-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%; /* Full width */
+    height: 300px; /* Adjust based on your design */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4; /* Optional background color */
+  }
+  
+  /* Carousel track (scrolling area) */
+  .carousel-track {
+    display: flex;
+    width: max-content; /* Allows it to expand based on content */
+    transition: transform 0.05s linear; /* Smooth scrolling effect */
+  }
+  
+  /* Carousel images */
+  .carousel-image {
+    width: 300px; /* Adjust the image size */
+    height: 300px; /* Adjust the image size */
+    object-fit: cover;
+    margin: 0 0px; /* Space between images */
+    opacity: 0;
+    animation: fade-in 1.5s forwards; /* Fade-in effect */
+  }
+  
+  /* Fade-in animation */
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+
+
+
 .fixed-buttons {
     position: fixed;
     bottom: 10px; /* Distance from the bottom of the viewport */

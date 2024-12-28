@@ -1,27 +1,35 @@
-
-
-.category-list {
-  width: 100%;
-  display: flex;
-  flex-wrap: nowrap; /* Prevent wrapping */
-  white-space: nowrap;
-  padding: 10px;
-  margin: 10px 0;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
+.category-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  padding-bottom: 10px;
 }
 
-.category-item {
-  padding: 10px;
-  margin-right: 10px;
-  color: #36454f;
-  font-weight: bold;
-  border: 1.5px solid rgb(221, 32, 44);
-  border-radius: 4px;
-  white-space: nowrap; /* Prevent text wrapping */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
+/* For smooth transitions */
+* {
+  transition: all 0.3s ease-in-out;
+}
 
+/* Prevent horizontal overflow */
+body {
+  overflow-x: hidden;
+}
+
+
+Copy.chakra-stack::-webkit-scrollbar {
+  height: 8px;
+}
+
+.chakra-stack::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 8px;
+}
+
+.chakra-stack::-webkit-scrollbar-thumb {
+  background: #e53e3e;
+  border-radius: 8px;
+}
+
+.chakra-stack {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
