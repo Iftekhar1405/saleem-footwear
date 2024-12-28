@@ -138,7 +138,7 @@ const ProductCard = ({ product, index }) => {
           </Box>
         </Box>
 
-        <Box p={6} bg="white">
+        <Box p={4} bg="white">
           <Heading size="md" noOfLines={1} color="red.600" mb={2}>
             {product.article}
           </Heading>
