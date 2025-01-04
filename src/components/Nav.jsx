@@ -1,9 +1,14 @@
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, IconButton, Image, Text, useBreakpointValue } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import RoleBasedComponent from '../RoleBasedComponents';
 import logo from './images/logo.png';
+
+// Create a motion variant of Box
+const MotionBox = motion(Box);
+const MotionFlex = motion(Flex);
 
 function Nav() {
   let token = localStorage.getItem('token');
@@ -30,14 +35,33 @@ function Nav() {
 
   return (
     <>
-      <Box p={4} bg="black" color="white">
+      {/* Header Container with Fade-In */}
+      <MotionBox
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ 
+          duration: 0.6,
+          ease: "easeOut"
+        }}
+        p={4} 
+        bg="black" 
+        color="white"
+      >
         <Flex align="center" justify="space-between" maxW="1200px" mx="auto">
-          <Flex align="center">
-            <Image src={logo} alt="Logo"  h={'60px'} />
-            <Text  fontSize="xl" fontWeight="bold" color={'gray.200'} letterSpacing={3}>SALIM FOOTWEAR</Text>
-          </Flex>
+          {/* Logo and Title with Fade-In */}
+          <MotionFlex
+            align="center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, delay: 0.2 }}
+          >
+            <Image src={logo} alt="Logo" h={'60px'} />
+            <Text fontSize="xl" fontWeight="bold" color={'gray.200'} letterSpacing={3}>
+              SALIM FOOTWEAR
+            </Text>
+          </MotionFlex>
 
-          {/* Hamburger Menu for smaller screens */}
+          {/* Hamburger Menu Icon */}
           <IconButton
             aria-label="Open menu"
             icon={<HamburgerIcon />}
@@ -47,71 +71,121 @@ function Nav() {
             colorScheme="whiteAlpha"
           />
           
-          {/* Desktop Menu */}
-          <Flex
+          {/* Desktop Navigation Links with Staggered Fade-In */}
+          <MotionFlex
             as="nav"
             align="center"
             justify="space-between"
             display={{ base: 'none', md: 'flex' }}
             gap={6}
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.2 }, // Staggered animation
+              },
+            }}
           >
-            <Link to="/orders">
-              <Button variant="link" colorScheme="whiteAlpha">Orders</Button>
-            </Link>
-            <Link to="/catalog">
-              <Button variant="link" colorScheme="whiteAlpha">Catalogue</Button>
-            </Link>
+            {['/orders', '/catalog', '/profile'].map((path, index) => (
+              <MotionBox
+                key={index}
+                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              >
+                <Link to={path}>
+                  <Button variant="link" colorScheme="whiteAlpha">
+                    {path.slice(1).charAt(0).toUpperCase() + path.slice(2)}
+                  </Button>
+                </Link>
+              </MotionBox>
+            ))}
 
-            {/* Admin Link (Role-based) */}
             <RoleBasedComponent allowedRoles={['admin']}>
-              <Link to="/register">
-                <Button variant="link" colorScheme="whiteAlpha">Register Users</Button>
-              </Link>
+              <MotionBox
+                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              >
+                <Link to="/register">
+                  <Button variant="link" colorScheme="whiteAlpha">Register Users</Button>
+                </Link>
+              </MotionBox>
             </RoleBasedComponent>
 
-            <Link to="/profile">
-              <Button variant="link" colorScheme="whiteAlpha">Profile</Button>
-            </Link>
-
-            {/* Login/Logout Button */}
             {token ? (
-              <Button variant="outline" colorScheme="red" onClick={logout}>Log-out</Button>
+              <MotionBox
+                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              >
+                <Button variant="outline" colorScheme="red" onClick={logout}>
+                  Log-out
+                </Button>
+              </MotionBox>
             ) : (
-              <Button variant={buttonVariant} colorScheme="blue" onClick={() => navigate('/login')}>Log-in</Button>
+              <MotionBox
+                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              >
+                <Button variant={buttonVariant} colorScheme="blue" onClick={() => navigate('/login')}>
+                  Log-in
+                </Button>
+              </MotionBox>
             )}
-          </Flex>
+          </MotionFlex>
         </Flex>
 
-        {/* Mobile Menu */}
-        {isOpen && (
+        {/* Mobile Menu with Fade-In Animation */}
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ 
+            opacity: isOpen ? 1 : 0,
+            height: isOpen ? 'auto' : 0,
+          }}
+          transition={{ duration: 0.3 }}
+        >
           <Box mt={4} display={{ base: 'block', md: 'none' }}>
-            <Link to="/orders">
-              <Button w="full" variant="ghost" colorScheme="white">Orders</Button>
-            </Link>
-            <Link to="/catalog">
-              <Button w="full" variant="ghost" colorScheme="white">Catalogue</Button>
-            </Link>
+            {['/orders', '/catalog', '/profile'].map((path, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : 20 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                <Link to={path}>
+                  <Button w="full" variant="ghost" colorScheme="white">
+                    {path.slice(1).charAt(0).toUpperCase() + path.slice(2)}
+                  </Button>
+                </Link>
+              </motion.div>
+            ))}
 
             <RoleBasedComponent allowedRoles={['admin']}>
-              <Link to="/register">
-                <Button w="full" variant="ghost" colorScheme="white">Register Users</Button>
-              </Link>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Link to="/register">
+                  <Button w="full" variant="ghost" colorScheme="white">Register Users</Button>
+                </Link>
+              </motion.div>
             </RoleBasedComponent>
 
-            <Link to="/profile">
-              <Button w="full" variant="ghost" colorScheme="white">Profile</Button>
-            </Link>
-
-            {token ? (
-              <Button w="full" variant="outline" colorScheme="red" onClick={logout}>Log-out</Button>
-            ) : (
-              <Button w="full" variant="outline" colorScheme="blue" onClick={() => navigate('/login')}>Log-in</Button>
-            )}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : 20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {token ? (
+                <Button w="full" variant="outline" colorScheme="red" onClick={logout}>
+                  Log-out
+                </Button>
+              ) : (
+                <Button w="full" variant="outline" colorScheme="blue" onClick={() => navigate('/login')}>
+                  Log-in
+                </Button>
+              )}
+            </motion.div>
           </Box>
-        )}
-      </Box>
-
-      
+        </motion.div>
+      </MotionBox>
     </>
   );
 }

@@ -4,7 +4,7 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Text, Image, HStack, VStack, Divider, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, useToast } from '@chakra-ui/react';
+import { Box, Button, Text, Image, HStack, VStack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, useToast } from '@chakra-ui/react';
 
 const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 const token = localStorage.getItem('token');

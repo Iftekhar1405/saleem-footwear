@@ -1,4 +1,4 @@
-import { Box, Button, Center, Divider, Flex, Heading, HStack, Image, Spinner, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Heading, HStack, Image, Spinner, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -119,7 +119,7 @@ const CategoryGrid = () => {
           </Center>
         )}
       </Flex>
-      <Divider borderColor="gray.800"  mt={5}/>;
+      {/* <Divider borderColor="gray.800"  mt={5}/>; */}
     </Box>
   );
 };

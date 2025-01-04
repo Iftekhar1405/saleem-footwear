@@ -140,34 +140,79 @@ svg{
     vertical-align: middle;
 }
 
+
+
+/* ----------------------------------------------- */
+/* ------------------In Case ----------------------- */
+
 .scroll-container {
     display: flex;
-    overflow-x: auto; /* Enable horizontal scrolling */
-    white-space: nowrap; /* Prevent wrapping of items */
-    scroll-snap-type: x mandatory; /* Optional: for snapping behavior */
-}
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .scroll-container img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    pointer-events: none; /* Prevent drag on images */
+  }
+  
+  /* Hide scrollbar for clean look */
+  .scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .scroll-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
 
-.scroll-container img {
-    flex-shrink: 0; /* Prevent images from shrinking */
-    width: 80%; /* Ensure images fit within their container */
-    max-width: 450px;
-    height: auto; /* Maintain aspect ratio */
-    scroll-snap-align: start; /* Optional: for snapping behavior */
-}
+/* ------------------------------------------- */
 
-/* Optional: add some styling for scrollbar */
-.scroll-container::-webkit-scrollbar {
-    height: 8px;
-}
 
-.scroll-container::-webkit-scrollbar-thumb {
-    background: #888; 
-    border-radius: 4px;
-}
+/* Overall carousel container */
+.carousel-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%; /* Full width */
+    height: 300px; /* Adjust based on your design */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4; /* Optional background color */
+  }
+  
+  /* Carousel track (scrolling area) */
+  .carousel-track {
+    display: flex;
+    width: max-content; /* Allows it to expand based on content */
+    transition: transform 0.05s linear; /* Smooth scrolling effect */
+  }
+  
+  /* Carousel images */
+  .carousel-image {
+    width: 300px; /* Adjust the image size */
+    height: 300px; /* Adjust the image size */
+    object-fit: cover;
+    margin: 0 0px; /* Space between images */
+    opacity: 0;
+    animation: fade-in 1.5s forwards; /* Fade-in effect */
+  }
+  
+  /* Fade-in animation */
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
 
-.scroll-container::-webkit-scrollbar-thumb:hover {
-    background: #555; 
-}
 .fixed-buttons {
     position: fixed;
     bottom: 10px; /* Distance from the bottom of the viewport */
