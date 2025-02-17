@@ -26,9 +26,25 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { keyframes } from "@emotion/react";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
+// Add to cart animation
+const addToCartAnimation = keyframes`
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+`;
+
+// Image slide animation
+const slideAnimation = keyframes`
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+`;
+
+
 
 const ProductCard = () => {
   const { id } = useParams();
@@ -40,6 +56,8 @@ const ProductCard = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const navigate = useNavigate();
   const toast = useToast();
+  const [isHovering, setIsHovering] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   // Chakra UI AlertDialog state
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -123,22 +141,24 @@ const ProductCard = () => {
         status: "warning",
         duration: 3000,
         isClosable: true,
+        position: "top",
       });
       return;
     }
 
+    setIsAddingToCart(true);
     try {
       await addToCart(product, selectedColor, selectedSize, quantity);
       toast({
-        title: "Success",
-        description: "Item added to cart",
+        title: "Added to Cart!",
+        description: `${quantity} ${product.article} added successfully`,
         status: "success",
-        duration: 3000,
+        duration: 2000,
         isClosable: true,
+        position: "top",
       });
       window.dispatchEvent(new Event("cart-updated"));
     } catch (error) {
-      console.log(error);
       toast({
         title: "Error",
         description: "Failed to add item to cart",
@@ -146,6 +166,8 @@ const ProductCard = () => {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsAddingToCart(false);
     }
   };
   const imagesToShow = selectedColor
@@ -169,87 +191,113 @@ const ProductCard = () => {
 
   if (!product) {
     return (
-      <Flex height="100vh" justify="center" align="center">
+      <Flex 
+        height="100vh" 
+        justify="center" 
+        align="center"
+        transition="all 0.3s ease"
+      >
         <Box textAlign="center">
-          <Spinner size="xl" color="red.500" thickness="4px" />
+          <Spinner 
+            size="xl" 
+            color="red.500" 
+            thickness="4px"
+            transition="all 0.3s ease"
+          />
         </Box>
       </Flex>
     );
   }
 
+
   return (
-    <Container maxW="container.xl" py={4}>
-      <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={8}>
+    <Container maxW="container.xl" py={{ base: 4, md: 8 }}>
+      <Grid
+        templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }}
+        gap={{ base: 4, md: 8, lg: 12 }}
+      >
         {/* Image Gallery */}
         <Box
           position="relative"
-          borderRadius="lg"
+          borderRadius="xl"
           overflow="hidden"
           bg="gray.50"
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+          transition="transform 0.3s ease-in-out"
+          _hover={{ transform: "scale(1.02)" }}
         >
-          <Box position="relative" paddingBottom="">
-            {imagesToShow && imagesToShow.length > 0 ? (
-              <Box position="relative">
-                <Image
-                  src={imagesToShow[currentImageIndex]}
-                  alt={`${product.brand} ${product.article}`}
-                  objectFit="cover"
-                  w="80%"
-                  h="80%"
-                  margin={"0 auto"}
-                  position="relative"
-                  top="0"
-                  left="0"
-                />
-                <IconButton
-                  icon={<ChevronLeftIcon />}
-                  opacity={0}
-                  border={"1px solid rgb(174, 191, 221)"}
-                  position="absolute"
-                  height={"100%"}
-                  left={2}
-                  top="50%"
-                  transform="translateY(-50%)"
-                  onClick={prevImage}
-                  bg="white"
-                  _hover={{ bg: "gray.100" }}
-                  isRound
-                />
-                <IconButton
-                  icon={<ChevronRightIcon />}
-                  border={"1px solid rgb(174, 191, 221)"}
-                  position="absolute"
-                  opacity={0}
-                  height={"100%"}
-                  right={2}
-                  top="50%"
-                  transform="translateY(-50%)"
-                  onClick={nextImage}
-                  bg="white"
-                  _hover={{ bg: "gray.100" }}
-                  isRound
-                />
-              </Box>
-            ) : (
-              <Flex h="100%" align="center" justify="center">
-                <Text>No images available</Text>
-              </Flex>
-            )}
+          <Box position="relative">
+            <Image
+              src={imagesToShow[currentImageIndex]}
+              alt={`${product.brand} ${product.article}`}
+              objectFit="cover"
+              w={{ base: "100%", md: "90%" }}
+              h={{ base: "300px", md: "400px", lg: "500px" }}
+              margin="0 auto"
+              transition="all 0.5s ease"
+              animation={`${slideAnimation} 0.5s ease`}
+            />
+            <IconButton
+              icon={<ChevronLeftIcon />}
+              position="absolute"
+              left={4}
+              top="50%"
+              transform="translateY(-50%)"
+              onClick={prevImage}
+              opacity={isHovering ? 0.8 : 0}
+              transition="all 0.3s ease"
+              _hover={{ opacity: 1, bg: "white" }}
+              bg="white"
+              size={{ base: "sm", md: "md" }}
+              isRound
+              boxShadow="lg"
+            />
+            <IconButton
+              icon={<ChevronRightIcon />}
+              position="absolute"
+              right={4}
+              top="50%"
+              transform="translateY(-50%)"
+              onClick={nextImage}
+              opacity={isHovering ? 0.8 : 0}
+              transition="all 0.3s ease"
+              _hover={{ opacity: 1, bg: "white" }}
+              bg="white"
+              size={{ base: "sm", md: "md" }}
+              isRound
+              boxShadow="lg"
+            />
           </Box>
-
           {/* Thumbnails */}
-          <Flex mt={1} gap={2} overflowX="auto" p={1}>
+          <Flex
+            mt={4}
+            gap={3}
+            overflowX="auto"
+            p={2}
+            sx={{
+              "&::-webkit-scrollbar": {
+                height: "6px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#CBD5E0",
+                borderRadius: "3px",
+              },
+            }}
+          >
             {imagesToShow?.map((img, idx) => (
               <Box
                 key={idx}
                 as="button"
                 flexShrink={0}
-                w="14"
-                h="14"
+                w={{ base: "50px", md: "70px" }}
+                h={{ base: "50px", md: "70px" }}
                 borderRadius="md"
                 overflow="hidden"
-                border={currentImageIndex === idx ? "2px solid" : "none"}
-                borderColor="red.500"
+                border={currentImageIndex === idx ? "2px solid" : "1px solid"}
+                borderColor={currentImageIndex === idx ? "red.500" : "gray.200"}
+                transition="all 0.2s ease"
+                _hover={{ transform: "scale(1.05)" }}
                 onClick={() => setCurrentImageIndex(idx)}
               >
                 <Image
@@ -263,12 +311,29 @@ const ProductCard = () => {
             ))}
           </Flex>
         </Box>
-
         {/* Product Details */}
-        <Stack>
+        <Stack spacing={{ base: 4, md: 6 }}>
+          <Box
+            transition="all 0.3s ease"
+            transform="translateY(0)"
+            _hover={{ transform: "translateY(-2px)" }}
+          >
+            <Heading size={{ base: "lg", md: "xl" }}>{product.article}</Heading>
+            <Text fontSize={{ base: "sm", md: "md" }} color="gray.600" mt={2}>
+              {product.brand}
+            </Text>
+            <Text
+              fontSize={{ base: "xl", md: "2xl" }}
+              fontWeight="bold"
+              color="red.600"
+              mt={2}
+            >
+              ₹{product.price}
+            </Text>
+          </Box>
           {/* Color Selection */}
           <Box>
-            <Text fontWeight="semibold" mb={2}>
+            <Text fontWeight="semibold" mb={3}>
               Select Color
             </Text>
             <Flex wrap="wrap" gap={2}>
@@ -278,10 +343,10 @@ const ProductCard = () => {
                     key={color}
                     variant={selectedColor === color ? "solid" : "outline"}
                     colorScheme="red"
-                    borderBottomColor={color}
                     onClick={() => setSelectedColor(color)}
-                    px={6}
-                    size={"sm"}
+                    transition="all 0.2s ease"
+                    _hover={{ transform: "translateY(-2px)" }}
+                    size={{ base: "sm", md: "md" }}
                   >
                     {color}
                   </Button>
@@ -289,48 +354,46 @@ const ProductCard = () => {
             </Flex>
           </Box>
 
-          <Box>
-            <Heading size="lg">{product.article}</Heading>
-            <Text fontSize="md" color="gray.600">
-              {product.brand}
-            </Text>
-
-            <Text fontSize="xl" fontWeight="bold" color="red.600" mt={1}>
-              ₹{product.price}
-            </Text>
-            <Text color="gray.600">{product.description}</Text>
-          </Box>
-
           {/* Size Selection */}
           <Box>
-            <Text fontWeight="semibold" mb={2}>
+            <Text fontWeight="semibold" mb={3}>
               Select Size
             </Text>
             <Grid
-              templateColumns="repeat(auto-fill, minmax(80px, 1fr))"
+              templateColumns={{
+                base: "repeat(auto-fill, minmax(60px, 1fr))",
+                md: "repeat(auto-fill, minmax(80px, 1fr))",
+              }}
               gap={2}
             >
               {product.itemSet.map((item, index) => (
                 <Button
                   key={index}
-                  variant={selectedSize === item.size ? "solid" : "outline"}
+                  variant={
+                    selectedSize.size === item.size ? "solid" : "outline"
+                  }
                   colorScheme="red"
                   onClick={() =>
-                    setSelectedSize({ size: item.size, lengths: item.lengths })
+                    setSelectedSize({
+                      size: item.size,
+                      lengths: item.lengths,
+                    })
                   }
                   position="relative"
+                  transition="all 0.2s ease"
+                  _hover={{ transform: "translateY(-2px)" }}
+                  size={{ base: "sm", md: "md" }}
                 >
                   {item.size}
                   <Badge
-                    padding={".5em .7em"}
                     position="absolute"
-                    top="-3"
-                    right="-5"
+                    top="-2"
+                    right="-2"
                     colorScheme="red"
-                    fontSize="sm"
+                    fontSize={{ base: "xs", md: "sm" }}
                     borderRadius="full"
                   >
-                    {`${item.lengths}Pcs`}
+                    {item.lengths}
                   </Badge>
                 </Button>
               ))}
@@ -346,9 +409,16 @@ const ProductCard = () => {
                 onClick={() => quantity > 1 && setQuantity((q) => q - 1)}
                 colorScheme="red"
                 variant="outline"
-                size="sm"
+                transition="all 0.2s ease"
+                _hover={{ transform: "scale(1.1)" }}
+                size={{ base: "sm", md: "md" }}
               />
-              <Text fontWeight="medium" w="8" textAlign="center">
+              <Text
+                fontWeight="medium"
+                w="8"
+                textAlign="center"
+                fontSize={{ base: "md", md: "lg" }}
+              >
                 {quantity}
               </Text>
               <IconButton
@@ -356,7 +426,9 @@ const ProductCard = () => {
                 onClick={() => setQuantity((q) => q + 1)}
                 colorScheme="red"
                 variant="outline"
-                size="sm"
+                transition="all 0.2s ease"
+                _hover={{ transform: "scale(1.1)" }}
+                size={{ base: "sm", md: "md" }}
               />
             </Flex>
           </Flex>
@@ -364,11 +436,19 @@ const ProductCard = () => {
           {/* Add to Cart Button */}
           <Button
             colorScheme="red"
-            size="lg"
+            size={{ base: "md", md: "lg" }}
             onClick={handleAddToCart}
             w="100%"
-            h="14"
-            fontSize="lg"
+            h={{ base: "12", md: "14" }}
+            fontSize={{ base: "md", md: "lg" }}
+            mt={4}
+            isLoading={isAddingToCart}
+            transition="all 0.3s ease"
+            _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}
+            _active={{ transform: "scale(0.95)" }}
+            animation={
+              isAddingToCart ? `${addToCartAnimation} 0.3s ease` : "none"
+            }
           >
             Add to Cart
           </Button>

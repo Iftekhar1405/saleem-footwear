@@ -1,126 +1,232 @@
-import { Box, Button, Center, Flex, Heading, HStack, Image, Spinner, Text } from '@chakra-ui/react';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Category.css';
+import {
+  Box,
+  Button,
+  Center,
+  Divider,
+  Flex,
+  Grid,
+  HStack,
+  Image,
+  Skeleton,
+  SkeletonText,
+  Spinner,
+  Text,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+import { motion, useInView } from "framer-motion";
+import axios from "axios";
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
-const URL = 'https://saleem-footwear-api.vercel.app/api/v1/search/category';
-const CATEGORIES_PER_PAGE = 10; // Set the limit for categories per page
+const URL = "https://saleem-footwear-api.vercel.app/api/v1/search/category";
+
+const MotionBox = motion(Box);
+const MotionDivider = motion(Divider);
+const MotionGrid = motion(Grid);
+
+const CategorySkeleton = () => (
+  <Box
+    borderWidth="1px"
+    borderRadius="md"
+    overflow="hidden"
+    boxShadow="sm"
+    bg="white"
+    p={3}
+    width="100%"
+  >
+    <Skeleton height="130px" borderRadius="sm" mb={2} />
+    <SkeletonText mt="2" noOfLines={1} spacing="4" />
+  </Box>
+);
+
+const DecorativeDivider = ({ isTop = true }) => (
+  <Flex align="center" my={4}>
+    <MotionDivider
+      borderColor="slate.400"
+      borderWidth="2px"
+      initial={{ width: 0 }}
+      animate={{ width: "100%" }}
+      transition={{ duration: 2.4, delay: 0.6 }}
+    />
+    <Box
+      bg="black"
+      w={3}
+      h={3}
+      borderRadius="full"
+      mx={2}
+      transform={isTop ? "translateY(1px)" : "translateY(-1px)"}
+    />
+    <MotionDivider
+      borderColor="slate.400"
+      borderWidth="2px"
+      initial={{ width: 0 }}
+      animate={{ width: "100%" }}
+      transition={{ duration: 2.4, delay: 0.6 }}
+    />
+  </Flex>
+);
 
 const CategoryGrid = () => {
   const [categories, setCategories] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true); // Track if more categories are available
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: false, margin: "-100px" });
   const navigate = useNavigate();
 
-  const fetchCategories = async (page) => {
-    if (loading) return;
+  const fetchCategories = async () => {
     setLoading(true);
-    
     try {
-      const response = await axios.get(URL, {
-        params: {
-          page,
-          limit: CATEGORIES_PER_PAGE
-        }
-      });
-      
-      // Append new categories to existing ones
-      setCategories((prevCategories) => [...prevCategories, ...response.data.data]);
-
-      // Check if there are more categories to load
-      setHasMore(response.data.data.length === CATEGORIES_PER_PAGE);
+      const response = await axios.get(URL);
+      setCategories(response.data.data);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.error("Error fetching categories:", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCategories(currentPage);
-  }, [currentPage]);
-
-  const handleLoadMore = () => {
-    setCurrentPage((prevPage) => prevPage + 1); // Increment page to load more categories
-  };
+    fetchCategories();
+  }, []);
 
   const handleCategoryClick = (category) => {
     navigate(`/category-grid/category=${category}`);
   };
 
+  const handleSeeMore = () => {
+    setShowAll(true);
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+
+  const displayCategories = showAll ? categories : categories.slice(0, 2);
+
   return (
-    <Box mt={5} boxShadow="lg" p={5} borderRadius="md" bg="gray.50">
-      <Heading as="h3" size="md" mb={4} textAlign="left">
-        Explore Your Category:
-      </Heading>
+    <MotionBox
+      ref={containerRef}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      variants={containerVariants}
+      mt={1}
+      boxShadow="lg"
+      p={3}
+      borderRadius="md"
+      bg="gray.50"
+    >
+      <DecorativeDivider isTop={true} />
 
-      <HStack
-        spacing={4}
-        overflowX="auto"
-        py={2}
-        px={1}
-        css={{
-          "&::-webkit-scrollbar": {
-            height: "8px",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "rgba(50, 50, 93, 0.25)",
-            borderRadius: "8px",
-          },
-        }}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
       >
-        {categories.map((category, index) => (
-          <Box
-            key={index}
-            flexShrink={0}
-            borderWidth="1px"
-            borderRadius="md"
-            overflow="hidden"
-            boxShadow="sm"
-            bg="white"
-            p={3}
-            textAlign="center"
-            cursor="pointer"
-            _hover={{ boxShadow: "md", transform: "scale(1.05)", transition: "0.3s" }}
-            onClick={() => handleCategoryClick(category.category)}
-          >
-            <Image
-              src={category.image}
-              alt={category.category}
-              h="130px"
-              w="full"
-              objectFit="cover"
-              mb={2}
-              borderRadius="sm"
-            />
-            <Text fontWeight="bold" color="red.600">
-              {category.category}
-            </Text>
-          </Box>
-        ))}
-      </HStack>
+        <motion.h3
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: "bold",
+            marginBottom: "1rem",
+            color: "#2D3748"
+          }}
+        >
+          Explore Your Category:
+        </motion.h3>
+      </motion.div>
 
-      <Flex justifyContent="center" mt={4}>
-        {hasMore && !loading && (
-          <Button
-            colorScheme="red"
-            onClick={handleLoadMore}
-            size="sm"
-            variant="solid"
-          >
-            Load More
-          </Button>
-        )}
-        {loading && (
-          <Center>
-            <Spinner size="sm" />
-          </Center>
-        )}
-      </Flex>
-      {/* <Divider borderColor="gray.800"  mt={5}/>; */}
-    </Box>
+      <MotionGrid
+        templateColumns="repeat(2, 1fr)"
+        gap={4}
+        px={2}
+        py={4}
+        variants={containerVariants}
+      >
+        {loading
+          ? [...Array(2)].map((_, index) => (
+              <CategorySkeleton key={`skeleton-${index}`} />
+            ))
+          : displayCategories.map((category, index) => (
+              <MotionBox
+                key={index}
+                variants={itemVariants}
+                borderWidth="1px"
+                borderRadius="md"
+                overflow="hidden"
+                boxShadow="sm"
+                bg="white"
+                p={3}
+                textAlign="center"
+                cursor="pointer"
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "xl",
+                  transition: { duration: 0.2 },
+                }}
+                onClick={() => handleCategoryClick(category.category)}
+              >
+                <Image
+                  src={category.image}
+                  alt={category.category}
+                  h="130px"
+                  w="100%"
+                  objectFit="contain"
+                  mb={2}
+                  borderRadius="sm"
+                />
+                <Text
+                  fontWeight="bold"
+                  bgGradient="linear(to-r, red.500, red.300)"
+                  bgClip="text"
+                >
+                  {category.category}
+                </Text>
+              </MotionBox>
+            ))}
+      </MotionGrid>
+
+      {!showAll && !loading && categories.length > 2 && (
+        <Flex justifyContent="center" mt={6}>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              colorScheme="red"
+              onClick={handleSeeMore}
+              size="md"
+              px={8}
+              shadow="md"
+              _hover={{
+                transform: "translateY(-2px)",
+                shadow: "lg",
+              }}
+            >
+              See More
+            </Button>
+          </motion.div>
+        </Flex>
+      )}
+
+      <DecorativeDivider isTop={false} />
+    </MotionBox>
   );
 };
 
