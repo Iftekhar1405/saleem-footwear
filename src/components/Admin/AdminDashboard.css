@@ -6,10 +6,12 @@
 
 }
 .admin-card{
-    width: 80vw;
-    height: 20vh;
-    background-color: white;
-    margin: 10px auto;
+    width: 100vw;
+    
+    background-color: #000000;
+    margin: auto;
+    padding: 15px;
+    border-bottom: solid 1px white;
     text-align: center;
 }
 

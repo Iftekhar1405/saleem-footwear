@@ -1,6 +1,7 @@
 /* PendingOrders.css */
 .pending-orders {
     padding: 20px;
+    color:#36454f;
   }
   
   .customer-orders {
@@ -17,6 +18,12 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #fff;
+    color:#36454f
+    
+  }
+  .order-item-details{
+    display: flex;
+    flex-direction: column;
   }
   
   .order-item button {

@@ -1,134 +1,396 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './ProductGrid.css';
-import './ProductCard.css';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import {
+  Box,
+  Grid,
+  GridItem,
+  Heading,
+  Text,
+  Image,
+  Flex,
+  Spinner,
+  useBreakpointValue,
+  Skeleton,
+  SkeletonText,
+  Container,
+  chakra,
+  shouldForwardProp,
+} from "@chakra-ui/react";
+import { isValidMotionProp, motion } from "framer-motion";
 
-const URL = "http://localhost:7000/api/v1"
-const token = localStorage.getItem('token')
-// export const addToCart = async (product) => {
-//   try {
-//     const headers = {
-//       'Content-Type': 'application/json',
-//       'Authorization': `Bearer ${token}`
-//     };
+const MotionGrid = motion(Grid);
+const MotionGridItem = motion(GridItem);
 
-//     // Fetch existing cart items
-//     const cartResponse = await axios.get(`${URL}/cart`, { headers });
-//     const cartItems = cartResponse.data.data.items;
+const MotionHeading = chakra(motion.div, {
+  shouldForwardProp: (prop) =>
+    isValidMotionProp(prop) || shouldForwardProp(prop),
+});
 
-//     console.log("Cart Items:", cartItems); // Debugging
-//     console.log("Product ID:", product._id); // Debugging
-
-//     const existingCartItem = cartItems.find(item => item.productId?item.productId._id === product._id:false);
-
-//     if (existingCartItem) {
-//       // Product already in cart, update quantity
-//       const updatedBody = {
-//         productId: product._id,
-//         quantity: existingCartItem.quantity + 1,
-//       };
-//       const response = await axios.post(`${URL}/cart/add-to-cart`, updatedBody, { headers });
-//       console.log('Cart updated:', response.data);
-//     } else {
-//       // Product not in cart, add new product
-//       const newBody = {
-//         productId: product._id,
-//         quantity: 1, // Default quantity
-//         itemSet: product.itemSet[0]|| [], // Default to an empty array if itemSet is not available
-//         color: product.colors ? Object.keys(product.colors)[0] : "N/A" // Default to the first color or "N/A" if not available
-//       };
-//       const response = await axios.post(`${URL}/cart/add-to-cart`, newBody, { headers });
-//       console.log('Product added to cart:', response.data);
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+/* For out of stock */
+const styles = {
+  "@keyframes pulse": {
+    "0%": { opacity: 1, transform: "scale(1)" },
+    "50%": { opacity: 0.5, transform: "scale(1.05)" },
+    "100%": { opacity: 1, transform: "scale(1)" }
+  }
+}
 
 
+const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 
-const useFetchData = (url) => {
+const useFetchData = (url, limit = 20) => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Changed to true initially
   const [error, setError] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const pageRef = useRef(1);
+
+  const fetchData = async (page) => {
+    if ((loading && page > 1) || !hasMore) return;
+    setLoading(true);
+    try {
+      const response = await axios.get(url, {
+        params: { page, limit },
+      });
+      if (response.data.products.length === 0) {
+        setHasMore(false);
+      } else {
+        setData((prevData) => [...prevData, ...response.data.products]);
+      }
+    } catch (err) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    (async () => {
-      try {
-        const response = await axios.get(url);
-        setData(response.data.products);
-        console.log(response.data.products)
-      } catch (error) {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    })();
+    fetchData(pageRef.current);
   }, [url]);
 
-  return { data, loading, error };
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollableHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const currentScrollPosition = window.scrollY;
+      if (
+        currentScrollPosition >= scrollableHeight - 100 &&
+        hasMore &&
+        !loading
+      ) {
+        pageRef.current += 1;
+        fetchData(pageRef.current);
+      }
+    };
+
+    if (hasMore) {
+      window.addEventListener("scroll", handleScroll);
+    }
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasMore, loading]);
+
+  return { data, loading, error, hasMore };
 };
 
-const ProductGrid = () => {
-  const { data: products, loading, error } = useFetchData(`${URL}/products`);
- 
-  if (loading) {
-    return <h2>Loading...</h2>;
-  }
-
-  if (error) {
-    return <h2>Something went wrong</h2>;
-  }
-
+// ProductCard Component
+const ProductCard = ({ product, index }) => {
   return (
-    <div className="product-grid">
-      {products.map((product) => (
-        <div className="product-card" key={product._id} style={{backgroundColor:'#000'}}>
-          <Link to={`/product/${product._id}`}>
-            <div className="product-image-gallery">
-              {product.images.map((imgUrl, index) => (
-                <img key={index} src={imgUrl} alt={`${product.brand} ${product.article}`} className="product-image" />
-              ))}
-            </div>
-            <div className="product-details">
-              <h2 className="product-name">{product.article}</h2>
-              <p className="product-brand">{product.brand}</p>
-              <p className="product-description">{product.description}</p>
-              <div className="product-info">
-                <p className="product-mrp">MRP: ₹{product.price}</p>
-                <p className="product-material">Material: {product.material}</p>
-                <p className="product-gender">Gender: {product.gender}</p>
-              </div>
-              <p className="product-sizes">
-                Available Sizes: {product.itemSet && product.itemSet.length > 0 
-                  ? product.itemSet.map(item => `${item.size} (Length: ${item.lengths})`).join(', ') 
-                  : "N/A"}
-              </p>
-              <p className="product-colors">
-                Colors: {product.colors && Object.keys(product.colors).length > 0 
-                  ? Object.keys(product.colors).join(', ') 
-                  : "N/A"}
-              </p>
-            </div>
-          </Link>
-          {/* <div className="buttons">
-            <button onClick={() => addToLiked(product)}>
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
-                <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z" />
-              </svg>
-            </button>
-            <span className="v-bar"> &#124;</span>
-            <button onClick={() => addToCart(product)}>
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
-                <path d="M440-600v-120H320v-80h120v-120h80v120h120v80H520v120h-80ZM280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z" />
-              </svg>
-            </button>
-          </div> */}
-        </div>
-      ))}
-    </div>
+    <MotionGridItem
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      whileHover={{
+        y: -5,
+        transition: { duration: 0.2 },
+      }}
+      borderRadius="lg"
+      overflow="hidden"
+      bg="white"
+      boxShadow="lg"
+      _hover={{
+        boxShadow: "2xl",
+      }}
+      transform="auto"
+    >
+      <Link to={`/product/${product._id}`}>
+        <Box position="relative" overflow="hidden">
+          <motion.div
+            whileHover={{ scale: !product.inStock ? 1 : 1.05 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Image
+              src={product.images[0]}
+              alt={`${product.brand} ${product.article}`}
+              boxSize="100%"
+              objectFit="contain"
+              height={{ base: "200px", md: "250px" }}
+              padding="0.2em"
+              transition="0.3s ease-in-out"
+              filter={!product.inStock ? "grayscale(0%)" : "none"}
+            />
+          </motion.div>
+
+          {/* Out of Stock Overlay */}
+          {!product.inStock && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Box
+                position="absolute"
+                top="0"
+                left="0"
+                right="0"
+                bottom="0"
+                bg="rgba(255, 255, 255, 0)"
+                backdropFilter="blur(4px)"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <motion.div
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: -15 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20,
+                  }}
+                >
+                  <Box
+                    bg="#c53030"
+                    color="white"
+                    px={{ base: "4", md: "6" }}
+                    py={{ base: "2", md: "3" }}
+                    borderRadius="xl"
+                    boxShadow="xl"
+                    position="relative"
+                    _after={{
+                      content: '""',
+                      position: "absolute",
+                      top: "-2px",
+                      left: "-2px",
+                      right: "-2px",
+                      bottom: "-2px",
+                      border: "2px solid",
+                      borderColor: "red.200",
+                      borderRadius: "xl",
+                      animation: "pulse 2s infinite"
+                    }}
+                  >
+                    <Text
+                      fontWeight="bold"
+                      fontSize={{ base: "md", md: "xl" }}
+                      textShadow="0 2px 4px rgba(0,0,0,0.2)"
+                    >
+                      Out of Stock
+                    </Text>
+                  </Box>
+                </motion.div>
+              </Box>
+            </motion.div>
+          )}
+
+          <Box
+            position="absolute"
+            top="4"
+            right="4"
+            background="rgba(255, 255, 255, 0.95)"
+            p={2}
+            borderRadius="full"
+            boxShadow="lg"
+            borderWidth="2px"
+            borderColor="red.200"
+          >
+            <Text
+              fontSize={{ base: "xs", md: "sm" }}
+              color="red.500"
+              fontWeight="bold"
+              textTransform="uppercase"
+            >
+              {product.brand}
+            </Text>
+          </Box>
+        </Box>
+
+        <Box
+          p={4}
+          bg="white"
+          position="relative"
+          _before={{
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: "10%",
+            right: "10%",
+            height: "1px",
+            bg: "gray.200",
+          }}
+        >
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
+            <Heading size="md" noOfLines={1} color="red.600" mb={2}>
+              {product.article}
+            </Heading>
+          </motion.div>
+
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+          >
+            <Text color="gray.700" fontSize="lg" fontWeight="bold" mb={3}>
+              ₹{product.price}
+            </Text>
+          </motion.div>
+
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.3 }}
+          >
+            <Text
+              fontSize="sm"
+              color="gray.500"
+              noOfLines={2}
+              fontWeight="medium"
+            >
+              Colors:{" "}
+              {product.colors && Object.keys(product.colors).length > 0
+                ? Object.keys(product.colors).join(", ")
+                : "N/A"}
+            </Text>
+          </motion.div>
+        </Box>
+      </Link>
+    </MotionGridItem>
   );
 };
+
+
+// Enhanced ProductCardSkeleton
+const ProductCardSkeleton = () => (
+  <GridItem borderRadius="lg" overflow="hidden" bg="white" boxShadow="lg">
+    <Box position="relative">
+      <Skeleton height={{ base: "200px", md: "250px" }} />
+      <Box position="absolute" top="4" right="4" width="60px">
+        <Skeleton height="24px" borderRadius="full" />
+      </Box>
+    </Box>
+
+    <Box p={6} bg="white">
+      <SkeletonText mt="4" noOfLines={1} spacing="4" skeletonHeight="6" />
+      <SkeletonText mt="4" noOfLines={1} spacing="4" skeletonHeight="4" />
+      <SkeletonText mt="4" noOfLines={2} spacing="4" skeletonHeight="3" />
+    </Box>
+  </GridItem>
+);
+
+
+const ProductGrid = () => {
+  const {
+    data: products,
+    loading,
+    error,
+    hasMore,
+  } = useFetchData(`${URL}/products`);
+
+  const columns = useBreakpointValue({
+    base: "repeat(2, 1fr)",
+    md: "repeat(3, 1fr)",
+    lg: "repeat(4, 1fr)",
+    xl: "repeat(5, 1fr)",
+  });
+
+  if (error) {
+    return (
+      <Flex justify="center" align="center" minH="50vh">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Heading as="h2" color="red.500">
+            Something went wrong
+          </Heading>
+        </motion.div>
+      </Flex>
+    );
+  }
+
+  const skeletonArray = Array.from({ length: 8 }, (_, index) => index);
+
+  return (
+    <Box bg="gray.50" minHeight="100vh">
+      <Container maxW="8xl" py={{ base: 8, md: 12 }}>
+        <MotionHeading
+          as="h1"
+          fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}
+          fontWeight="800"
+          textAlign="center"
+          mb={{ base: 6, md: 10 }}
+          color="red.600"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          letterSpacing="tight"
+        >
+          Our Products
+          <Box
+            as="span"
+            display="block"
+            height="4px"
+            bg="red.500"
+            width="60px"
+            mx="auto"
+            mt={3}
+            borderRadius="full"
+          />
+        </MotionHeading>
+
+        <MotionGrid
+          templateColumns={columns}
+          gap={{ base: 3, md: 6, lg: 8 }}
+          p={{ base: 2, md: 4 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {loading && products.length === 0
+            ? skeletonArray.map((index) => <ProductCardSkeleton key={index} />)
+            : products.map((product, index) => (
+              <ProductCard
+                key={product._id}
+                product={product}
+                index={index}
+              />
+            ))}
+        </MotionGrid>
+
+        {loading && products.length > 0 && (
+          <Flex
+            justify="center"
+            mt={8}
+            mb={8}
+            direction="column"
+            align="center"
+            gap={4}
+          >
+            <Spinner size="xl" color="red.500" thickness="4px" speed="0.65s" />
+            <Text color="gray.600" fontSize="lg">
+              Loading more products...
+            </Text>
+          </Flex>
+        )}
+      </Container>
+    </Box>
+  );
+};
+
 
 export default ProductGrid;

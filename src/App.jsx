@@ -1,13 +1,14 @@
-import RoleBasedComponent from './RoleBasedComponents';
+import { ChakraProvider } from '@chakra-ui/react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import BrandScroller from './components/BrandScroller';
+import CategoryGrid from './components/Category';
 import Header from './components/Header';
 import Nav from './components/Nav';
-import Scroll from './components/Scroll';
 import ProductGrid from './components/ProductGrid';
-import CategoryGrid from './components/Category';
-import SearchBar from './components/SearchBar';
-import BrandScroller from './components/BrandScroller';
-import './components/Style.css'
+import Scroll from './components/Scroll';
+import './components/Style.css';
+import RoleBasedComponent from './RoleBasedComponents';
 
 
 
@@ -20,20 +21,19 @@ function App() {
 
 
   return (
-    <>
+    <ChakraProvider>
       <Header />
       <Nav />
-      <SearchBar />
       <Scroll />
       <div className="fixed-buttons">
         <RoleBasedComponent allowedRoles={['admin', 'employee']}>
           <Link to='/addproduct'>
-            <button className="addproduct">+ Add Products</button>
+            <button className="addproduct" style={{margin:'10px'}}>+ Add Products</button>
           </Link>
         </RoleBasedComponent>
         <RoleBasedComponent allowedRoles={['admin']}>
           <Link to='/admin-dashboard'>
-            <button className="admin-tools">Admin Tools</button>
+            <button className="admin-tools" style={{margin:'10px'}}>Admin Tools</button>
           </Link>
         </RoleBasedComponent>
       </div>
@@ -41,7 +41,7 @@ function App() {
       <CategoryGrid />
       <ProductGrid />
      
-    </>
+    </ChakraProvider>
 
   )
 }

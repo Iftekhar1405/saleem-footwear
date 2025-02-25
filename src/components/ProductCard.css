@@ -2,7 +2,7 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
-    background-color: #000;
+    background-color: #ffff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out;
     width: 100%;
@@ -25,31 +25,19 @@
     color: #666;
 }
 
-.product-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+
 
 .product-mrp {
-    text-decoration: line-through;
     color: #ff0000;
     margin-right: 8px;
 }
 
-.product-discount {
-    color: #e91e63;
-    font-weight: bold;
+
+.product-sizes .product-material .product-gender {
+    font-size: 0.9em;
+    color: #000;
 }
 
-.product-sizes {
-    font-size: 0.9em;
-    color: #888;
-}
-.product-discounted-price{
-    color: green;
-    font-weight: bold;
-}
 .buttons{
     display: flex;
     justify-content: space-around;

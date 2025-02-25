@@ -1,6 +1,8 @@
 /* AllCustomers.css */
 .all-customers {
     padding: 20px;
+    color: rgb(119, 114, 114);
+    font-weight: bold;
   }
   
   .customer-item {
