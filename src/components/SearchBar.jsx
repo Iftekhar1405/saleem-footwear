@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Box, Input, Grid, GridItem, Heading, Text, Image, Spinner, useBreakpointValue } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import { URL } from '../context/url';
 
 // Search Input Component
 const SearchInput = React.memo(({ searchTerm, onSearchChange }) => (
@@ -135,7 +136,7 @@ const SearchBar = () => {
         setError(false);
 
         try {
-            const response = await axios.get(`https://saleem-footwear-api.vercel.app/api/v1/search?q=${term}`);
+            const response = await axios.get(`${URL}/search?q=${term}`);
             setFilteredResults(response.data.products);
         } catch (error) {
             setError(true);

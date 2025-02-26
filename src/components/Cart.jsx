@@ -5,8 +5,7 @@ import html2canvas from 'html2canvas';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, Text, Image, HStack, VStack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, useToast } from '@chakra-ui/react';
-
-const URL = "https://saleem-footwear-api.vercel.app/api/v1";
+import { URL } from '../context/url';
 const token = localStorage.getItem('token');
 
 const Cart = () => {

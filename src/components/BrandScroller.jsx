@@ -7,6 +7,7 @@ import columbus from "./images/columbus.png";
 import paragon from "./images/paragon.jpg";
 import shoe from "./images/shoe.jpg";
 import shoefact from "./images/shoefact.jpeg";
+import { URL } from "../context/url";
 
 const brands = [
   { id: 1, name: "Paragon", image: paragon },
@@ -14,8 +15,6 @@ const brands = [
   { id: 4, name: "Columbus", image: columbus },
   { id: 5, name: "--Others--", image: shoe },
 ];
-
-const URL = 'https://saleem-footwear-api.vercel.app/api/v1/search/brand';
 
 // Create motion components
 const MotionContainer = motion.div;
@@ -28,16 +27,16 @@ const BrandScroller = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(URL, {
-          maxBodyLength: Infinity
+        const response = await axios.get(`${URL}/search/brands`, {
+          maxBodyLength: Infinity,
         });
         setCategories(response.data.data);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error("Error fetching categories:", error);
       }
     };
 
-    fetchCategories();
+    // fetchCategories();
   }, []);
 
   const handleCategoryClick = (category) => {
@@ -57,25 +56,25 @@ const BrandScroller = () => {
 
   // Card animation variants
   const cardVariants = {
-    hidden: { 
+    hidden: {
       opacity: 0,
-      y: 50
+      y: 50,
     },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
-      }
+        ease: "easeOut",
+      },
     },
     hover: {
       y: -10,
       scale: 1.05,
       transition: {
-        duration: 0.3
-      }
-    }
+        duration: 0.3,
+      },
+    },
   };
 
   return (
@@ -92,7 +91,7 @@ const BrandScroller = () => {
       >
         Brands We Deal in:
       </motion.h3>
-      
+
       <div className="brand-container">
         {brands.map((brand) => (
           <MotionCard
@@ -101,8 +100,8 @@ const BrandScroller = () => {
             variants={cardVariants}
             whileHover="hover"
           >
-            <motion.img 
-              src={brand.image} 
+            <motion.img
+              src={brand.image}
               alt={brand.name}
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}

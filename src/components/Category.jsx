@@ -17,8 +17,7 @@ import { motion, useInView } from "framer-motion";
 import axios from "axios";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-
-const URL = "https://saleem-footwear-api.vercel.app/api/v1/search/category";
+import { URL } from "../context/url";
 
 const MotionBox = motion(Box);
 const MotionDivider = motion(Divider);
@@ -77,7 +76,7 @@ const CategoryGrid = () => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(URL);
+      const response = await axios.get(`${URL}/search/category`);
       setCategories(response.data.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -148,7 +147,7 @@ const CategoryGrid = () => {
             fontSize: "1.5rem",
             fontWeight: "bold",
             marginBottom: "1rem",
-            color: "#2D3748"
+            color: "#2D3748",
           }}
         >
           Explore Your Category:

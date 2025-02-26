@@ -94,7 +94,7 @@ const useFetchData = (url, limit = 20) => {
     const scrollThreshold = 200; // Load more when within 200px of bottom
     const scrollPosition = window.scrollY;
     
-    console.log(scrollPosition, scrollableHeight - scrollThreshold);
+    // console.log(scrollPosition, scrollableHeight - scrollThreshold);
     
     // Make sure we've actually scrolled a bit before loading more
     if (

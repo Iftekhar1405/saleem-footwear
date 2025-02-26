@@ -21,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useState } from "react";
+import { URL } from "../../context/url";
 
 function AddProduct() {
   const toast = useToast();
@@ -89,7 +90,7 @@ function AddProduct() {
 
     try {
       const response = await axios.post(
-        "https://saleem-footwear-api.vercel.app/api/v1/upload-img",
+        `${URL}/upload-img`,
         formData,
         {
           headers: {
@@ -178,7 +179,7 @@ function AddProduct() {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        "https://saleem-footwear-api.vercel.app/api/v1/products",
+        `${URL}/products`,
         productData,
         {
           headers: {

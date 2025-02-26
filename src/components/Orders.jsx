@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Cart.css'; // Reuse Cart CSS for consistent styling
+import { URL } from '../context/url';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -17,7 +18,7 @@ const Orders = () => {
         };
 
         const response = await axios.get(
-          'https://saleem-footwear-api.vercel.app/api/v1/order/history',
+          `${URL}/order/history`,
           { headers }
         );
         setOrders(response.data.data || []);
@@ -38,7 +39,7 @@ const Orders = () => {
         'Content-Type': 'application/json',
       };
       await axios.post(
-        `https://saleem-footwear-api.vercel.app/api/v1/order/cancel/${orderId}`,
+        `${URL}/order/cancel/${orderId}`,
         {},
         { headers }
       );

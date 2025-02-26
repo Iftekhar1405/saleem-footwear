@@ -17,8 +17,7 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { BiPrinter } from "react-icons/bi";
 import { useReactToPrint } from "react-to-print";
-
-const URL = "https://saleem-footwear-api.vercel.app/api/v1";
+import { URL } from "../../context/url";
 
 function RejectedOrders() {
   const [rejectedOrders, setRejectedOrders] = useState([]);
