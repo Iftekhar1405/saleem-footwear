@@ -1,18 +1,160 @@
-.admin-card-cont{
+/* AdminDashboard.css */
+
+.admin-dashboard {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-top: 1em;
+    background-color: #f5f7fa;
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  .dashboard-title {
+    font-size: 2em;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 2.5rem;
+    letter-spacing: -0.5px;
+  }
+  
+  .admin-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.8rem;
+  }
+  
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .admin-card {
+    background-color: white;
+    border: 1px solid #eaedf3;
+    border-radius: 12px;
+    padding: 1.8rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
-}
-.admin-card{
-    width: 100vw;
-    
-    background-color: #000000;
-    margin: auto;
-    padding: 15px;
-    border-bottom: solid 1px white;
-    text-align: center;
-}
-
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.25s cubic-bezier(0.2, 0, 0.2, 1);
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+  }
   
+  .admin-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+  }
+  
+  .admin-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+    border-color: #d8dee9;
+  }
+  
+  .admin-card:hover::after {
+    background-color: #4a7bff;
+  }
+  
+  .admin-card:nth-child(2):hover::after {
+    background-color: #47c98e;
+  }
+  
+  .admin-card:nth-child(3):hover::after {
+    background-color: #ff6b6b;
+  }
+  
+  .admin-card:nth-child(4):hover::after {
+    background-color: #8a6fff;
+  }
+  
+  .admin-card:nth-child(5):hover::after {
+    background-color: #ffae33;
+  }
+  
+  .admin-card svg {
+    color: #64748b;
+    margin-bottom: 1.2rem;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  
+  .admin-card:hover svg {
+    transform: scale(1.15);
+    color: #4a7bff;
+  }
+  
+  .admin-card:nth-child(2):hover svg {
+    color: #47c98e;
+  }
+  
+  .admin-card:nth-child(3):hover svg {
+    color: #ff6b6b;
+  }
+  
+  .admin-card:nth-child(4):hover svg {
+    color: #8a6fff;
+  }
+  
+  .admin-card:nth-child(5):hover svg {
+    color: #ffae33;
+  }
+  
+  .admin-card h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #334155;
+    text-align: center;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .admin-dashboard {
+      padding: 1.5rem;
+    }
+    
+    .admin-card-container {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.2rem;
+    }
+    
+    .admin-card {
+      padding: 1.4rem;
+      height: 140px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .admin-dashboard {
+      padding: 1rem;
+    }
+    
+    .admin-card-container {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    
+    .admin-card {
+      padding: 1.2rem;
+      height: 130px;
+    }
+    
+    .admin-card svg {
+      margin-bottom: 0.8rem;
+    }
+    
+    .dashboard-title {
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
+  }

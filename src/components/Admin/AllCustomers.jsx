@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './AllCustomers.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./AllCustomers.css";
+import { URL } from "../../context/url";
 
 function AllCustomers() {
   const [customers, setCustomers] = useState([]);
@@ -9,14 +10,14 @@ function AllCustomers() {
     // Fetch all customers from backend
     const fetchCustomers = async () => {
       try {
-        const token = localStorage.getItem('token'); // Get the token from localStorage
-        const response = await axios.get('https://saleem-footwear-api.vercel.app/api/v1/users', {
-          headers: { Authorization: `Bearer ${token}` } // Add token to the request headers
+        const token = localStorage.getItem("token"); // Get the token from localStorage
+        const response = await axios.get(`${URL}/users`, {
+          headers: { Authorization: `Bearer ${token}` }, // Add token to the request headers
         });
-        console.log(response)
+        console.log(response);
         setCustomers(response.data.users);
       } catch (error) {
-        console.error('Error fetching customers', error);
+        console.error("Error fetching customers", error);
       }
     };
 
@@ -37,14 +38,16 @@ function AllCustomers() {
 
   const handleDeleteCustomer = async (customerId) => {
     try {
-      const token = localStorage.getItem('token'); // Get the token from localStorage
-      await axios.delete(`https://saleem-footwear-api.vercel.app/api/v1/customers/${customerId}`, {
-        headers: { Authorization: `Bearer ${token}` } // Add token to the request headers
+      const token = localStorage.getItem("token"); // Get the token from localStorage
+      await axios.delete(`${URL}/customers/${customerId}`, {
+        headers: { Authorization: `Bearer ${token}` }, // Add token to the request headers
       });
       // Remove the deleted customer from the list
-      setCustomers(prevCustomers => prevCustomers.filter(cust => cust.id !== customerId));
+      setCustomers((prevCustomers) =>
+        prevCustomers.filter((cust) => cust.id !== customerId)
+      );
     } catch (error) {
-      console.error('Error deleting customer', error);
+      console.error("Error deleting customer", error);
     }
   };
 
@@ -55,15 +58,17 @@ function AllCustomers() {
         <p>No customers found</p>
       ) : (
         <div>
-          {customers.map(customer => (
-            <div key={customer.id} className="customer-item">
+          {customers.map((customer) => (
+            <div key={customer._id} className="customer-item">
               <p>Name: {customer.name}</p>
               <p>Email: {customer.email}</p>
               <p>Address: {customer.address}</p>
               <p>Phone: {customer.phone}</p>
               {/* <button onClick={() => handleViewDetails(customer.id)}>View Details</button>
               <button onClick={() => handleEditCustomer(customer.id)}>Edit</button> */}
-              <button onClick={() => handleDeleteCustomer(customer.id)}>Delete</button>
+              <button onClick={() => handleDeleteCustomer(customer.id)}>
+                Delete
+              </button>
             </div>
           ))}
         </div>
