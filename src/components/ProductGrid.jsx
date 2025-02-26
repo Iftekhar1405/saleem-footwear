@@ -18,6 +18,7 @@ import {
   shouldForwardProp,
 } from "@chakra-ui/react";
 import { isValidMotionProp, motion } from "framer-motion";
+import { URL } from "../context/url";
 
 const MotionGrid = motion(Grid);
 const MotionGridItem = motion(GridItem);
@@ -37,7 +38,6 @@ const styles = {
 }
 
 
-const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 
 const useFetchData = (url, limit = 20) => {
   const [data, setData] = useState([]);

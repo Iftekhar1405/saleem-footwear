@@ -25,8 +25,8 @@ const CategorizedProducts = () => {
         setLoading(false);
       }
     };
-
-    fetchProducts();
+    fetchCategoriesByGender(category);
+    // fetchProducts();
   }, [category]);
 
   if (loading) return <p>Loading...</p>;
