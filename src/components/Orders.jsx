@@ -1,26 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './Cart.css'; // Reuse Cart CSS for consistent styling
-import { URL } from '../context/url';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./Cart.css"; // Reuse Cart CSS for consistent styling
+import { URL } from "../context/url";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const headers = {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         };
 
-        const response = await axios.get(
-          `${URL}/order/history`,
-          { headers }
-        );
+        const response = await axios.get(`${URL}/order/history`, { headers });
         setOrders(response.data.data || []);
         setLoading(false);
       } catch (err) {
@@ -36,21 +33,17 @@ const Orders = () => {
     try {
       const headers = {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       };
-      await axios.post(
-        `${URL}/order/cancel/${orderId}`,
-        {},
-        { headers }
-      );
+      await axios.post(`${URL}/order/cancel/${orderId}`, {}, { headers });
 
       setOrders((prevOrders) =>
         prevOrders.filter((order) => order._id !== orderId)
       );
-      alert('Order canceled successfully');
+      alert("Order canceled successfully");
     } catch (err) {
-      console.error('Error canceling order:', err);
-      alert('Failed to cancel the order');
+      console.error("Error canceling order:", err);
+      alert("Failed to cancel the order");
     }
   };
 
@@ -77,7 +70,9 @@ const Orders = () => {
                   <p>Status: {order.status}</p>
                   <p>Total Price: ₹{order.totalPrice}</p>
                   <p>Total Items: {order.totalItems}</p>
-                  <p>Order Date: {new Date(order.createdAt).toLocaleDateString()}</p>
+                  <p>
+                    Order Date: {new Date(order.createdAt).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
               <div className="rest-details">
@@ -90,7 +85,7 @@ const Orders = () => {
                           src={item.productId.images[0]}
                           alt={item.productId.name}
                           className="order-item-image"
-                          style={{ verticalAlign: 'middle' }}
+                          style={{ verticalAlign: "middle" }}
                         />
                       </div>
                       <div className="order-item-details">
@@ -105,7 +100,7 @@ const Orders = () => {
                 </div>
 
                 {/* Cancel Order Section */}
-                {order.status === 'pending' ? (
+                {order.status === "pending" ? (
                   <button
                     onClick={() => handleCancelOrder(order._id)}
                     className="remove-button"
@@ -113,7 +108,9 @@ const Orders = () => {
                     Cancel Order
                   </button>
                 ) : (
-                  <p className="non-cancellable">Can't cancel, order already accepted</p>
+                  <p className="non-cancellable">
+                    Can't cancel, order already accepted
+                  </p>
                 )}
               </div>
             </div>

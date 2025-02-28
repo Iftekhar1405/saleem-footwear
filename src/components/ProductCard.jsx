@@ -85,9 +85,7 @@ const ProductCard = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(
-          `${URL}/products/${id}`
-        );
+        const response = await axios.get(`${URL}/products/${id}`);
         setProduct(response.data.product);
         if (response.data?.product.itemSet) {
           if (response.data.product.itemSet.length > 0) {

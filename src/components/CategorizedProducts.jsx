@@ -34,8 +34,8 @@ const styles = {
   "@keyframes pulse": {
     "0%": { opacity: 1, transform: "scale(1)" },
     "50%": { opacity: 0.5, transform: "scale(1.05)" },
-    "100%": { opacity: 1, transform: "scale(1)" }
-  }
+    "100%": { opacity: 1, transform: "scale(1)" },
+  },
 };
 
 // ProductCard Component
@@ -122,7 +122,7 @@ const ProductCard = ({ product, index }) => {
                       border: "2px solid",
                       borderColor: "red.200",
                       borderRadius: "xl",
-                      animation: "pulse 2s infinite"
+                      animation: "pulse 2s infinite",
                     }}
                   >
                     <Text
@@ -240,20 +240,22 @@ const CategorizedProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${URL}/search/category/specific/?${category}`);
+        const response = await axios.get(
+          `${URL}/search/category/specific/?${category}`
+        );
         setProducts(response.data.products);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching products:', err);
-        setError('Failed to fetch products');
+        console.error("Error fetching products:", err);
+        setError("Failed to fetch products");
         setLoading(false);
       }
     };
-    
+
     fetchProducts();
   }, [category]);
 
@@ -277,14 +279,15 @@ const CategorizedProducts = () => {
           <Heading as="h2" color="red.500">
             Something went wrong
           </Heading>
-          <Text color="gray.600" mt={2}>{error}</Text>
+          <Text color="gray.600" mt={2}>
+            {error}
+          </Text>
         </motion.div>
       </Flex>
     );
   }
   // console.log(category.charAt(0).toUpperCase() + category.slice(1));
   console.log(category.split("=")[1]);
-  
 
   return (
     <Box bg="gray.50" minHeight="100vh">
@@ -325,21 +328,16 @@ const CategorizedProducts = () => {
           {loading
             ? skeletonArray.map((index) => <ProductCardSkeleton key={index} />)
             : products.map((product, index) => (
-              <ProductCard
-                key={product._id}
-                product={product}
-                index={index}
-              />
-            ))}
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  index={index}
+                />
+              ))}
         </MotionGrid>
 
         {products.length === 0 && !loading && (
-          <Flex 
-            justify="center" 
-            align="center" 
-            minH="30vh" 
-            direction="column"
-          >
+          <Flex justify="center" align="center" minH="30vh" direction="column">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}

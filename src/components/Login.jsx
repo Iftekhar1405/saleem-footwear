@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -17,10 +17,10 @@ import {
   Icon,
   extendTheme,
   useColorModeValue,
-} from '@chakra-ui/react';
-import { motion } from 'framer-motion';
-import { FiPhone, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
-import { URL } from '../context/url';
+} from "@chakra-ui/react";
+import { motion } from "framer-motion";
+import { FiPhone, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { URL } from "../context/url";
 
 // Create a custom ChakraProvider theme
 const theme = extendTheme({
@@ -31,25 +31,25 @@ const theme = extendTheme({
   components: {
     Button: {
       baseStyle: {
-        borderRadius: 'md',
-        fontWeight: '500',
+        borderRadius: "md",
+        fontWeight: "500",
       },
       variants: {
         solid: {
-          bg: 'red.400',
-          color: 'white',
+          bg: "red.400",
+          color: "white",
           _hover: {
-            bg: 'red.500',
-            transform: 'translateY(-2px)',
-            boxShadow: 'lg',
+            bg: "red.500",
+            transform: "translateY(-2px)",
+            boxShadow: "lg",
           },
-          transition: 'all 0.2s ease-in-out',
+          transition: "all 0.2s ease-in-out",
         },
         outline: {
-          borderColor: 'red.400',
-          color: 'red.400',
+          borderColor: "red.400",
+          color: "red.400",
           _hover: {
-            bg: 'red.50',
+            bg: "red.50",
           },
         },
       },
@@ -58,20 +58,20 @@ const theme = extendTheme({
       variants: {
         filled: {
           field: {
-            bg: 'gray.50',
-            borderRadius: 'md',
+            bg: "gray.50",
+            borderRadius: "md",
             _focus: {
-              borderColor: 'red.400',
-              bg: 'white',
+              borderColor: "red.400",
+              bg: "white",
             },
             _hover: {
-              bg: 'gray.100',
+              bg: "gray.100",
             },
           },
         },
       },
       defaultProps: {
-        variant: 'filled',
+        variant: "filled",
       },
     },
   },
@@ -83,8 +83,8 @@ const MotionFlex = motion(Flex);
 const MotionHeading = motion(Heading);
 
 function Login() {
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -92,12 +92,12 @@ function Login() {
 
   // Chakra color mode values
   const bgGradient = useColorModeValue(
-    'linear(to-r, #89216B, #DA4453)',
-    'linear(to-r, #701A5A, #B63245)'
+    "linear(to-r, #89216B, #DA4453)",
+    "linear(to-r, #701A5A, #B63245)"
   );
-  const cardBg = useColorModeValue('white', 'gray.800');
-  const textColor = useColorModeValue('gray.800', 'white');
-  const subtleTextColor = useColorModeValue('gray.600', 'gray.400');
+  const cardBg = useColorModeValue("white", "gray.800");
+  const textColor = useColorModeValue("gray.800", "white");
+  const subtleTextColor = useColorModeValue("gray.600", "gray.400");
 
   const handlePhoneChange = (e) => {
     setPhone(e.target.value);
@@ -127,7 +127,7 @@ function Login() {
       let role = response.data.userToken.role;
 
       localStorage.setItem("token", token);
-      localStorage.setItem('role', role);
+      localStorage.setItem("role", role);
 
       toast({
         title: "Login Successful",
@@ -140,12 +140,14 @@ function Login() {
 
       // Add a small delay before navigation for better UX
       setTimeout(() => {
-        navigate('/');
+        navigate("/");
       }, 1200);
     } catch (error) {
       toast({
         title: "Login Failed",
-        description: error.response?.data?.msg || "Something went wrong with authentication.",
+        description:
+          error.response?.data?.msg ||
+          "Something went wrong with authentication.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -243,7 +245,9 @@ function Login() {
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
                 <FormControl isRequired>
-                  <FormLabel color="red.600" fontWeight="medium">Phone</FormLabel>
+                  <FormLabel color="red.600" fontWeight="medium">
+                    Phone
+                  </FormLabel>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none" color="red.500">
                       <Icon as={FiPhone} />
@@ -255,7 +259,7 @@ function Login() {
                       placeholder="Enter your phone number"
                       pl={10}
                       focusBorderColor="red.400"
-                      _focus={{ boxShadow: '0 0 0 1px red.400' }}
+                      _focus={{ boxShadow: "0 0 0 1px red.400" }}
                       as={motion.input}
                       whileFocus={{ scale: 1.01 }}
                     />
@@ -263,7 +267,9 @@ function Login() {
                 </FormControl>
 
                 <FormControl isRequired>
-                  <FormLabel color="red.600" fontWeight="medium">Password</FormLabel>
+                  <FormLabel color="red.600" fontWeight="medium">
+                    Password
+                  </FormLabel>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none" color="red.500">
                       <Icon as={FiLock} />
@@ -275,18 +281,21 @@ function Login() {
                       placeholder="Enter your password"
                       pl={10}
                       focusBorderColor="red.400"
-                      _focus={{ boxShadow: '0 0 0 1px red.400' }}
+                      _focus={{ boxShadow: "0 0 0 1px red.400" }}
                       as={motion.input}
                       whileFocus={{ scale: 1.01 }}
                     />
                     <InputRightElement width="3rem">
-                      <Button 
-                        h="1.5rem" 
-                        size="sm" 
+                      <Button
+                        h="1.5rem"
+                        size="sm"
                         variant="ghost"
                         onClick={togglePasswordVisibility}
                       >
-                        <Icon as={showPassword ? FiEyeOff : FiEye} color="gray.500" />
+                        <Icon
+                          as={showPassword ? FiEyeOff : FiEye}
+                          color="gray.500"
+                        />
                       </Button>
                     </InputRightElement>
                   </InputGroup>
@@ -310,9 +319,9 @@ function Login() {
               </MotionFlex>
             </form>
 
-            <MotionFlex 
-              justify="center" 
-              mt={6} 
+            <MotionFlex
+              justify="center"
+              mt={6}
               align="center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -326,7 +335,7 @@ function Login() {
                 colorScheme="red"
                 fontWeight="medium"
                 size="sm"
-                onClick={() => navigate('/register')}
+                onClick={() => navigate("/register")}
                 as={motion.button}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -343,14 +352,14 @@ function Login() {
 
 // Custom InputLeftElement component
 const InputLeftElement = ({ children, ...props }) => (
-  <Box 
-    position="absolute" 
-    left="0" 
-    top="0" 
-    height="100%" 
-    width="40px" 
-    display="flex" 
-    alignItems="center" 
+  <Box
+    position="absolute"
+    left="0"
+    top="0"
+    height="100%"
+    width="40px"
+    display="flex"
+    alignItems="center"
     justifyContent="center"
     {...props}
   >

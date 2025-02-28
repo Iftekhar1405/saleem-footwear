@@ -1,482 +1,3 @@
-// import React, { useState, useRef } from "react";
-// import {
-//   Box,
-//   Button,
-//   Flex,
-//   IconButton,
-//   Text,
-//   Menu,
-//   MenuButton,
-//   MenuList,
-//   MenuItem,
-//   useBreakpointValue,
-//   Tooltip,
-//   useOutsideClick,
-// } from "@chakra-ui/react";
-// import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
-// import { motion } from "framer-motion";
-// import { Link, useNavigate, useLocation } from "react-router-dom";
-// import RoleBasedComponent from "../RoleBasedComponents";
-// import { iconVariants } from "./Header";
-// import { User2Icon } from "lucide-react";
-
-// // Create motion components
-// const MotionFlex = motion(Flex);
-// const MotionBox = motion(Box);
-// const MotionText = motion(Text);
-
-// function Nav() {
-//   const token = localStorage.getItem("token");
-//   const navigate = useNavigate();
-//   const location = useLocation();
-//   const [isOpen, setIsOpen] = useState(false);
-//   const dropdownRef = useRef();
-  
-//   // For mobile dropdown
-//   useOutsideClick({
-//     ref: dropdownRef,
-//     handler: () => setIsOpen(false),
-//   });
-  
-//   // Gradient background colors to match Header
-//   const bgGradient = "linear(to-r, #000000, #1a1a1a, #000000)";
-//   const buttonHoverBg = "rgba(255, 255, 255, 0.1)";
-
-//   const logout = () => {
-//     const confirm = window.confirm("Are you sure you want to log out?");
-//     if (confirm) {
-//       localStorage.removeItem("token");
-//       localStorage.removeItem("role");
-//       navigate("/");
-//     }
-//   };
-
-//   // Animation variants
-//   const navbarVariants = {
-//     hidden: {
-//       y: -100,
-//       opacity: 0,
-//     },
-//     visible: {
-//       y: 0,
-//       opacity: 1,
-//       transition: {
-//         type: "spring",
-//         stiffness: 300,
-//         damping: 30,
-//       },
-//     },
-//   };
-
-//   const textVariants = {
-//     initial: { opacity: 0, y: -5 },
-//     animate: { 
-//       opacity: 1, 
-//       y: 0,
-//       transition: {
-//         type: "spring",
-//         stiffness: 300,
-//         damping: 20,
-//         delay: 0.2
-//       }
-//     },
-//     hover: {
-//       scale: 1.05,
-//       color: "#FF6B6B",
-//       transition: { type: "spring", stiffness: 300, damping: 15 },
-//     }
-//   };
-
-//   const dropdownVariants = {
-//     hidden: {
-//       opacity: 0,
-//       y: -20,
-//       scale: 0.95,
-//       transition: {
-//         duration: 0.2,
-//       },
-//     },
-//     visible: {
-//       opacity: 1,
-//       y: 0,
-//       scale: 1,
-//       transition: {
-//         type: "spring",
-//         stiffness: 400,
-//         damping: 15,
-//       },
-//     },
-//   };
-
-//   return (
-//     <>
-//       <MotionBox
-//         initial="hidden"
-//         animate="visible"
-//         variants={navbarVariants}
-//         position="sticky"
-//         top="0"
-//         zIndex="1000"
-//       >
-//         <Box 
-//           py={4} 
-//           px={6} 
-//           bgGradient={bgGradient} 
-//           color="white"
-//           boxShadow="0px 2px 15px rgba(0, 0, 0, 0.5)"
-//           borderBottomWidth="1px"
-//           borderBottomColor="rgba(255, 255, 255, 0.1)"
-//         >
-//           <Flex 
-//             align="center" 
-//             justify="space-between" 
-//             maxW="1200px" 
-//             mx="auto"
-//             initial={{ opacity: 0 }}
-//             animate={{ opacity: 1 }}
-//             transition={{ delay: 0.1, duration: 0.5 }}
-//           >
-//             <Flex align="center">
-//               {/* Brand Logo/Name */}
-//               <Link to="/">
-//                 <MotionText
-//                   variants={textVariants}
-//                   initial="initial"
-//                   animate="animate"
-//                   whileHover="hover"
-//                   fontSize={{ base: "xl", md: "2xl" }}
-//                   fontWeight="extrabold"
-//                   bgGradient="linear(to-r, #FF0080, #FF6B6B)"
-//                   bgClip="text"
-//                   fontFamily={"Al-Navrada"}
-//                   letterSpacing=".2em"
-//                   cursor="pointer"
-//                   filter="drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.5))"
-//                 >
-//                   SALIM FOOTWEAR
-//                 </MotionText>
-//               </Link>
-//             </Flex>
-
-//             {/* Mobile menu button with dropdown */}
-//             <Box display={{ base: "block", md: "none" }} position="relative" ref={dropdownRef}>
-//               <Tooltip hasArrow label="Menu" bg="#FF6B6B">
-//                 <IconButton
-//                   as={motion.button}
-//                   variants={iconVariants}
-//                   initial="initial"
-//                   whileHover="hover"
-//                   whileTap="tap"
-//                   aria-label="Open menu"
-//                   icon={<User2Icon w={6} h={6}/>}
-//                   onClick={() => setIsOpen(!isOpen)}
-//                   variant="ghost"
-//                   colorScheme="whiteAlpha"
-//                   fontSize="lg"
-//                   borderRadius="full"
-//                   _hover={{ bg: buttonHoverBg }}
-//                 />
-//               </Tooltip>
-              
-//               {/* Mobile dropdown menu */}
-//               <MotionBox
-//                 initial="hidden"
-//                 animate={isOpen ? "visible" : "hidden"}
-//                 variants={dropdownVariants}
-//                 position="absolute"
-//                 right="0"
-//                 mt={2}
-//                 width="240px"
-//                 bg="rgba(0, 0, 0, 0.95)"
-//                 borderRadius="md"
-//                 overflow="hidden"
-//                 boxShadow="0px 5px 15px rgba(0, 0, 0, 0.3)"
-//                 borderWidth="1px"
-//                 borderColor="rgba(255, 255, 255, 0.1)"
-//                 zIndex={10}
-//                 display={{ base: "block", md: "none" }}
-//               >
-//                 <Box py={2}>
-//                   <Link to="/orders">
-//                     <Button
-//                       w="full"
-//                       variant="ghost"
-//                       colorScheme="whiteAlpha"
-//                       fontWeight="medium"
-//                       justifyContent="flex-start"
-//                       py={3}
-//                       px={4}
-//                       color="white"
-//                       _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
-//                       _active={{ bg: "rgba(255, 255, 255, 0.2)" }}
-//                       onClick={() => setIsOpen(false)}
-//                     >
-//                       ORDERS
-//                     </Button>
-//                   </Link>
-//                   <Link to="/catalog">
-//                     <Button
-//                       w="full"
-//                       variant="ghost"
-//                       colorScheme="whiteAlpha"
-//                       fontWeight="medium"
-//                       justifyContent="flex-start"
-//                       py={3}
-//                       px={4}
-//                       color="white"
-//                       _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
-//                       _active={{ bg: "rgba(255, 255, 255, 0.2)" }}
-//                       onClick={() => setIsOpen(false)}
-//                     >
-//                       CATALOGUE
-//                     </Button>
-//                   </Link>
-                  
-//                   <RoleBasedComponent allowedRoles={["admin"]}>
-//                     <Link to="/register">
-//                       <Button
-//                         w="full"
-//                         variant="ghost"
-//                         colorScheme="whiteAlpha"
-//                         fontWeight="medium"
-//                         justifyContent="flex-start"
-//                         py={3}
-//                         px={4}
-//                         color="white"
-//                         _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
-//                         _active={{ bg: "rgba(255, 255, 255, 0.2)" }}
-//                         onClick={() => setIsOpen(false)}
-//                       >
-//                         REGISTER USERS
-//                       </Button>
-//                     </Link>
-//                   </RoleBasedComponent>
-                  
-//                   <Link to="/profile">
-//                     <Button
-//                       w="full"
-//                       variant="ghost"
-//                       colorScheme="whiteAlpha"
-//                       fontWeight="medium"
-//                       justifyContent="flex-start"
-//                       py={3}
-//                       px={4}
-//                       color="white"
-//                       _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
-//                       _active={{ bg: "rgba(255, 255, 255, 0.2)" }}
-//                       onClick={() => setIsOpen(false)}
-//                     >
-//                       PROFILE
-//                     </Button>
-//                   </Link>
-                  
-//                   {token ? (
-//                     <Button
-//                       w="full"
-//                       variant="ghost"
-//                       colorScheme="red"
-//                       justifyContent="flex-start"
-//                       py={3}
-//                       px={4}
-//                       onClick={() => {
-//                         logout();
-//                         setIsOpen(false);
-//                       }}
-//                       _hover={{ bg: "rgba(255, 107, 107, 0.2)" }}
-//                     >
-//                       LOG OUT
-//                     </Button>
-//                   ) : (
-//                     <Button
-//                       w="full"
-//                       variant="ghost"
-//                       colorScheme="blue"
-//                       justifyContent="flex-start"
-//                       py={3}
-//                       px={4}
-//                       onClick={() => {
-//                         navigate("/login");
-//                         setIsOpen(false);
-//                       }}
-//                       _hover={{ bg: "rgba(255, 107, 107, 0.2)" }}
-//                     >
-//                       LOG IN
-//                     </Button>
-//                   )}
-//                 </Box>
-//               </MotionBox>
-//             </Box>
-
-//             {/* Desktop Navigation */}
-//             <Flex
-//               as="nav"
-//               align="center"
-//               justify="space-between"
-//               display={{ base: "none", md: "flex" }}
-//               gap={6}
-//             >
-//               <Link to="/orders">
-//                 <Button
-//                   as={motion.button}
-//                   variants={iconVariants}
-//                   initial="initial"
-//                   whileHover="hover"
-//                   whileTap="tap"
-//                   variant="ghost"
-//                   colorScheme="whiteAlpha"
-//                   fontSize="sm"
-//                   fontWeight="medium"
-//                   borderRadius="full"
-//                   px={4}
-//                   _hover={{ bg: buttonHoverBg }}
-//                   isActive={location.pathname === "/orders"}
-//                   _active={{
-//                     bg: "rgba(255, 255, 255, 0.2)",
-//                     borderBottom: "2px solid",
-//                     borderColor: "#FF6B6B",
-//                   }}
-//                 >
-//                   ORDERS
-//                 </Button>
-//               </Link>
-              
-//               <Link to="/catalog">
-//                 <Button
-//                   as={motion.button}
-//                   variants={iconVariants}
-//                   initial="initial"
-//                   whileHover="hover"
-//                   whileTap="tap"
-//                   variant="ghost"
-//                   colorScheme="whiteAlpha"
-//                   fontSize="sm"
-//                   fontWeight="medium"
-//                   borderRadius="full"
-//                   px={4}
-//                   _hover={{ bg: buttonHoverBg }}
-//                   isActive={location.pathname === "/catalog"}
-//                   _active={{
-//                     bg: "rgba(255, 255, 255, 0.2)",
-//                     borderBottom: "2px solid",
-//                     borderColor: "#FF6B6B",
-//                   }}
-//                 >
-//                   CATALOGUE
-//                 </Button>
-//               </Link>
-
-//               <RoleBasedComponent allowedRoles={["admin"]}>
-//                 <Link to="/register">
-//                   <Button
-//                     as={motion.button}
-//                     variants={iconVariants}
-//                     initial="initial"
-//                     whileHover="hover"
-//                     whileTap="tap"
-//                     variant="ghost"
-//                     colorScheme="whiteAlpha"
-//                     fontSize="sm"
-//                     fontWeight="medium"
-//                     borderRadius="full"
-//                     px={4}
-//                     _hover={{ bg: buttonHoverBg }}
-//                     isActive={location.pathname === "/register"}
-//                     _active={{
-//                       bg: "rgba(255, 255, 255, 0.2)",
-//                       borderBottom: "2px solid",
-//                       borderColor: "#FF6B6B",
-//                     }}
-//                   >
-//                     REGISTER USERS
-//                   </Button>
-//                 </Link>
-//               </RoleBasedComponent>
-
-//               <Link to="/profile">
-//                 <Button
-//                   as={motion.button}
-//                   variants={iconVariants}
-//                   initial="initial"
-//                   whileHover="hover"
-//                   whileTap="tap"
-//                   variant="ghost"
-//                   colorScheme="whiteAlpha"
-//                   fontSize="sm"
-//                   fontWeight="medium"
-//                   borderRadius="full"
-//                   px={4}
-//                   _hover={{ bg: buttonHoverBg }}
-//                   isActive={location.pathname === "/profile"}
-//                   _active={{
-//                     bg: "rgba(255, 255, 255, 0.2)",
-//                     borderBottom: "2px solid",
-//                     borderColor: "#FF6B6B",
-//                   }}
-//                 >
-//                   PROFILE
-//                 </Button>
-//               </Link>
-
-//               {token ? (
-//                 <Button
-//                   as={motion.button}
-//                   variants={iconVariants}
-//                   initial="initial"
-//                   whileHover="hover"
-//                   whileTap="tap"
-//                   variant="outline"
-//                   colorScheme="red"
-//                   onClick={logout}
-//                   borderRadius="full"
-//                   fontSize="sm"
-//                   fontWeight="medium"
-//                   borderColor="#FF6B6B"
-//                   _hover={{ bg: "rgba(255, 107, 107, 0.2)" }}
-//                 >
-//                   LOG OUT
-//                 </Button>
-//               ) : (
-//                 <Button
-//                   as={motion.button}
-//                   variants={iconVariants}
-//                   initial="initial"
-//                   whileHover="hover"
-//                   whileTap="tap"
-//                   variant="outline"
-//                   colorScheme="blue"
-//                   onClick={() => navigate("/login")}
-//                   borderRadius="full"
-//                   fontSize="sm"
-//                   fontWeight="medium"
-//                   borderColor="#FF6B6B"
-//                   _hover={{ bg: "rgba(255, 107, 107, 0.2)" }}
-//                 >
-//                   LOG IN
-//                 </Button>
-//               )}
-//             </Flex>
-//           </Flex>
-//         </Box>
-//       </MotionBox>
-//     </>
-//   );
-// }
-
-// export default Nav;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React, { useState, useRef } from "react";
 import {
   Box,
@@ -486,36 +7,82 @@ import {
   Text,
   useOutsideClick,
   Tooltip,
+  Input,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import RoleBasedComponent from "../RoleBasedComponents";
+import { iconVariants } from "./Header";
+import { SearchIcon, XIcon } from "lucide-react";
 
 // Motion components
 const MotionFlex = motion(Flex);
 const MotionBox = motion(Box);
 const MotionText = motion(Text);
+const MotionInput = motion(Input);
+
+const textVariants = {
+  hidden: { opacity: 0 },
+  visible: (i = 1) => ({
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2 * i,
+    },
+  }),
+};
+
+const letterVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+};
+
+const MotionText2 = ({ text }) => {
+  return (
+    <motion.div variants={textVariants} initial="hidden" animate="visible">
+      {text.split("").map((char, index) => (
+        <motion.span key={index} variants={letterVariants}>
+          {char}
+        </motion.span>
+      ))}
+    </motion.div>
+  );
+};
 
 function Nav() {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef();
-  
+  const searchRef = useRef();
+
   useOutsideClick({
     ref: dropdownRef,
     handler: () => setIsOpen(false),
   });
-  
+
+  useOutsideClick({
+    ref: searchRef,
+    handler: () => {
+      if (showSearch) {
+        setShowSearch(false);
+      }
+    },
+  });
+
   // Sleek, minimal background
   const bgColor = "rgba(10, 10, 12, 0.7)";
   const glassEffect = {
     backdropFilter: "blur(8px)",
     WebkitBackdropFilter: "blur(8px)",
   };
-  
+
   const buttonHoverBg = "rgba(255, 255, 255, 0.05)";
 
   const logout = () => {
@@ -527,40 +94,68 @@ function Nav() {
     }
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setShowSearch(false);
+      setSearchQuery("");
+    }
+  };
+
   // Enhanced animation variants
   const navbarVariants = {
     hidden: { y: -20, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
-      transition: { type: "spring", stiffness: 200, damping: 20 }
-    }
+      transition: { type: "spring", stiffness: 200, damping: 20 },
+    },
   };
 
   const textVariants = {
     initial: { opacity: 0 },
-    animate: { 
+    animate: {
       opacity: 1,
-      transition: { duration: 0.5 }
+      transition: { duration: 0.5 },
     },
     hover: {
       color: "#00f5ff",
       textShadow: "0 0 8px rgba(0, 245, 255, 0.5)",
-      transition: { duration: 0.2 }
-    }
+      transition: { duration: 0.2 },
+    },
+  };
+
+  const searchVariants = {
+    closed: {
+      width: "0%",
+      opacity: 0,
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut",
+      },
+    },
+    open: {
+      width: "100%",
+      opacity: 1,
+      transition: {
+        duration: 0.3,
+        ease: "easeOut",
+      },
+    },
   };
 
   const menuItemVariants = {
     initial: { opacity: 0, x: -10 },
-    animate: (i) => ({ 
-      opacity: 1, 
+    animate: (i) => ({
+      opacity: 1,
       x: 0,
-      transition: { 
+      transition: {
         delay: i * 0.05,
-        duration: 0.2
-      }
+        duration: 0.2,
+      },
     }),
-    exit: { opacity: 0, x: -10 }
+    exit: { opacity: 0, x: -10 },
   };
 
   const dropdownVariants = {
@@ -568,20 +163,20 @@ function Nav() {
       opacity: 0,
       scale: 0.95,
       y: -10,
-      transition: { duration: 0.2 }
+      transition: { duration: 0.2 },
     },
     visible: {
       opacity: 1,
       scale: 1,
       y: 0,
-      transition: { 
-        type: "spring", 
-        stiffness: 300, 
+      transition: {
+        type: "spring",
+        stiffness: 300,
         damping: 15,
         staggerChildren: 0.05,
-        delayChildren: 0.1
-      }
-    }
+        delayChildren: 0.1,
+      },
+    },
   };
 
   const navItems = [
@@ -593,33 +188,32 @@ function Nav() {
 
   return (
     <MotionBox
-      initial="hidden"
-      animate="visible"
-      variants={navbarVariants}
-      position="sticky"
-      top="0"
-      zIndex="1000"
-    >
-      <Box 
-        py={3} 
-        px={{ base: 4, md: 6 }} 
-        bg={bgColor}
-        color="white"
-        style={glassEffect}
-        borderBottom="1px solid rgba(255, 255, 255, 0.05)"
-      >
-        <Flex 
-          align="center" 
-          justify="space-between" 
-          maxW="1200px" 
-          mx="auto"
-        >
-          <Link to="/">
+  initial="hidden"
+  animate="visible"
+  variants={navbarVariants}
+  position="sticky"
+  top="0"
+  zIndex="1000"
+>
+  <Box
+    py={3}
+    px={{ base: 4, md: 6 }}
+    bg={bgColor}
+    color="white"
+    style={glassEffect}
+    borderBottom="1px solid rgba(255, 255, 255, 0.05)"
+  >
+    <Flex align="center" justify="space-between" maxW="1200px" mx="auto">
+      {/* Brand Logo - Only show when search isn't active on mobile */}
+      <Box display={{ base: showSearch ? "none" : "block", md: "block" }}>
+        <Link to="/">
+          <Box position={"relative"}>
             <MotionText
               variants={textVariants}
-              initial="initial"
-              animate="animate"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               whileHover="hover"
+              transition={{ duration: 1.0, ease: "easeOut" }}
               fontSize={{ base: "lg", md: "xl" }}
               fontWeight="light"
               letterSpacing=".5em"
@@ -627,25 +221,123 @@ function Nav() {
               textTransform="uppercase"
               fontFamily="monospace"
             >
-              SALIM
+              <MotionText2 text="SALIM" />
             </MotionText>
-          </Link>
 
-          {/* Mobile menu button */}
-          <Box display={{ base: "block", md: "none" }} position="relative" ref={dropdownRef}>
+            <MotionText
+              variants={textVariants}
+              initial="initial"
+              animate="animate"
+              whileHover="hover"
+              fontSize={{ base: "10", md: "sm" }}
+              textAlign={"center"}
+              fontWeight="light"
+              letterSpacing=".6em"
+              cursor="pointer"
+              textTransform="uppercase"
+              fontFamily="monospace"
+              position={"absolute"}
+              top={"5"}
+            >
+              <MotionText2 text="FOOTWEAR" />
+            </MotionText>
+          </Box>
+        </Link>
+      </Box>
+
+      {/* Mobile View: Search container */}
+      <AnimatePresence>
+        {showSearch && (
+          <MotionBox
+            ref={searchRef}
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={searchVariants}
+            display={{ base: "block", md: "none" }}
+            flexGrow={1}
+            mr={2}
+          >
+            <form onSubmit={handleSearch}>
+              <InputGroup size="md">
+                <MotionInput
+                  autoFocus
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  bg="rgba(0, 0, 0, 0.2)"
+                  border="1px solid rgba(255, 255, 255, 0.1)"
+                  _focus={{
+                    borderColor: "#00f5ff",
+                    boxShadow: "0 0 0 1px #00f5ff",
+                  }}
+                  borderRadius="full"
+                  color="white"
+                  pl={4}
+                  pr={10}
+                />
+                <InputRightElement>
+                  <IconButton
+                    aria-label="Close search"
+                    icon={<XIcon size={16} />}
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setShowSearch(false)}
+                    _hover={{ bg: "transparent" }}
+                  />
+                </InputRightElement>
+              </InputGroup>
+            </form>
+          </MotionBox>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile menu and search buttons */}
+      <Flex display={{ base: "flex", md: "none" }} position="relative">
+        {/* Search Button - Mobile */}
+        {!showSearch && (
+          <Tooltip hasArrow label="Search" bg="#00f5ff" color="black">
+            <IconButton
+              as={motion.button}
+              variants={iconVariants}
+              initial="initial"
+              whileHover="hover"
+              whileTap="tap"
+              aria-label="Search"
+              icon={<SearchIcon />}
+              variant="ghost"
+              colorScheme="whiteAlpha"
+              fontSize="lg"
+              borderRadius="full"
+              _hover={{ bg: buttonHoverBg }}
+              onClick={() => setShowSearch(true)}
+              mr={1}
+            />
+          </Tooltip>
+        )}
+
+        {/* Menu Dropdown - Mobile (hide when search is active) */}
+        {!showSearch && (
+          <Box ref={dropdownRef}>
             <IconButton
               as={motion.button}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               aria-label="Menu"
-              icon={isOpen ? <ChevronUpIcon w={5} h={5} /> : <ChevronDownIcon w={5} h={5} />}
+              icon={
+                isOpen ? (
+                  <ChevronUpIcon w={5} h={5} />
+                ) : (
+                  <ChevronDownIcon w={5} h={5} />
+                )
+              }
               onClick={() => setIsOpen(!isOpen)}
               variant="unstyled"
               display="flex"
               alignItems="center"
               justifyContent="center"
             />
-            
+
             <AnimatePresence>
               {isOpen && (
                 <MotionBox
@@ -665,29 +357,31 @@ function Nav() {
                   zIndex={10}
                 >
                   <Flex direction="column" py={1}>
-                    {navItems.map((item, i) => (
-                      ((item.roles.includes("all") || 
-                       (localStorage.getItem("role") === "admin" && item.roles.includes("admin"))) && (
-                        <Link to={item.path} key={item.path}>
-                          <MotionBox
-                            custom={i}
-                            variants={menuItemVariants}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
-                            px={4}
-                            py={2}
-                            fontSize="sm"
-                            fontWeight="light"
-                            letterSpacing="0.1em"
-                            _hover={{ bg: "rgba(255, 255, 255, 0.05)" }}
-                            onClick={() => setIsOpen(false)}
-                          >
-                            {item.label}
-                          </MotionBox>
-                        </Link>
-                      ))
-                    ))}
+                    {navItems.map(
+                      (item, i) =>
+                        (item.roles.includes("all") ||
+                          (localStorage.getItem("role") === "admin" &&
+                            item.roles.includes("admin"))) && (
+                          <Link to={item.path} key={item.path}>
+                            <MotionBox
+                              custom={i}
+                              variants={menuItemVariants}
+                              initial="initial"
+                              animate="animate"
+                              exit="exit"
+                              px={4}
+                              py={2}
+                              fontSize="sm"
+                              fontWeight="light"
+                              letterSpacing="0.1em"
+                              _hover={{ bg: "rgba(255, 255, 255, 0.05)" }}
+                              onClick={() => setIsOpen(false)}
+                            >
+                              {item.label}
+                            </MotionBox>
+                          </Link>
+                        )
+                    )}
                     <MotionBox
                       custom={navItems.length}
                       variants={menuItemVariants}
@@ -720,84 +414,178 @@ function Nav() {
               )}
             </AnimatePresence>
           </Box>
+        )}
+      </Flex>
 
-          {/* Desktop Navigation */}
-          <Flex
-            align="center"
-            justify="flex-end"
-            gap={5}
-            display={{ base: "none", md: "flex" }}
+      {/* Desktop Navigation and Search */}
+      <Flex
+        align="center"
+        justify="flex-end"
+        gap={5}
+        display={{ base: "none", md: "flex" }}
+        position="relative"
+      >
+        {/* Desktop Nav Items Container - maintain width when search is active */}
+        <Box display="flex" justifyContent="center" alignItems="center" position="relative" width="100%">
+          {/* Desktop search container */}
+          <Box 
+            position="absolute" 
+            right="0" 
+            zIndex="10" 
+            width="300px"
           >
-            {navItems.map((item) => (
-              ((item.roles.includes("all") || 
-               (localStorage.getItem("role") === "admin" && item.roles.includes("admin"))) && (
-                <Link to={item.path} key={item.path}>
-                  <MotionText
-                    variants={textVariants}
-                    initial="initial"
-                    animate="animate"
-                    whileHover="hover"
-                    fontSize="xs"
-                    fontWeight="light"
-                    letterSpacing="0.15em"
-                    position="relative"
-                    pb={1}
-                    _after={{
-                      content: '""',
-                      position: "absolute",
-                      width: location.pathname === item.path ? "100%" : "0%",
-                      height: "1px",
-                      bottom: "0",
-                      left: "0",
-                      bg: location.pathname === item.path ? "#00f5ff" : "white",
-                      transition: "width 0.3s ease"
-                    }}
-                    _hover={{
-                      _after: {
-                        width: "100%",
-                        bg: "#00f5ff"
-                      }
-                    }}
-                  >
-                    {item.label}
-                  </MotionText>
-                </Link>
-              ))
-            ))}
+            <AnimatePresence>
+              {showSearch && (
+                <MotionBox
+                  initial="closed"
+                  animate="open"
+                  exit="closed"
+                  variants={searchVariants}
+                  overflow="hidden"
+                  width="100%"
+                >
+                  <form onSubmit={handleSearch}>
+                    <InputGroup size="sm">
+                      <MotionInput
+                        autoFocus
+                        placeholder="Search products..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        bg="rgba(0, 0, 0, 0.2)"
+                        border="1px solid rgba(255, 255, 255, 0.1)"
+                        _focus={{
+                          borderColor: "#00f5ff",
+                          boxShadow: "0 0 0 1px #00f5ff",
+                        }}
+                        borderRadius="full"
+                        color="white"
+                        pl={4}
+                        pr={10}
+                      />
+                      <InputRightElement>
+                        <IconButton
+                          aria-label="Close search"
+                          icon={<XIcon size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          onClick={() => setShowSearch(false)}
+                          _hover={{ bg: "transparent" }}
+                        />
+                      </InputRightElement>
+                    </InputGroup>
+                  </form>
+                </MotionBox>
+              )}
+            </AnimatePresence>
+          </Box>
 
-            <MotionBox
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              ml={2}
-            >
-              <Button
-                as={motion.button}
-                whileHover={{ 
-                  scale: 1.05,
-                  boxShadow: "0 0 10px rgba(0, 245, 255, 0.5)"
-                }}
-                whileTap={{ scale: 0.95 }}
-                size="sm"
-                bg="transparent"
-                border="1px solid rgba(0, 245, 255, 0.3)"
-                color="white"
-                onClick={token ? logout : () => navigate("/login")}
-                borderRadius="full"
-                fontSize="xs"
-                px={4}
-                py={1}
-                fontWeight="light"
-                letterSpacing="0.1em"
-                _hover={{ bg: "rgba(0, 245, 255, 0.1)" }}
-              >
-                {token ? "LOGOUT" : "LOGIN"}
-              </Button>
-            </MotionBox>
+          {/* Desktop navigation items */}
+          <Flex
+            justifyContent="space-evenly"
+            alignItems="center"
+            gap="4"
+            opacity={showSearch ? 0 : 1}
+            transition="opacity 0.3s ease"
+          >
+            {navItems.map(
+              (item) =>
+                (item.roles.includes("all") ||
+                  (localStorage.getItem("role") === "admin" &&
+                    item.roles.includes("admin"))) && (
+                  <Link to={item.path} key={item.path}>
+                    <MotionText
+                      variants={textVariants}
+                      initial="initial"
+                      animate="animate"
+                      whileHover="hover"
+                      fontSize="xs"
+                      fontWeight="light"
+                      letterSpacing="0.15em"
+                      position="relative"
+                      pb={1}
+                      _after={{
+                        content: '""',
+                        position: "absolute",
+                        width:
+                          location.pathname === item.path ? "100%" : "0%",
+                        height: "1px",
+                        bottom: "0",
+                        left: "0",
+                        bg:
+                          location.pathname === item.path
+                            ? "#00f5ff"
+                            : "white",
+                        transition: "width 0.3s ease",
+                      }}
+                      _hover={{
+                        _after: {
+                          width: "100%",
+                          bg: "#00f5ff",
+                        },
+                      }}
+                    >
+                      {item.label}
+                    </MotionText>
+                  </Link>
+                )
+            )}
           </Flex>
-        </Flex>
-      </Box>
-    </MotionBox>
+
+         {!showSearch && ( <MotionBox
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            // transition={{ delay: 0.5 }}
+            ml={2}
+            opacity={showSearch ? 0 : 1}
+            transition="opacity 0.3s ease"
+          >
+            <Button
+              as={motion.button}
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 0 10px rgba(0, 245, 255, 0.5)",
+              }}
+              whileTap={{ scale: 0.95 }}
+              size="sm"
+              bg="transparent"
+              border="1px solid rgba(0, 245, 255, 0.3)"
+              color="white"
+              onClick={token ? logout : () => navigate("/login")}
+              borderRadius="full"
+              fontSize="xs"
+              px={4}
+              py={1}
+              fontWeight="light"
+              letterSpacing="0.1em"
+              _hover={{ bg: "rgba(0, 245, 255, 0.1)" }}
+            >
+              {token ? "LOGOUT" : "LOGIN"}
+            </Button>
+          </MotionBox>)}
+        </Box>
+
+        {/* Search Button - Desktop (position outside the nav items) */}
+        <Tooltip hasArrow label="Search" bg="#00f5ff" color="black">
+          <IconButton
+            as={motion.button}
+            variants={iconVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            aria-label="Search"
+            icon={<SearchIcon />}
+            variant="ghost"
+            colorScheme="whiteAlpha"
+            fontSize="lg"
+            borderRadius="full"
+            _hover={{ bg: buttonHoverBg }}
+            onClick={() => setShowSearch(!showSearch)}
+          />
+        </Tooltip>
+      </Flex>
+    </Flex>
+  </Box>
+</MotionBox>
   );
 }
 

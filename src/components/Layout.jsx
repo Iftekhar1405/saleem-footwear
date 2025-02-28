@@ -4,7 +4,7 @@ import React from "react";
 import "./Layout.css";
 export function Layout() {
   const location = useLocation();
-  const hideNavbarRoutes = ["/login", "/register", "/prelogin", "/contact-us"];
+  const hideNavbarRoutes = ["/login", "/register", "/prelogin"];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (

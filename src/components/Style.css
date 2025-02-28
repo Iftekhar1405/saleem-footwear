@@ -318,3 +318,208 @@ svg{
 
 
 
+/* Enhanced button styling with more appealing effects */
+
+.fixed-buttons {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.futuristic-button {
+  background: rgba(15, 15, 30, 0.7);
+  border: 1px solid rgba(120, 180, 255, 0.2);
+  color: #ffffff;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  padding: 0;
+  height: 48px;
+  min-width: 170px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 
+              0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+}
+
+/* Gradient border effect */
+.futuristic-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 1px;
+  background: linear-gradient(45deg, 
+    rgba(120, 180, 255, 0) 0%,
+    rgba(120, 180, 255, 0.3) 50%, 
+    rgba(120, 180, 255, 0) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* Shine effect */
+.futuristic-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+/* Hover state enhancements */
+.futuristic-button:hover {
+  transform: translateY(-3px) scale(1.02);
+  background: rgba(25, 25, 45, 0.85);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15),
+              0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+              0 0 15px rgba(120, 180, 255, 0.2);
+  letter-spacing: 0.5px;
+}
+
+.futuristic-button:hover::before {
+  left: 150%;
+  transition: left 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.futuristic-button:hover::after {
+  opacity: 1;
+}
+
+/* Active/click state */
+.futuristic-button:active {
+  transform: translateY(1px) scale(0.98);
+  background: rgba(10, 10, 25, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2),
+              0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  transition: all 0.1s ease;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+  padding: 0 18px;
+  position: relative;
+  z-index: 2;
+}
+
+.button-icon {
+  font-size: 18px;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+}
+
+.button-text {
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+/* Icon and text animations */
+.futuristic-button:hover .button-icon {
+  transform: scale(1.2) rotate(5deg);
+  opacity: 1;
+  color: #a0d2ff;
+}
+
+.futuristic-button:hover .button-text {
+  letter-spacing: 1px;
+  transform: translateX(2px);
+  text-shadow: 0 0 8px rgba(160, 210, 255, 0.5);
+}
+
+.futuristic-button:active .button-icon {
+  transform: scale(0.9);
+  transition: transform 0.1s;
+}
+
+.futuristic-button:active .button-text {
+  transform: translateX(0);
+  transition: all 0.1s;
+}
+
+/* Specific button styles with unique accents */
+.add-product {
+  border-left: 3px solid #3498db;
+}
+
+.add-product:hover {
+  border-color: #48aeff;
+}
+
+.add-product .button-icon {
+  color: #3498db;
+}
+
+.admin-tools {
+  border-left: 3px solid #9b59b6;
+}
+
+.admin-tools:hover {
+  border-color: #b67ad4;
+}
+
+.admin-tools .button-icon {
+  color: #9b59b6;
+}
+
+/* Entrance animation for buttons */
+@keyframes slideIn {
+  0% { opacity: 0; transform: translateX(20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+.fixed-buttons {
+  animation: slideIn 0.4s ease-out forwards;
+}
+
+.fixed-buttons .futuristic-button:nth-child(1) {
+  animation: slideIn 0.4s 0.1s ease-out backwards;
+}
+
+.fixed-buttons .futuristic-button:nth-child(2) {
+  animation: slideIn 0.4s 0.2s ease-out backwards;
+}
+
+/* Subtle pulse effect */
+@keyframes subtlePulse {
+  0% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05) inset; }
+  50% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 10px rgba(120, 180, 255, 0.2); }
+  100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05) inset; }
+}
+
+.futuristic-button {
+  animation: subtlePulse 3s infinite;
+}
+
+.futuristic-button:nth-child(2) {
+  animation-delay: 1.5s;
+}
+
+/* Add some interaction with the other button when one is hovered */
+.fixed-buttons:hover .futuristic-button:not(:hover) {
+  opacity: 0.7;
+  transform: scale(0.98);
+  transition: all 0.3s ease;
+}

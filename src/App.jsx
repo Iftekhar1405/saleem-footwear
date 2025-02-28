@@ -10,16 +10,7 @@ import Scroll from './components/Scroll';
 import './components/Style.css';
 import RoleBasedComponent from './RoleBasedComponents';
 
-
-
 function App() {
-
-
-
-
-
-
-
   return (
     <ChakraProvider>
       <Header />
@@ -28,23 +19,30 @@ function App() {
       <div className="fixed-buttons">
         <RoleBasedComponent allowedRoles={['admin', 'employee']}>
           <Link to='/addproduct'>
-            <button className="addproduct" style={{margin:'10px'}}>+ Add Products</button>
+            <button className="futuristic-button add-product">
+              <span className="button-content">
+                <span className="button-icon">+</span>
+                <span className="button-text">Add Products</span>
+              </span>
+            </button>
           </Link>
         </RoleBasedComponent>
         <RoleBasedComponent allowedRoles={['admin']}>
           <Link to='/admin-dashboard'>
-            <button className="admin-tools" style={{margin:'10px'}}>Admin Tools</button>
+            <button className="futuristic-button admin-tools">
+              <span className="button-content">
+                <span className="button-icon">⚙</span>
+                <span className="button-text">Admin Tools</span>
+              </span>
+            </button>
           </Link>
         </RoleBasedComponent>
       </div>
       <BrandScroller />
       <CategoryGrid />
       <ProductGrid />
-     
     </ChakraProvider>
-
   )
 }
 
 export default App
-

@@ -89,15 +89,11 @@ function AddProduct() {
     });
 
     try {
-      const response = await axios.post(
-        `${URL}/upload-img`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${URL}/upload-img`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       // Get the uploaded image data from the response
       const { primaryImage, colorImage } = response.data.images;
@@ -178,15 +174,11 @@ function AddProduct() {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(
-        `${URL}/products`,
-        productData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.post(`${URL}/products`, productData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       toast({
         title: "Success",

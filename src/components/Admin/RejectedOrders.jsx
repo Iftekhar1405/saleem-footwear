@@ -135,7 +135,7 @@ function RejectedOrders() {
   }
 
   return (
-    <Box p={4} >
+    <Box p={4}>
       <Text fontSize="2xl" mb={4}>
         Rejected Orders
       </Text>
