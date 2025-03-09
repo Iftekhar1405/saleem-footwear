@@ -255,7 +255,7 @@ const Header = () => {
       >
         <MotionHStack
           spacing={{ base: 2, md: 5 }}
-          justify="space-between"
+          justify={{ base: "space-between", md: "space-between" }}
           align="center"
           maxW="1200px"
           mx="auto"
@@ -301,7 +301,7 @@ const Header = () => {
           {/* Center Logo - Visible on all screen sizes */}
           <Link to="/">
             <MotionImage
-              display={{ base: "block", md: "none" }}
+              display={{ base: "block", md: "block" }}
               as={motion.img}
               variants={logoVariants}
               initial="initial"
@@ -320,7 +320,8 @@ const Header = () => {
           <HStack
             spacing={5}
             display={{ base: "none", md: "flex" }}
-            justify="center"
+            justify={{ base: "center", md: "flex-end" }}
+            width={"100%"}
           >
             {["SHOP", "CATEGORIES", "CONTACT US"].map((item, i) => (
               <Link to={`/${item.toLowerCase().replace(" ", "-")}`} key={item}>

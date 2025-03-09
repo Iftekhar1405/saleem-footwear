@@ -21,7 +21,7 @@ function ModernFuturisticCarousel() {
   
   const isMobile = useBreakpointValue({ base: true, md: false });
   const slideWidth = useBreakpointValue({ base: "100%", md: "33.333%" });
-  const carouselHeight = useBreakpointValue({ base: "40vh", md: "65vh" });
+  const carouselHeight = useBreakpointValue({ base: "40vh", md: "40vh" });
   
   // Dark, futuristic color scheme
   const bgColor = useColorModeValue("#0a0a1a", "#0a0a1a");
