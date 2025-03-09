@@ -365,7 +365,7 @@ const Header = () => {
 
           {/* Action Icons */}
           <HStack spacing={{ base: 1, md: 4 }}>
-            {!shouldHideCart && (
+            {(!shouldHideCart || cartLength > 0) &&  (
               <Tooltip hasArrow label="Cart" bg="#FF6B6B">
                 <Link to="/cart">
                   <IconButton
