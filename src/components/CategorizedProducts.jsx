@@ -1,98 +1,359 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import './ProductCard.css';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import {
+  Box,
+  Grid,
+  GridItem,
+  Heading,
+  Text,
+  Image,
+  Flex,
+  Spinner,
+  useBreakpointValue,
+  Skeleton,
+  SkeletonText,
+  Container,
+  chakra,
+  shouldForwardProp,
+} from "@chakra-ui/react";
+import { isValidMotionProp, motion } from "framer-motion";
+import { URL } from "../context/url";
+
+const MotionGrid = motion(Grid);
+const MotionGridItem = motion(GridItem);
+
+const MotionHeading = chakra(motion.div, {
+  shouldForwardProp: (prop) =>
+    isValidMotionProp(prop) || shouldForwardProp(prop),
+});
+
+/* For out of stock */
+const styles = {
+  "@keyframes pulse": {
+    "0%": { opacity: 1, transform: "scale(1)" },
+    "50%": { opacity: 0.5, transform: "scale(1.05)" },
+    "100%": { opacity: 1, transform: "scale(1)" },
+  },
+};
+
+// ProductCard Component
+const ProductCard = ({ product, index }) => {
+  return (
+    <MotionGridItem
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      whileHover={{
+        y: -5,
+        transition: { duration: 0.2 },
+      }}
+      borderRadius="lg"
+      overflow="hidden"
+      bg="white"
+      boxShadow="lg"
+      _hover={{
+        boxShadow: "2xl",
+      }}
+      transform="auto"
+    >
+      <Link to={`/product/${product._id}`}>
+        <Box position="relative" overflow="hidden">
+          <motion.div
+            whileHover={{ scale: !product.inStock ? 1 : 1.05 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Image
+              src={product.images[0]}
+              alt={`${product.brand} ${product.article}`}
+              boxSize="100%"
+              objectFit="contain"
+              height={{ base: "200px", md: "250px" }}
+              padding="0.2em"
+              transition="0.3s ease-in-out"
+              filter={!product.inStock ? "grayscale(0%)" : "none"}
+            />
+          </motion.div>
+
+          {/* Out of Stock Overlay */}
+          {!product.inStock && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Box
+                position="absolute"
+                top="0"
+                left="0"
+                right="0"
+                bottom="0"
+                bg="rgba(255, 255, 255, 0)"
+                backdropFilter="blur(4px)"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <motion.div
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: -15 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20,
+                  }}
+                >
+                  <Box
+                    bg="#c53030"
+                    color="white"
+                    px={{ base: "4", md: "6" }}
+                    py={{ base: "2", md: "3" }}
+                    borderRadius="xl"
+                    boxShadow="xl"
+                    position="relative"
+                    _after={{
+                      content: '""',
+                      position: "absolute",
+                      top: "-2px",
+                      left: "-2px",
+                      right: "-2px",
+                      bottom: "-2px",
+                      border: "2px solid",
+                      borderColor: "red.200",
+                      borderRadius: "xl",
+                      animation: "pulse 2s infinite",
+                    }}
+                  >
+                    <Text
+                      fontWeight="bold"
+                      fontSize={{ base: "md", md: "xl" }}
+                      textShadow="0 2px 4px rgba(0,0,0,0.2)"
+                    >
+                      Out of Stock
+                    </Text>
+                  </Box>
+                </motion.div>
+              </Box>
+            </motion.div>
+          )}
+
+          <Box
+            position="absolute"
+            top="4"
+            right="4"
+            background="rgba(255, 255, 255, 0.95)"
+            p={2}
+            borderRadius="full"
+            boxShadow="lg"
+            borderWidth="2px"
+            borderColor="red.200"
+          >
+            <Text
+              fontSize={{ base: "xs", md: "sm" }}
+              color="red.500"
+              fontWeight="bold"
+              textTransform="uppercase"
+            >
+              {product.brand}
+            </Text>
+          </Box>
+        </Box>
+
+        <Box
+          p={4}
+          bg="white"
+          position="relative"
+          _before={{
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: "10%",
+            right: "10%",
+            height: "1px",
+            bg: "gray.200",
+          }}
+        >
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
+            <Heading size="md" noOfLines={1} color="red.600" mb={2}>
+              {product.article}
+            </Heading>
+          </motion.div>
+
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+          >
+            <Text color="gray.700" fontSize="lg" fontWeight="bold" mb={3}>
+              ₹{product.price}
+            </Text>
+          </motion.div>
+
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.3 }}
+          >
+            <Text
+              fontSize="sm"
+              color="gray.500"
+              noOfLines={2}
+              fontWeight="medium"
+            >
+              Colors:{" "}
+              {product.colors && Object.keys(product.colors).length > 0
+                ? Object.keys(product.colors).join(", ")
+                : "N/A"}
+            </Text>
+          </motion.div>
+        </Box>
+      </Link>
+    </MotionGridItem>
+  );
+};
+
+// Enhanced ProductCardSkeleton
+const ProductCardSkeleton = () => (
+  <GridItem borderRadius="lg" overflow="hidden" bg="white" boxShadow="lg">
+    <Box position="relative">
+      <Skeleton height={{ base: "200px", md: "250px" }} />
+      <Box position="absolute" top="4" right="4" width="60px">
+        <Skeleton height="24px" borderRadius="full" />
+      </Box>
+    </Box>
+
+    <Box p={6} bg="white">
+      <SkeletonText mt="4" noOfLines={1} spacing="4" skeletonHeight="6" />
+      <SkeletonText mt="4" noOfLines={1} spacing="4" skeletonHeight="4" />
+      <SkeletonText mt="4" noOfLines={2} spacing="4" skeletonHeight="3" />
+    </Box>
+  </GridItem>
+);
 
 const CategorizedProducts = () => {
   const { category } = useParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`https://saleem-footwear-api.vercel.app/api/v1/search/category/specific/?${category}`)
-          
-         
-        console.log(response)
-        setProducts(response.data.products); // Assuming response.data.products contains the products
+        const response = await axios.get(
+          `${URL}/search/category/specific/?${category}`
+        );
+        setProducts(response.data.products);
         setLoading(false);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setError('Failed to fetch products');
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError("Failed to fetch products");
         setLoading(false);
       }
     };
-    fetchCategoriesByGender(category);
-    // fetchProducts();
+
+    fetchProducts();
   }, [category]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  const columns = useBreakpointValue({
+    base: "repeat(2, 1fr)",
+    md: "repeat(3, 1fr)",
+    lg: "repeat(4, 1fr)",
+    xl: "repeat(5, 1fr)",
+  });
+
+  const skeletonArray = Array.from({ length: 8 }, (_, index) => index);
+
+  if (error) {
+    return (
+      <Flex justify="center" align="center" minH="50vh">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Heading as="h2" color="red.500">
+            Something went wrong
+          </Heading>
+          <Text color="gray.600" mt={2}>
+            {error}
+          </Text>
+        </motion.div>
+      </Flex>
+    );
+  }
+  // console.log(category.charAt(0).toUpperCase() + category.slice(1));
+  console.log(category.split("=")[1]);
 
   return (
-    <div className="product-grid" style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'0',margin:'0'
-      
-    }}>
-      {products.map((product) => (
-        <div className="product-card" key={product._id} style={{margin:'0',borderRadius:'0',width:'50vw',backgroundColor:'#EDEADE'}} >
-          <Link to={`/product/${product._id}`}>
-            <div className="product-image-gallery">
-              {product.images.map((imgUrl, index) => (
-                <img key={index} src={imgUrl} alt={`${product.brand} ${product.article}`} className="product-image"
-                style={{height:'180px',
-                  width:'200px',objectFit:'cover',objectPosition:'center'}} />
+    <Box bg="gray.50" minHeight="100vh">
+      <Container maxW="8xl" py={{ base: 8, md: 12 }}>
+        <MotionHeading
+          as="h1"
+          fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}
+          fontWeight="800"
+          textAlign="center"
+          mb={{ base: 6, md: 10 }}
+          color="red.600"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          letterSpacing="tight"
+        >
+          {category.split("=")[1]} Products
+          <Box
+            as="span"
+            display="block"
+            height="4px"
+            bg="red.500"
+            width="60px"
+            mx="auto"
+            mt={3}
+            borderRadius="full"
+          />
+        </MotionHeading>
+
+        <MotionGrid
+          templateColumns={columns}
+          gap={{ base: 3, md: 6, lg: 8 }}
+          p={{ base: 2, md: 4 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {loading
+            ? skeletonArray.map((index) => <ProductCardSkeleton key={index} />)
+            : products.map((product, index) => (
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  index={index}
+                />
               ))}
-            </div>
-            <div className="product-details"  style={{backgroundColor:'#EDEADE',paddingBottom:'0px',paddingRight:'10px'
-              ,marginBottom:'0'
-            }}>
-            
-              <h2 className="product-name">{product.article}</h2>
-              <p className="product-brand">{product.brand}</p>
-              <div className="product-info" style={{display:'flex',flexDirection:'column',alignItems:'flex-start',color:'#36454f',fontWeight:'bold'
-                ,
-              }}>
-                <span className="product-mrp" style={{textDecoration:'none',marginBottom:'5px'}}>MRP: ₹{product.price}</span>
-                <br />
-                <span className="product-colors" style={{color:'#36454f',fontWeight:'bold',fontSize:'small', opacity:'0.75'
-                }}>
-                Colors: {product.colors && Object.keys(product.colors).length > 0 
-                  ? Object.keys(product.colors).join(', ') 
-                  : "N/A"}
-              </span>
-                
-                {/* <div style={{display:'flex',justifyContent:'space-between', width:'100%', margin:'0px'}}>
-                <p className="product-material">Material: {product.material}</p>
-                <p className="product-gender">Gender: {product.gender}</p>
-                </div> */}
-              </div>
-              {/* <p className="product-sizes">
-                Available Sizes: {product.itemSet && product.itemSet.length > 0 
-                  ? product.itemSet.map(item => `${item.size} (PCs: ${item.lengths})`).join(', ') 
-                  : "N/A"}
-              </p> */}
-              
-            </div>
-          </Link>
-          {/* <div className="buttons">
-            <button onClick={() => addToLiked(product)}>
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
-                <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z" />
-              </svg>
-            </button>
-            <span className="v-bar"> &#124;</span>
-            <button onClick={() => addToCart(product)}>
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
-                <path d="M440-600v-120H320v-80h120v-120h80v120h120v80H520v120h-80ZM280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z" />
-              </svg>
-            </button>
-          </div> */}
-        </div>
-      ))}
-    </div>
+        </MotionGrid>
+
+        {products.length === 0 && !loading && (
+          <Flex justify="center" align="center" minH="30vh" direction="column">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Heading as="h3" size="lg" color="gray.600" textAlign="center">
+                No products found in this category
+              </Heading>
+              <Text mt={4} color="gray.500" textAlign="center">
+                Try browsing other categories or check back later
+              </Text>
+            </motion.div>
+          </Flex>
+        )}
+      </Container>
+    </Box>
   );
 };
 

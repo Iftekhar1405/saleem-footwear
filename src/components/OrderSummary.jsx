@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { URL } from "../context/url";
 
 const OrderSummary = () => {
   const location = useLocation();
@@ -26,7 +27,7 @@ const OrderSummary = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.patch(
-        `https://your-backend-url/api/v1/orders/${order._id}/cancel`,
+        `${URL}/orders/${order._id}/cancel`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

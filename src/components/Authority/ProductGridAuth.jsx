@@ -39,7 +39,6 @@ import { URL } from "../../context/url";
 // API Constants
 // const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 
-
 /**
  * Custom hook for fetching paginated data with infinite scroll
  */
@@ -89,13 +88,14 @@ const useFetchData = (url, limit = 20) => {
     if (document.documentElement.scrollHeight <= window.innerHeight) {
       return; // Page doesn't have a scrollbar, so exit early
     }
-  
-    const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+
+    const scrollableHeight =
+      document.documentElement.scrollHeight - window.innerHeight;
     const scrollThreshold = 200; // Load more when within 200px of bottom
     const scrollPosition = window.scrollY;
-    
-    console.log(scrollPosition, scrollableHeight - scrollThreshold);
-    
+
+    // console.log(scrollPosition, scrollableHeight - scrollThreshold);
+
     // Make sure we've actually scrolled a bit before loading more
     if (
       scrollPosition >= scrollableHeight - scrollThreshold &&
@@ -122,8 +122,11 @@ const useFetchData = (url, limit = 20) => {
 const ProductCard = ({ product, onEdit, onDelete }) => {
   // Helper function to check if a specific color is in stock
   const isColorInStock = (colorName) => {
-    if (!product.colorsStock || !Array.isArray(product.colorsStock)) return true;
-    const colorStock = product.colorsStock.find(item => item.color === colorName);
+    if (!product.colorsStock || !Array.isArray(product.colorsStock))
+      return true;
+    const colorStock = product.colorsStock.find(
+      (item) => item.color === colorName
+    );
     return colorStock ? colorStock.inStock : true;
   };
 
@@ -226,8 +229,8 @@ const ProductCard = ({ product, onEdit, onDelete }) => {
                 Colors:
               </Text>
               <Box>
-                {Object.keys(product.colors).map(color => (
-                  <Badge 
+                {Object.keys(product.colors).map((color) => (
+                  <Badge
                     key={color}
                     colorScheme={isColorInStock(color) ? "green" : "red"}
                     mr={2}
@@ -239,10 +242,11 @@ const ProductCard = ({ product, onEdit, onDelete }) => {
               </Box>
             </VStack>
           )}
-          
+
           {product.colorsStock && product.colorsStock.length > 0 && (
             <Text fontSize="xs" color="gray.500">
-              {product.colorsStock.filter(c => c.inStock).length} of {product.colorsStock.length} colors in stock
+              {product.colorsStock.filter((c) => c.inStock).length} of{" "}
+              {product.colorsStock.length} colors in stock
             </Text>
           )}
         </VStack>
@@ -255,10 +259,10 @@ const ProductCard = ({ product, onEdit, onDelete }) => {
  * Product Edit Form Component
  */
 const ProductEditForm = ({ product, onSave, onCancel }) => {
-  const [editedProduct, setEditedProduct] = useState({ 
+  const [editedProduct, setEditedProduct] = useState({
     ...product,
     // Ensure colorsStock exists
-    colorsStock: product.colorsStock || []
+    colorsStock: product.colorsStock || [],
   });
 
   const handleChange = (e) => {
@@ -281,27 +285,29 @@ const ProductEditForm = ({ product, onSave, onCancel }) => {
     setEditedProduct((prev) => {
       // Get current colorsStock or initialize if not exists
       const colorsStock = [...(prev.colorsStock || [])];
-      
+
       // Find if this color already exists in colorsStock
-      const colorIndex = colorsStock.findIndex(item => item.color === colorName);
-      
+      const colorIndex = colorsStock.findIndex(
+        (item) => item.color === colorName
+      );
+
       if (colorIndex >= 0) {
         // Update existing color stock status
         colorsStock[colorIndex] = {
           ...colorsStock[colorIndex],
-          inStock
+          inStock,
         };
       } else {
         // Add new color stock entry
         colorsStock.push({
           color: colorName,
-          inStock
+          inStock,
         });
       }
-      
+
       return {
         ...prev,
-        colorsStock
+        colorsStock,
       };
     });
   };
@@ -366,26 +372,28 @@ const ProductEditForm = ({ product, onSave, onCancel }) => {
   };
 
   const addColorField = () => {
-    const newColorName = `color${Object.keys(editedProduct.colors || {}).length + 1}`;
-    
+    const newColorName = `color${
+      Object.keys(editedProduct.colors || {}).length + 1
+    }`;
+
     setEditedProduct((prev) => {
       // Add the color to colors object
       const newColors = {
         ...prev.colors,
         [newColorName]: [],
       };
-      
+
       // Also add an entry in colorsStock for this new color
       const newColorsStock = [...(prev.colorsStock || [])];
       newColorsStock.push({
         color: newColorName,
-        inStock: true
+        inStock: true,
       });
-      
+
       return {
         ...prev,
         colors: newColors,
-        colorsStock: newColorsStock
+        colorsStock: newColorsStock,
       };
     });
   };
@@ -400,17 +408,17 @@ const ProductEditForm = ({ product, onSave, onCancel }) => {
       delete newColors[oldColor];
 
       // Also update the color name in colorsStock
-      const newColorsStock = (prev.colorsStock || []).map(item => {
+      const newColorsStock = (prev.colorsStock || []).map((item) => {
         if (item.color === oldColor) {
           return { ...item, color: newColor };
         }
         return item;
       });
-      
+
       return {
         ...prev,
         colors: newColors,
-        colorsStock: newColorsStock
+        colorsStock: newColorsStock,
       };
     });
   };
@@ -423,13 +431,13 @@ const ProductEditForm = ({ product, onSave, onCancel }) => {
 
       // Also remove the color from colorsStock
       const updatedColorsStock = (prev.colorsStock || []).filter(
-        item => item.color !== color
+        (item) => item.color !== color
       );
-      
+
       return {
         ...prev,
         colors: updatedColors,
-        colorsStock: updatedColorsStock
+        colorsStock: updatedColorsStock,
       };
     });
   };
@@ -437,8 +445,10 @@ const ProductEditForm = ({ product, onSave, onCancel }) => {
   // Helper function to get stock status for a color
   const getColorStockStatus = (colorName) => {
     if (!editedProduct.colorsStock) return true;
-    
-    const colorStock = editedProduct.colorsStock.find(item => item.color === colorName);
+
+    const colorStock = editedProduct.colorsStock.find(
+      (item) => item.color === colorName
+    );
     return colorStock ? colorStock.inStock : true;
   };
 
@@ -609,18 +619,23 @@ const ProductEditForm = ({ product, onSave, onCancel }) => {
                         size="sm"
                         width="60%"
                       />
-                      
+
                       {/* Color Stock Status Select */}
                       <Select
                         value={getColorStockStatus(color).toString()}
-                        onChange={(e) => handleColorStockChange(color, e.target.value === "true")}
+                        onChange={(e) =>
+                          handleColorStockChange(
+                            color,
+                            e.target.value === "true"
+                          )
+                        }
                         size="sm"
                         width="30%"
                       >
                         <option value="true">In Stock</option>
                         <option value="false">Out of Stock</option>
                       </Select>
-                      
+
                       <IconButton
                         icon={<DeleteIcon />}
                         onClick={() => handleRemoveColor(color)}
