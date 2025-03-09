@@ -139,7 +139,7 @@ const ProductCard = ({ product, index }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: animationDelay, ease: "easeOut" }}
-      whileHover={{ y: -8, transition: { duration: 0.2 } }}
+      whilehover={{ y: -8, transition: { duration: 0.2 } }}
       borderRadius="xl"
       overflow="hidden"
       bg={bgColor}

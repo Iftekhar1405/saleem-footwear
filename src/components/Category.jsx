@@ -1,85 +1,36 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { URL } from "../context/url";
-import {
-  Box,
-  Container,
-  Flex,
-  Grid,
-  Text,
-  Button,
-  useBreakpointValue,
-} from "@chakra-ui/react";
-
-// Enhanced skeleton component with modern styling
-const CategorySkeleton = () => (
-  <Box
-    borderRadius="xl"
-    overflow="hidden"
-    bg="white"
-    boxShadow="sm"
-    borderColor="gray.100"
-    borderWidth="1px"
-    p={4}
-    height="100%"
-    position="relative"
-    transition="all 0.3s"
-  >
-    <Box 
-      height="130px" 
-      borderRadius="lg" 
-      mb={3}
-      bg="gray.100" 
-    />
-    <Box height="20px" width="70%" mx="auto" bg="gray.100" borderRadius="md" />
-    
-    {/* Subtle decorative element */}
-    <Box 
-      position="absolute" 
-      top="10%" 
-      right="10%" 
-      width="20px" 
-      height="20px" 
-      borderRadius="full"
-      background="linear-gradient(45deg, #6366F1, #8B5CF6)"
-      opacity="0.1"
-      filter="blur(8px)"
-    />
-  </Box>
-);
 
 const CategoryGrid = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
+  const [hoveredCategory, setHoveredCategory] = useState(null);
+  const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { once: false, amount: 0.2 });
   const navigate = useNavigate();
-
-  // Responsive values adjusted for 3 on mobile, 5 on desktop
-  const gridColumns = useBreakpointValue({ 
-    base: 3,     // 3 cards on mobile (small screens)
-    md: 4,       // 4 cards on medium screens
-    lg: 5        // 5 cards on desktop (large screens)
-  });
-  
-  const initialDisplay = useBreakpointValue({ 
-    base: 6,     // Show 6 initially on mobile (2 rows of 3)
-    md: 8,       // Show 8 initially on medium screens
-    lg: 10       // Show 10 initially on desktop (2 rows of 5)
-  });
-  
-  const headingSize = useBreakpointValue({ base: "xl", md: "2xl" });
-  
-  // Theme colors adjusted for white background
-  const accentColor = "indigo.500";
-  const accentGradient = "linear(to-r, indigo.400, purple.500)";
-  const textGradient = "linear(to-r, indigo.400, purple.500)";
+  const [visibleCategories, setVisibleCategories] = useState(10);
 
   useEffect(() => {
     fetchCategories();
+    
+    // Responsive grid handling
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setVisibleCategories(6); // 2 rows of 3 on mobile
+      } else if (window.innerWidth < 1024) {
+        setVisibleCategories(8); // 2 rows of 4 on tablet
+      } else {
+        setVisibleCategories(10); // 2 rows of 5 on desktop
+      }
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const fetchCategories = async () => {
@@ -100,6 +51,23 @@ const CategoryGrid = () => {
 
   const handleSeeMore = () => {
     setShowAll(true);
+  };
+
+  const handleMouseEnter = (category, event) => {
+    // Calculate position based on mouse and viewport
+    const rect = event.currentTarget.getBoundingClientRect();
+    let x = rect.left + rect.width / 2;
+    if (x < 90) x = x * 1.6
+    if (x > 210) x = x/1.2
+    const y = rect.top - 10; // Position above the element
+
+    
+    setHoverPosition({ x, y });
+    setHoveredCategory(category);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredCategory(null);
   };
 
   // Animation variants
@@ -127,231 +95,173 @@ const CategoryGrid = () => {
     },
   };
 
-  const titleVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        damping: 20,
-        stiffness: 200,
-        delay: 0.1,
-      },
-    },
+  const hoverBoxVariants = {
+    hidden: { opacity: 0, y: 10, scale: 0.95 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: { 
+        type: "spring", 
+        damping: 25, 
+        stiffness: 300 
+      }
+    }
   };
 
-  const displayCategories = showAll ? categories : categories.slice(0, initialDisplay);
+  const displayCategories = showAll ? categories : categories.slice(0, visibleCategories);
 
   return (
-    <Container maxW="container.xl" p={{ base: 2, md: 4 }}>
-      <Box
-        ref={containerRef}
-        as={motion.div}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        variants={containerVariants}
-        borderRadius="xl"
-        overflow="hidden"
-        bg="white"
-        p={{ base: 4, md: 6 }}
-        position="relative"
-        boxShadow="md"
-      >
-        {/* Subtle decorative elements */}
-        <Box 
-          position="absolute" 
-          top="-5%" 
-          left="-5%" 
-          width="150px" 
-          height="150px" 
-          borderRadius="full"
-          bgGradient="linear(to-br, indigo.100, purple.100)"
-          opacity="0.3"
-          filter="blur(40px)"
-          zIndex="0"
-        />
-        
-        {/* Title with animated underline */}
-        <Flex 
-          direction="column" 
-          position="relative" 
-          zIndex="1"
-          mb={6}
+    <div className="w-full relative py-6 px-4 bg-gradient-to-b from-slate-50 to-slate-100 rounded-xl shadow-sm mb-8 overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute -top-10 -left-10 w-40 h-40 bg-blue-400/10 rounded-full blur-3xl" />
+      <div className="absolute -bottom-20 -right-10 w-40 h-40 bg-purple-400/10 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-1/2 bg-indigo-400/5 rounded-full blur-3xl" />
+      
+      {/* Header */}
+      <div className="relative mb-6 flex justify-between items-center">
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center"
         >
-          <motion.div variants={titleVariants}>
-            <Text
-              fontSize={headingSize}
-              fontWeight="700"
-              bgGradient={textGradient}
-              bgClip="text"
-              mb={2}
-              letterSpacing="tight"
-            >
-              Explore Categories
-            </Text>
-          </motion.div>
-          
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: "80px" }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-          >
-            <Box 
-              h="3px" 
-              bgGradient={accentGradient} 
-              borderRadius="full"
-            />
-          </motion.div>
-        </Flex>
-
-        {/* Category grid - adjusted for 3/5 columns */}
-        <Grid
-          as={motion.div}
+          <span className="h-6 w-1 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full mr-3"></span>
+          <h3 className="text-lg font-bold text-slate-800">
+            Explore Categories
+          </h3>
+        </motion.div>
+      </div>
+      
+      {/* Categories grid */}
+      <div className="relative" ref={containerRef}>
+        <motion.div 
+          className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
           variants={containerVariants}
-          templateColumns={{ 
-            base: "repeat(3, 1fr)", 
-            md: "repeat(4, 1fr)", 
-            lg: "repeat(5, 1fr)" 
-          }}
-          gap={{ base: 3, md: 4 }}
-          mb={6}
-          position="relative"
-          zIndex="1"
+          initial="hidden"
+          animate="visible"
         >
-          <AnimatePresence>
-            {loading
-              ? [...Array(initialDisplay)].map((_, index) => (
-                  <motion.div key={`skeleton-${index}`} variants={itemVariants}>
-                    <CategorySkeleton />
-                  </motion.div>
-                ))
-              : displayCategories.map((category, index) => (
-                  <motion.div 
-                    key={index} 
-                    variants={itemVariants}
-                    layoutId={`category-${index}`}
+          {loading
+            ? [...Array(visibleCategories)].map((_, index) => (
+                <motion.div key={`skeleton-${index}`} variants={itemVariants}>
+                  <div className="w-full aspect-square rounded-xl bg-white shadow-sm border border-slate-200 p-3 flex flex-col items-center justify-center">
+                    <div className="h-3/5 w-full bg-slate-100 rounded-lg mb-3"></div>
+                    <div className="h-4 w-2/3 bg-slate-100 rounded-md"></div>
+                  </div>
+                </motion.div>
+              ))
+            : displayCategories.map((category, index) => (
+                <motion.div 
+                  key={index} 
+                  variants={itemVariants}
+                  onClick={() => handleCategoryClick(category.category)}
+                  onMouseEnter={(e) => handleMouseEnter(category, e)}
+                  onMouseLeave={handleMouseLeave}
+                  onTouchStart={(e) => handleMouseEnter(category, e)}
+                  onTouchEnd={handleMouseLeave}
+                  className="cursor-pointer"
+                >
+                  <motion.div
+                    whileHover={{ 
+                      scale: 1.05, 
+                      boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.15)" 
+                    }}
+                    className="w-full aspect-square rounded-xl bg-white shadow-sm border border-slate-200 hover:border-blue-500/20 p-3 flex flex-col items-center justify-center transition-all duration-300 relative overflow-hidden"
                   >
-                    <Box
-                      borderRadius="lg"
-                      overflow="hidden"
-                      bg="white"
-                      boxShadow="sm"
-                      borderColor="gray.100"
-                      borderWidth="1px"
-                      p={{ base: 2, md: 3 }}
-                      height="100%"
-                      onClick={() => handleCategoryClick(category.category)}
-                      cursor="pointer"
-                      position="relative"
-                      transition="all 0.2s"
-                      _hover={{
-                        transform: "translateY(-4px)",
-                        boxShadow: "md",
-                        borderColor: "indigo.100"
-                      }}
-                      as={motion.div}
-                      whileHover={{ 
-                        scale: 1.03,
-                        transition: { duration: 0.2 }
-                      }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      {/* Image container with subtle hover effects */}
-                      <Flex
-                        height={{ base: "100px", md: "130px" }}
-                        alignItems="center"
-                        justifyContent="center"
-                        mb={2}
-                        borderRadius="md"
-                        overflow="hidden"
-                        bg="gray.50"
-                        position="relative"
-                      >
-                        <Box
-                          as={motion.img}
-                          src={category.image}
-                          alt={category.category}
-                          maxH="85%"
-                          maxW="85%"
-                          objectFit="contain"
-                          transition="transform 0.3s ease"
-                          layoutId={`category-image-${index}`}
-                          whileHover={{ scale: 1.05 }}
-                        />
-                      </Flex>
-                      
-                      {/* Category name */}
-                      <Text
-                        fontWeight="600"
-                        textAlign="center"
-                        fontSize={{ base: "xs", md: "sm" }}
-                        color="gray.800"
-                        noOfLines={1}
-                        transition="all 0.3s"
-                        _groupHover={{ 
-                          bgGradient: textGradient,
-                          bgClip: "text"
+                    {/* Top accent bar */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    {/* Top right corner accent */}
+                    <div className="absolute -right-1 -top-1 w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rotate-45 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                    
+                    {/* Category image */}
+                    <div className="h-3/5 w-full flex items-center justify-center mb-3">
+                      <motion.img
+                        src={category.image}
+                        alt={category.category}
+                        className="max-h-full max-w-full object-contain filter drop-shadow-sm rounded"
+                        initial={{ y: 10, opacity: 0 }}
+                        animate={{ 
+                          y: 0, 
+                          opacity: 1,
+                          transition: { delay: index * 0.05 + 0.2 }
                         }}
-                      >
-                        {category.category}
-                      </Text>
-                    </Box>
+                      />
+                    </div>
+                    
+                    {/* Category name */}
+                    <p className="text-sm font-medium text-center truncate max-w-full text-slate-700 hover:text-blue-600">
+                      {category.category}
+                    </p>
                   </motion.div>
-                ))}
-          </AnimatePresence>
-        </Grid>
-
-        {/* "See More" button with animations */}
-        {!showAll && !loading && categories.length > initialDisplay && (
-          <Flex justifyContent="center" mt={6}>
+                </motion.div>
+              ))}
+        </motion.div>
+        
+        {/* Hover info box */}
+        <AnimatePresence>
+          {hoveredCategory && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.4 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              variants={hoverBoxVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              className="fixed z-50 bg-white rounded-xl shadow-xl p-4 pointer-events-none transform -translate-x-1/2 -translate-y-full w-60"
+              style={{ 
+                top: `${hoverPosition.y}px`, 
+                left: `${hoverPosition.x}px` 
+              }}
             >
-              <Button
-                onClick={handleSeeMore}
-                size={{ base: "md", md: "lg" }}
-                px={8}
-                py={{ base: 5, md: 6 }}
-                fontSize={{ base: "sm", md: "md" }}
-                fontWeight="600"
-                borderRadius="full"
-                position="relative"
-                overflow="hidden"
-                bgGradient={accentGradient}
-                color="white"
-                _hover={{
-                  transform: "translateY(-2px)",
-                  boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)",
-                }}
-                _active={{
-                  transform: "translateY(1px)",
-                  boxShadow: "none",
-                }}
-              >
-                <Text>Explore All</Text>
-                <Box
-                  position="absolute"
-                  top="0"
-                  left="0"
-                  right="0"
-                  bottom="0"
-                  bg="white"
-                  opacity="0.1"
-                  transform="skewX(-20deg) translateX(-70%)"
-                  transition="transform 0.7s ease"
-                  _groupHover={{ transform: "skewX(-20deg) translateX(170%)" }}
-                />
-              </Button>
+              <div className="flex flex-col items-center">
+                <div className="h-24 w-24 mb-3 flex items-center justify-center">
+                  <img
+                    src={hoveredCategory.image}
+                    alt={hoveredCategory.category}
+                    className="max-h-20 max-w-20 object-contain"
+                  />
+                </div>
+                
+                <h4 className="font-bold text-lg mb-2 bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
+                  {hoveredCategory.category}
+                </h4>
+                
+                <p className="text-sm text-gray-600 text-center">
+                  Explore our {hoveredCategory.category} collection with the latest styles and trends.
+                </p>
+                
+                {/* Triangle pointer */}
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white"></div>
+              </div>
             </motion.div>
-          </Flex>
-        )}
-      </Box>
-    </Container>
+          )}
+        </AnimatePresence>
+      </div>
+      
+      {/* See more button */}
+      {!showAll && !loading && categories.length > visibleCategories && (
+        <div className="mt-6 py-2 px-7 text-center">
+          <motion.button 
+            onClick={handleSeeMore}
+            className="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-full shadow-md hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 focus:outline-none"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0, transition: { delay: 0.4 } }}
+          >
+            <span className="flex items-center px-6 bg-black/50 text-stone-200 backdrop-blur-md p-2 rounded-lg">
+  Show All
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" viewBox="0 0 20 20" fill="currentColor">
+    <path
+      fillRule="evenodd"
+      d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+      clipRule="evenodd"
+    />
+  </svg>
+</span>
+
+          </motion.button>
+        </div>
+      )}
+    </div>
   );
 };
 

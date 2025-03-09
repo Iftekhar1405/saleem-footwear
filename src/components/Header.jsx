@@ -270,7 +270,7 @@ const Header = () => {
                 as={motion.button}
                 variants={iconVariants}
                 initial="initial"
-                whileHover="hover"
+                whilehover="hover"
                 whileTap="tap"
                 aria-label="Back"
                 icon={
@@ -306,7 +306,7 @@ const Header = () => {
               variants={logoVariants}
               initial="initial"
               animate="animate"
-              whileHover="hover"
+              whilehover="hover"
               src={logo}
               alt="Company Logo"
               height={{ base: "30px", md: "40px" }}
@@ -329,7 +329,7 @@ const Header = () => {
                   variants={textVariants}
                   initial="hidden"
                   animate="visible"
-                  whileHover="hover"
+                  whilehover="hover"
                   fontSize="sm"
                   fontWeight="medium"
                   letterSpacing="0.1em"
@@ -371,7 +371,7 @@ const Header = () => {
                     as={motion.button}
                     variants={iconVariants}
                     initial="initial"
-                    whileHover="hover"
+                    whilehover="hover"
                     whileTap="tap"
                     aria-label="Cart"
                     icon={
@@ -438,7 +438,7 @@ const Header = () => {
               as={motion.button}
               variants={iconVariants}
               initial="initial"
-              whileHover="hover"
+              whilehover="hover"
               whileTap="tap"
               display={{ base: "flex", md: "none" }}
               onClick={onOpen}
@@ -512,7 +512,7 @@ const Header = () => {
                     variants={navigationItemVariants}
                     initial="hidden"
                     animate="visible"
-                    whileHover={{ x: 5, transition: { duration: 0.2 } }}
+                    whilehover={{ x: 5, transition: { duration: 0.2 } }}
                   >
                     <Button
                       w="full"
@@ -577,7 +577,7 @@ const Header = () => {
                   variants={navigationItemVariants}
                   initial="hidden"
                   animate="visible"
-                  whileHover={{ x: 5, transition: { duration: 0.2 } }}
+                  whilehover={{ x: 5, transition: { duration: 0.2 } }}
                 >
                   <Button
                     w="full"

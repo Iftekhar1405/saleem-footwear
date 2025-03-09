@@ -1,29 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import columbus from "./images/columbus.png";
 import paragon from "./images/paragon.jpg";
 import shoe from "./images/shoe.jpg";
 import shoefact from "./images/shoefact.jpeg";
-// Custom style to hide scrollbars (to be included in your CSS)
-const scrollbarHideStyles = `
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
 
-  /* Hide scrollbar for IE, Edge and Firefox */
-  .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-`;
 const ModernBrandCarousel = () => {
   const navigate = useNavigate();
   const [isDragging, setIsDragging] = useState(false);
   const scrollRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
-
+  const [visibleBrands, setVisibleBrands] = useState(5);
 
   const brands = [
     { id: 1, name: "Paragon", image: paragon },
@@ -34,6 +22,24 @@ const ModernBrandCarousel = () => {
     { id: 6, name: "Shoe Factory", image: shoefact },
     { id: 7, name: "Columbus", image: columbus },
   ];
+
+  // Determine visible brands based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setVisibleBrands(3);
+      } else if (window.innerWidth < 1024) {
+        setVisibleBrands(4);
+      } else {
+        setVisibleBrands(5);
+      }
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Handle brand click
   const handleBrandClick = (brand) => {
     if (!isDragging) {
@@ -45,7 +51,8 @@ const ModernBrandCarousel = () => {
   const handleScroll = () => {
     if (scrollRef.current) {
       const scrollPosition = scrollRef.current.scrollLeft;
-      const itemWidth = scrollRef.current.offsetWidth / 5; // Assuming 5 visible items
+      const containerWidth = scrollRef.current.clientWidth;
+      const itemWidth = containerWidth / visibleBrands;
       const index = Math.round(scrollPosition / itemWidth);
       setActiveIndex(Math.min(index, brands.length - 1));
     }
@@ -54,7 +61,8 @@ const ModernBrandCarousel = () => {
   // Scroll to brand index
   const scrollToIndex = (index) => {
     if (scrollRef.current) {
-      const itemWidth = scrollRef.current.offsetWidth / 5;
+      const containerWidth = scrollRef.current.clientWidth;
+      const itemWidth = containerWidth / visibleBrands;
       scrollRef.current.scrollTo({
         left: index * itemWidth,
         behavior: "smooth"
@@ -62,129 +70,204 @@ const ModernBrandCarousel = () => {
     }
   };
 
+  // Handle next/prev navigation
+  const handleNavigation = (direction) => {
+    const newIndex = direction === 'next' 
+      ? Math.min(activeIndex + 1, brands.length - 1)
+      : Math.max(activeIndex - 1, 0);
+    
+    scrollToIndex(newIndex);
+  };
+
   return (
-    <div className="w-full relative py-4 px-4 bg-[#f7fafc] backdrop-blur-md  mb-6 ">
-      {/* Gradient accents */}
-      <div className="absolute top-1/4 left-1/4 w-1/3 h-1/3 bg-blue-400/10 rounded-full blur-3xl -z-0" />
-      <div className="absolute bottom-1/4 right-1/4 w-1/4 h-1/4 bg-indigo-400/10 rounded-full blur-3xl -z-0" />
+    <div className="w-full relative py-6 px-4 bg-gradient-to-b from-slate-50 to-slate-100 rounded-xl shadow-sm mb-8 overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute -top-10 -left-10 w-40 h-40 bg-blue-400/10 rounded-full blur-3xl" />
+      <div className="absolute -bottom-20 -right-10 w-40 h-40 bg-purple-400/10 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-1/2 bg-indigo-400/5 rounded-full blur-3xl" />
       
       {/* Header */}
-      <div className="relative mb-4 z-10">
-        <motion.h3 
+      <div className="relative mb-6 flex justify-between items-center">
+        <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-sm font-semibold uppercase tracking-wider text-slate-800 dark:text-slate-200"
+          className="flex items-center"
         >
-          <span className="relative pb-1 after:content-[''] font-extrabold tracking-[0.3em] text-lg text-[#282321] after:absolute after:w-1/3 after:h-0.5 after:bg-gradient-to-r after:from-blue-400 after:to-transparent after:bottom-0 after:left-0">
-            Brands
-          </span>
-        </motion.h3>
-      </div>
-      
-      {/* Scrollable container */}
-      <div 
-        ref={scrollRef}
-        className="w-full overflow-x-auto scrollbar-hide" 
-        onScroll={handleScroll}
-        style={{ 
-          scrollbarWidth: 'none',  // Firefox
-          msOverflowStyle: 'none',  // IE/Edge
-          WebkitOverflowScrolling: 'touch'
-        }}
-      >
-        <div className="flex gap-4 pb-4 pt-2 min-w-max">
-          {brands.map((brand, index) => (
-            <motion.div
-              key={brand.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ 
-                opacity: 1, 
-                scale: 1,
-                transition: { delay: index * 0.05 }
-              }}
-              whileHover={{ scale: 1.05 }}
-              className={`flex-shrink-0 cursor-pointer`}
-              onClick={() => handleBrandClick(brand.name)}
-              onMouseDown={() => setIsDragging(false)}
-              onMouseMove={() => setIsDragging(true)}
-              onMouseUp={() => setTimeout(() => setIsDragging(false), 10)}
-              onTouchStart={() => setIsDragging(false)}
-              onTouchMove={() => setIsDragging(true)}
-              onTouchEnd={() => setTimeout(() => setIsDragging(false), 10)}
-            >
-              <div 
-                className={`w-24 h-24 md:w-32 md:h-32 flex flex-col items-center justify-center rounded-lg p-3
-                  ${activeIndex === index 
-                    ? 'bg-white/10 border border-blue-400/30 shadow-lg shadow-blue-400/10' 
-                    : 'bg-white/5 border border-white/10'}
-                  transition-all duration-300 backdrop-blur-sm
-                  relative`}
-              >
-                {/* Glassmorphism effect */}
-                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
-                
-                {/* Brand image */}
-                <div className="h-3/5 w-full flex items-center justify-center mb-2">
-                  <img
-                    src={brand.image}
-                    alt={brand.name}
-                    className="max-h-full max-w-full object-contain filter drop-shadow-sm rounded"
-                  />
-                </div>
-                
-                {/* Brand name */}
-                <p 
-                  className={`text-xs md:text-sm font-medium text-center truncate max-w-full
-                    ${activeIndex === index ? 'text-blue-400' : 'text-slate-700 dark:text-slate-300'}`}
-                >
-                  {brand.name}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+          <span className="h-6 w-1 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full mr-3"></span>
+          <h3 className="text-lg font-bold text-slate-800">
+            Featured Brands
+          </h3>
+        </motion.div>
+        
+        {/* Desktop navigation arrows */}
+        <div className="hidden md:flex space-x-2">
+          <button 
+            onClick={() => handleNavigation('prev')}
+            disabled={activeIndex === 0}
+            className={`p-2 rounded-full ${activeIndex === 0 ? 'text-slate-400 cursor-not-allowed' : 'text-slate-700 hover:bg-slate-200'} transition-colors`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button 
+            onClick={() => handleNavigation('next')}
+            disabled={activeIndex === brands.length - 1}
+            className={`p-2 rounded-full ${activeIndex === brands.length - 1 ? 'text-slate-400 cursor-not-allowed' : 'text-slate-700 hover:bg-slate-200'} transition-colors`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
       
-      {/* Indicator dots */}
-      <div className="flex justify-center gap-1 mt-3">
-        {brands.map((_, index) => (
-          <motion.button
-            key={index}
-            className="focus:outline-none"
-            onClick={() => scrollToIndex(index)}
-            initial={{ opacity: 0.3 }}
-            animate={{ 
-              opacity: index === activeIndex ? 1 : 0.3,
-              width: index === activeIndex ? "12px" : "4px",
-              height: "4px",
-              backgroundColor: index === activeIndex ? "#8AB4F8" : "rgba(138, 180, 248, 0.3)",
-              borderRadius: "9999px",
-              transition: { duration: 0.2 }
-            }}
-          />
-        ))}
+      {/* Main carousel container - constrained width */}
+      <div className="max-w-full relative">
+        {/* Scrollable container */}
+        <div 
+          ref={scrollRef}
+          className="w-full overflow-x-auto scrollbar-hide"
+          onScroll={handleScroll}
+          style={{ 
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            WebkitOverflowScrolling: 'touch'
+          }}
+        >
+          <div className="flex pb-4 pt-2 gap-4" style={{ width: 'max-content' }}>
+            {brands.map((brand, index) => (
+              <motion.div
+                key={brand.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1,
+                  transition: { delay: index * 0.05 }
+                }}
+                whileHover={{ 
+                  scale: 1.05, 
+                  boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.15)" 
+                }}
+                className={`flex-shrink-0 cursor-pointer transition-all duration-300`}
+                // onClick={() => handleBrandClick(brand.name)}
+                onMouseDown={() => setIsDragging(false)}
+                onMouseMove={() => setIsDragging(true)}
+                onMouseUp={() => setTimeout(() => setIsDragging(false), 10)}
+                onTouchStart={() => setIsDragging(false)}
+                onTouchMove={() => setIsDragging(true)}
+                onTouchEnd={() => setTimeout(() => setIsDragging(false), 10)}
+              >
+                <div 
+                  className={`w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 flex flex-col items-center justify-center rounded-xl p-3
+                    ${activeIndex === index 
+                      ? 'bg-white shadow-lg' 
+                      : 'bg-slate-50'}
+                    ${activeIndex === index 
+                      ? 'border border-blue-500/20' 
+                      : 'border border-slate-200'}
+                    transition-all duration-300 relative overflow-hidden`}
+                >
+                  {/* Active indicator */}
+                  {activeIndex === index && (
+                    <>
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
+                      <div className="absolute -right-1 -top-1 w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rotate-45 opacity-20"></div>
+                    </>
+                  )}
+                  
+                  {/* Brand image */}
+                  <div className="h-3/5 w-full flex items-center justify-center mb-3">
+                    <motion.img
+                      src={brand.image}
+                      alt={brand.name}
+                      className="max-h-full max-w-full object-contain filter drop-shadow-sm rounded"
+                      initial={{ y: 10, opacity: 0 }}
+                      animate={{ 
+                        y: 0, 
+                        opacity: 1,
+                        transition: { delay: index * 0.05 + 0.2 }
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Brand name */}
+                  <p 
+                    className={`text-sm font-medium text-center truncate max-w-full
+                      ${activeIndex === index 
+                        ? 'text-blue-600' 
+                        : 'text-slate-700'}`}
+                  >
+                    {brand.name}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Gradient fades on edges */}
+        <div className="absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-slate-50 to-transparent pointer-events-none" />
+        <div className="absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-slate-50 to-transparent pointer-events-none" />
       </div>
       
-      {/* Subtle scroll cue - fades out after initial load */}
-      <motion.div
-        className="absolute -right-1 top-1/2 transform -translate-y-1/2 h-12 w-8 bg-gradient-to-l from-slate-50/90 to-transparent dark:from-slate-900/90 pointer-events-none z-10"
-        initial={{ opacity: 1 }}
-        animate={{ opacity: [1, 0.8, 1], transition: { repeat: 3, duration: 1.5 } }}
-        exit={{ opacity: 0 }}
-      >
-        <motion.div 
-          className="h-8 w-8 flex items-center justify-center"
-          animate={{ x: [0, 4, 0], transition: { repeat: 3, duration: 1.5 } }}
+      {/* Mobile navigation */}
+      <div className="flex md:hidden justify-between mt-4">
+        <button 
+          onClick={() => handleNavigation('prev')}
+          disabled={activeIndex === 0}
+          className={`p-2 rounded-md ${activeIndex === 0 ? 'bg-slate-100 text-slate-400' : 'bg-slate-200 text-slate-700'} transition-colors`}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        
+        {/* Indicator dots */}
+        <div className="flex items-center justify-center gap-1">
+          {brands.map((_, index) => (
+            <motion.button
+              key={index}
+              className="focus:outline-none"
+              onClick={() => scrollToIndex(index)}
+              initial={{ opacity: 0.3 }}
+              animate={{ 
+                opacity: index === activeIndex ? 1 : 0.3,
+                width: index === activeIndex ? "16px" : "6px",
+                height: "6px",
+                backgroundColor: index === activeIndex ? "#3B82F6" : "#CBD5E1",
+                borderRadius: "9999px",
+                transition: { duration: 0.2 }
+              }}
+            />
+          ))}
+        </div>
+        
+        <button 
+          onClick={() => handleNavigation('next')}
+          disabled={activeIndex === brands.length - 1}
+          className={`p-2 rounded-md ${activeIndex === brands.length - 1 ? 'bg-slate-100 text-slate-400' : 'bg-slate-200 text-slate-700'} transition-colors`}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-        </motion.div>
-      </motion.div>
+        </button>
+      </div>
+      
+      {/* View all brands button (optional) */}
+      <div className="mt-6 text-center">
+        <button 
+          onClick={() => navigate('/all-brands')}
+          className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+        >
+          View all brands
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
     </div>
   );
 };
-
-
 
 export default ModernBrandCarousel;
