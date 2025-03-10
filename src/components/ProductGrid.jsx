@@ -21,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { isValidMotionProp, motion } from "framer-motion";
 import { URL } from "../context/url";
+import altImage from "./images/altImage.jpeg"
 
 // Motion components configuration
 const MotionGrid = motion(Grid);
@@ -192,8 +193,8 @@ const ProductCard = ({ product, index }) => {
           />
 
           <MotionImage
-            src={product.images[0]}
-            alt={`${product.brand} ${product.article}`}
+            src={ product.images[0] }
+            alt={altImage}
             objectFit="contain"
             maxHeight={{ base: "160px", sm: "180px", md: "220px" }}
             width="100%"

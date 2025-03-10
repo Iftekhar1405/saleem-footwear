@@ -13,7 +13,6 @@ import RoleBasedComponent from './RoleBasedComponents';
 function App() {
   return (
     <ChakraProvider>
-      <Header />
       <Nav />
       <Scroll />
       <div className="fixed-buttons">

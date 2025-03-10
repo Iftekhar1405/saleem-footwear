@@ -242,7 +242,7 @@ const Header = () => {
         animate={isVisible ? "visible" : "hidden"}
         bgGradient={bgGradient}
         color="white"
-        py={3}
+        py={"15px"}
         px={6}
         position="fixed"
         top={0}

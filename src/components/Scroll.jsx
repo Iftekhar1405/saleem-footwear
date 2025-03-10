@@ -25,7 +25,7 @@ function ModernFuturisticCarousel() {
   
   // Dark, futuristic color scheme
   const bgColor = useColorModeValue("#0a0a1a", "#0a0a1a");
-  const glowColor = "rgba(88, 103, 221, 0.6)";
+  const glowColor = "rgba(88, 103, 22, 0.6)";
   const buttonBg = "rgba(30, 41, 59, 0.6)";
   const buttonHoverBg = "rgba(44, 82, 130, 0.8)";
 
@@ -116,7 +116,7 @@ function ModernFuturisticCarousel() {
         bg={bgColor}
         boxShadow="0 8px 32px rgba(0, 0, 0, 0.25)"
         height={carouselHeight}
-        borderRadius="lg"
+        borderRadius={isMobile ? "none" : "lg"}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
