@@ -1,14 +1,14 @@
-import { ChakraProvider } from '@chakra-ui/react';
-import React from 'react';
-import { Link } from 'react-router-dom';
-import BrandScroller from './components/BrandScroller';
-import CategoryGrid from './components/Category';
-import Header from './components/Header';
-import Nav from './components/Nav';
-import ProductGrid from './components/ProductGrid';
-import Scroll from './components/Scroll';
-import './components/Style.css';
-import RoleBasedComponent from './RoleBasedComponents';
+import { ChakraProvider } from "@chakra-ui/react";
+import React from "react";
+import { Link } from "react-router-dom";
+import BrandScroller from "./components/BrandScroller";
+import CategoryGrid from "./components/Category";
+// import Header from './components/Header';
+import Nav from "./components/Nav";
+import ProductGrid from "./components/ProductGrid";
+import Scroll from "./components/Scroll";
+import "./components/Style.css";
+import RoleBasedComponent from "./RoleBasedComponents";
 
 function App() {
   return (
@@ -16,8 +16,8 @@ function App() {
       <Nav />
       <Scroll />
       <div className="fixed-buttons">
-        <RoleBasedComponent allowedRoles={['admin', 'employee']}>
-          <Link to='/addproduct'>
+        <RoleBasedComponent allowedRoles={["admin", "employee"]}>
+          <Link to="/addproduct">
             <button className="futuristic-button add-product">
               <span className="button-content">
                 <span className="button-icon">+</span>
@@ -26,8 +26,8 @@ function App() {
             </button>
           </Link>
         </RoleBasedComponent>
-        <RoleBasedComponent allowedRoles={['admin']}>
-          <Link to='/admin-dashboard'>
+        <RoleBasedComponent allowedRoles={["admin"]}>
+          <Link to="/admin-dashboard">
             <button className="futuristic-button admin-tools">
               <span className="button-content">
                 <span className="button-icon">⚙</span>
@@ -41,7 +41,7 @@ function App() {
       <CategoryGrid />
       <ProductGrid />
     </ChakraProvider>
-  )
+  );
 }
 
-export default App
+export default App;
