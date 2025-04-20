@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from "react";
-import "./Cart.css";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
-  Text,
-  Image,
   HStack,
-  VStack,
+  Image,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
+  ModalContent,
   ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
   useDisclosure,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
+import axios from "axios";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { URL } from "../context/url";
+import "./Cart.css";
 const token = localStorage.getItem("token");
 
 const Cart = () => {
@@ -177,7 +177,47 @@ const Cart = () => {
 
   const handleOrderNow = () => {
     onOpen(); // Open the Chakra confirmation modal
+    console.log(cart)
   };
+
+  const generateWhatsAppMessage = () => {
+    const itemDetails = cart
+      .map((item, index) => {
+        const { brand, article, gender } = item.productId;
+        const itemSets = item.itemSet
+          .map(
+            (set, i) =>
+              `    • Size: ${set.size}, Set: ${set.lengths}`
+          )
+          .join("\n");
+
+        return `Item ${index + 1}:
+    • Brand: ${brand}
+    • Article: ${article}
+    • Gender: ${gender}
+    • Color: ${item.color}
+    • Quantity: ${item.quantity}
+    • Price per unit: ₹${item.price}
+  ${itemSets ? `  • Item Sets:\n${itemSets}` : ""}`;
+      })
+      .join("\n\n");
+
+    const message = `🛒 *New Order Placed!*
+  
+  👤 *User ID:* ${userId}
+  
+  📦 *Items:*
+  ${itemDetails}
+  
+  
+  Please proceed to process the order. ✅`;
+
+    return encodeURIComponent(message);
+  };
+
+
+
+
 
   const confirmOrder = async () => {
     onClose(); // Close the modal after confirmation
@@ -217,6 +257,11 @@ const Cart = () => {
           duration: 5000,
           isClosable: true,
         });
+
+        const whatsappNumber = "+917024191093"; // Admin's number
+        const messageURL = `https://wa.me/${whatsappNumber}?text=${generateWhatsAppMessage()}`;
+
+        window.open(messageURL, "_blank");
 
         // Clear cart after successful order
         setCart([]);
