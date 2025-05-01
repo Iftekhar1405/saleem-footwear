@@ -192,12 +192,9 @@ const Cart = () => {
           .join("\n");
 
         return `Item ${index + 1}:
-    • Brand: ${brand}
     • Article: ${article}
-    • Gender: ${gender}
     • Color: ${item.color}
     • Quantity: ${item.quantity}
-    • Price per unit: ₹${item.price}
   ${itemSets ? `  • Item Sets:\n${itemSets}` : ""}`;
       })
       .join("\n\n");
