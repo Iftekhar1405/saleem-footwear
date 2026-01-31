@@ -503,7 +503,6 @@ const Header = () => {
                 />
               </motion.div>
             </Box>
-
             <VStack spacing={4} align="stretch">
               {[
                 { to: "/", label: "HOME" },
@@ -622,23 +621,38 @@ const Header = () => {
 
             {/* Footer in mobile menu */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7, duration: 0.5 }}
-            >
-              <Box position="absolute" bottom="4" width="85%">
-                <Text
-                  textAlign="center"
-                  color="gray.400"
-                  fontSize="sm"
-                  mt={12}
-                  fontFamily="monospace"
-                  letterSpacing="0.1em"
-                >
-                  © 2025 iRAD. All rights reserved.
-                </Text>
-              </Box>
-            </motion.div>
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ delay: 0.7, duration: 0.5 }}
+>
+  <Box position="absolute" bottom="4" width="85%">
+    <Text
+      textAlign="center"
+      color="gray.400"
+      fontSize="sm"
+      mt={12}
+      fontFamily="monospace"
+      letterSpacing="0.1em"
+    >
+      © 2026{' '}
+      <a 
+        href="https://irad.solutions/" 
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          color: '#FF6B6B',
+          textDecoration: 'underline',
+        }}
+        onMouseEnter={(e) => e.target.style.color = '#a0aec0'}
+        onMouseLeave={(e) => e.target.style.color = 'inherit'}
+      >
+        iRAD
+      </a>
+      . All rights reserved.
+    </Text>
+    
+  </Box>
+</motion.div>
           </DrawerBody>
         </DrawerContent>
       </Drawer>

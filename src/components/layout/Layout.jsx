@@ -12,11 +12,12 @@
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
+import Footer from "./Footer";
 import "../../styles/components/layout.css";
 
 export function Layout() {
   const location = useLocation();
-  
+
   // Routes where the header should be hidden
   const hideNavbarRoutes = ["/login", "/register", "/prelogin"];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
@@ -25,6 +26,7 @@ export function Layout() {
     <div className={shouldHideNavbar ? "no-header-layout" : "layout"}>
       {!shouldHideNavbar && <Header />}
       <Outlet />
+      {!shouldHideNavbar && <Footer />}
     </div>
   );
 }

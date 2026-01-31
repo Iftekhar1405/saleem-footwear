@@ -24,6 +24,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { URL } from "../context/url";
 import { FaChevronDown, FaCheck, FaWhatsapp, FaLanguage, FaTh, FaThLarge } from "react-icons/fa";
 import logo from "../components/images/logo.png"; // Fallback image
+import { Rows3 } from "lucide-react";
 
 // Helper to convert UPPERCASE to Title Case
 const toTitleCase = (str) => {
@@ -232,6 +233,7 @@ const Explore = () => {
 
         const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
         window.open(url, "_blank");
+        // setSelectedItems([]);
     };
 
     const handleBulkWhatsAppRedirect = () => {
@@ -248,6 +250,7 @@ const Explore = () => {
 
         const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
         window.open(url, "_blank");
+        setSelectedItems([]);
     };
 
 
@@ -328,41 +331,51 @@ const Explore = () => {
                         </div>
 
                         {/* Mobile Grid Toggle (Tabular) */}
-                        <div>
-                            <HStack
-                                display={{ base: "flex", md: "none" }}
-                                spacing={0}
-                                bg="gray.100"
-                                p="2px"
-                                borderRadius="md"
-                                border="1px solid"
-                                borderColor="gray.200"
-                            >
-                                <IconButton
-                                    icon={<FaThLarge />}
-                                    aria-label="Single Column"
-                                    size="sm"
-                                    variant={isSingleColumn ? "solid" : "ghost"}
-                                    colorScheme={isSingleColumn ? "red" : "gray"}
-                                    bg={isSingleColumn ? "white" : "transparent"}
-                                    shadow={isSingleColumn ? "sm" : "none"}
-                                    onClick={() => setIsSingleColumn(true)}
-                                    borderRadius="md"
-                                />
-                                <IconButton
-                                    icon={<FaTh />}
-                                    aria-label="Double Column"
-                                    size="sm"
-                                    variant={!isSingleColumn ? "solid" : "ghost"}
-                                    colorScheme={!isSingleColumn ? "red" : "gray"}
-                                    bg={!isSingleColumn ? "white" : "transparent"}
-                                    shadow={!isSingleColumn ? "sm" : "none"}
-                                    onClick={() => setIsSingleColumn(false)}
-                                    borderRadius="md"
-                                />
-                            </HStack>
-                        </div>
-
+                        <HStack
+    display={{ base: "flex", md: "none" }}
+    spacing={1}
+    bg="white"
+    p={1}
+    borderRadius="lg"
+    border="1px solid"
+    borderColor="gray.200"
+    boxShadow="sm"
+>
+    <IconButton
+        icon={<Rows3 size={18} />}
+        aria-label="Single Column"
+        size="sm"
+        variant="ghost"
+        color={isSingleColumn ? "white" : "gray.600"}
+        bg={isSingleColumn ? "red.500" : "transparent"}
+        _hover={{
+            bg: isSingleColumn ? "red.600" : "gray.100"
+        }}
+        _active={{
+            bg: isSingleColumn ? "red.600" : "gray.200"
+        }}
+        onClick={() => setIsSingleColumn(true)}
+        borderRadius="md"
+        transition="all 0.2s"
+    />
+    <IconButton
+        icon={<FaThLarge size={16} />}
+        aria-label="Double Column"
+        size="sm"
+        variant="ghost"
+        color={!isSingleColumn ? "white" : "gray.600"}
+        bg={!isSingleColumn ? "red.500" : "transparent"}
+        _hover={{
+            bg: !isSingleColumn ? "red.600" : "gray.100"
+        }}
+        _active={{
+            bg: !isSingleColumn ? "red.600" : "gray.200"
+        }}
+        onClick={() => setIsSingleColumn(false)}
+        borderRadius="md"
+        transition="all 0.2s"
+    />
+</HStack>
                     </HStack>
 
                     {/* Dropdown */}

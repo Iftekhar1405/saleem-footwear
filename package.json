@@ -1,7 +1,7 @@
 {
   "name": "saleem-footwear",
   "private": true,
-  "version": "1.23.1",
+  "version": "2.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
