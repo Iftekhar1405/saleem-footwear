@@ -30,6 +30,8 @@ import PDFViewer from "./components/PDF.jsx";
 import Orders from "./components/Orders.jsx";
 import ProductGridAuth from "./components/Authority/ProductGridAuth.jsx";
 import SearchBar from "./components/SearchBar.jsx";
+import TermsAndConditions from "./pages/TermsAndConditions.jsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import { ChakraProvider } from "@chakra-ui/react";
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -55,6 +57,8 @@ const router = createBrowserRouter(
       <Route path="category-grid/:category" element={<CategorizedProducts />} />
       <Route path="login" element={<Login />} />
       <Route path="contact-us" element={<ContactUs />} />
+      <Route path="terms-and-conditions" element={<TermsAndConditions />} />
+      <Route path="privacy-policy" element={<PrivacyPolicy />} />
       <Route path="register" element={<Register />} />
       <Route path="prelogin" element={<Prelogin />} />
       <Route

@@ -16,6 +16,10 @@ import {
   Badge,
   Image,
   Tooltip,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -361,6 +365,7 @@ const Header = () => {
                 </MotionText>
               </Link>
             ))}
+
           </HStack>
 
           {/* Action Icons */}
@@ -505,6 +510,8 @@ const Header = () => {
                 { to: "/products", label: "SHOP" },
                 { to: "/categories", label: "CATEGORIES" },
                 { to: "/contact-us", label: "CONTACT US" },
+                { to: "/terms-and-conditions", label: "TERMS & CONDITIONS" },
+                { to: "/privacy-policy", label: "PRIVACY POLICY" },
                 { to: "/cart", label: "CART", count: cartLength },
               ].map((item, i) => (
                 <Link key={item.to} to={item.to} onClick={onClose}>

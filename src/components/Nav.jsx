@@ -10,6 +10,10 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import { motion, AnimatePresence } from "framer-motion";
@@ -585,6 +589,70 @@ function Nav() {
                 onClick={() => setShowSearch(!showSearch)}
               />
             </Tooltip>
+
+            {/* Context Menu for Terms & Privacy */}
+            <Menu isLazy>
+              <MenuButton
+                as={motion.button}
+                variants={iconVariants}
+                initial="initial"
+                whileHover="hover"
+                whileTap="tap"
+                aria-label="More options"
+                borderRadius="full"
+                _hover={{ bg: buttonHoverBg }}
+                size="sm"
+                bg="transparent"
+                border="none"
+                color="white"
+                className="chakra-button css-13z083o"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                p={2}
+              >
+                <motion.svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="1" />
+                    <circle cx="12" cy="5" r="1" />
+                    <circle cx="12" cy="19" r="1" />
+                  </motion.svg>
+              </MenuButton>
+              <MenuList
+                bg="rgba(10, 10, 12, 0.95)"
+                zIndex={10000}
+                borderColor="rgba(0, 245, 255, 0.3)"
+                style={glassEffect}
+              >
+                <Link to="/terms-and-conditions">
+                  <MenuItem
+                    _hover={{ bg: "rgba(0, 245, 255, 0.1)" }}
+                    bg="transparent"
+                    fontSize="sm"
+                  >
+                    Terms & Conditions
+                  </MenuItem>
+                </Link>
+                <Link to="/privacy-policy">
+                  <MenuItem
+                    _hover={{ bg: "rgba(0, 245, 255, 0.1)" }}
+                    bg="transparent"
+                    fontSize="sm"
+                  >
+                    Privacy Policy
+                  </MenuItem>
+                </Link>
+              </MenuList>
+            </Menu>
           </Flex>
         </Flex>
       </Box>
