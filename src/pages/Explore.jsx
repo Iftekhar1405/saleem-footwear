@@ -484,17 +484,16 @@ const Explore = () => {
                                     top={2}
                                     right={2}
                                     zIndex={10}
-                                    onClick={(e) => toggleItemSelection(e, item)}
-                                    cursor="default"
+                                    cursor="pointer"
+                                    onClick={(e) => e.stopPropagation()} // Stop click from reaching card
                                 >
                                     <Checkbox
                                         size="lg"
                                         colorScheme="red"
                                         isChecked={isSelected}
+                                        onChange={(e) => toggleItemSelection(e, item)}
                                         bg="white"
                                         borderRadius="sm"
-                                        pointerEvents="none" // Pass clicks to parent Box
-                                        isReadOnly
                                     />
                                 </Box>
 
