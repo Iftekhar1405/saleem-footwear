@@ -224,7 +224,7 @@ const Explore = () => {
         let message = "";
 
         if (lang === "hi") {
-            message = `नमस्ते, मैं इस प्रोडक्ट के बारे में जानकारी चाहता हूँ। आर्टिकल: ${item.article} Image: ${item.imageUrl}`;
+            message = `नमस्ते, मैं इस प्रोडक्ट के बारे में जानकारी चाहता हूँ। आर्टिकल: ${item.article}\nImage: ${item.imageUrl}`;
 
         } else {
             message = `Hello, I am interested in this product:\nArticle: ${item.article}\nImage: ${item.imageUrl}`;
