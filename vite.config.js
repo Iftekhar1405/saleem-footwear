@@ -8,7 +8,7 @@ export default defineConfig({
     host: "0.0.0.0", // Allows access from other devices
     port: 5173, // You can change this if needed
   },
-  plugins: [tailwindcss()],
+  plugins: [react(), tailwindcss()],
   build: {
     rollupOptions: {
       external: [
