@@ -639,7 +639,7 @@ function Nav() {
                     bg="transparent"
                     fontSize="sm"
                   >
-                    Terms & Conditions
+                    Terms & Conditions.
                   </MenuItem>
                 </Link>
                 <Link to="/privacy-policy">
