@@ -44,10 +44,10 @@ import {
   PendingOrders,
   RejectedOrders,
   AdminDashboard,
-} from "./components/admin";
+} from "./components/Admin";
 
 // Authority Components
-import { AddProduct, ProductGridAuth } from "./components/authority";
+import { AddProduct, ProductGridAuth } from "./components/Authority";
 
 // Page Components
 import {
