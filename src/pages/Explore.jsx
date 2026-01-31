@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -13,12 +13,10 @@ import {
     GridItem,
     useColorModeValue,
     Button,
-    VStack,
     HStack,
     Icon,
     IconButton,
     Tooltip,
-    Switch,
     Checkbox,
     Slide,
 } from "@chakra-ui/react";
@@ -125,6 +123,7 @@ const Explore = () => {
     // 1. Initial Load: Fetch categories & Check Session/Params
     useEffect(() => {
         fetchCategories(1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // 2. Fetch items when category changes
@@ -138,6 +137,7 @@ const Explore = () => {
             setItemsHasMore(true);
             fetchItems(selectedCategory.name, 1);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategory]);
 
     // --- Functions ---
@@ -286,6 +286,7 @@ const Explore = () => {
 
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [itemsHasMore, itemsLoading, itemsPage, selectedCategory]);
 
 
