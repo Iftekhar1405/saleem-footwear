@@ -10,5 +10,6 @@
 export const URL = "https://saleem-footwear-api.vercel.app/api/v1";
 
 // Development API URL (uncomment for local development)
-// export const URL = "http://localhost:8080/api/v1";
+// export const URL = "http://localhost:8000/api/v1";
+
 

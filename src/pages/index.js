@@ -6,3 +6,4 @@ export { default as PrivacyPolicy } from './PrivacyPolicy';
 export { default as TermsAndConditions } from './TermsAndConditions';
 export { default as ContactUs } from './ContactUs';
 export { default as PDFViewer } from './PDFViewer';
+export { default as Explore } from './Explore';

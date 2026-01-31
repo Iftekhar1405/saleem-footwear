@@ -55,6 +55,7 @@ import {
   PDFViewer,
   TermsAndConditions,
   PrivacyPolicy,
+  Explore,
 } from "./pages";
 
 // Other Components
@@ -89,6 +90,7 @@ const router = createBrowserRouter(
         element={<ProtectedRoute element={<OrderSummary />} />}
       />
       <Route path="search" element={<SearchBar />} />
+      <Route path="explore" element={<Explore />} />
       <Route path="category-grid/:category" element={<CategorizedProducts />} />
       <Route path="login" element={<Login />} />
       <Route path="contact-us" element={<ContactUs />} />
