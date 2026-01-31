@@ -6,7 +6,6 @@
  * Uses React Router for client-side routing and Chakra UI for component library.
  */
 
-import React from "react";
 import ReactDOM from "react-dom/client";
 import { ChakraProvider } from "@chakra-ui/react";
 import {
