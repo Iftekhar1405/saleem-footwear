@@ -1,0 +1,82 @@
+/**
+ * CSS Variables - Theme Configuration
+ * 
+ * This file contains all the CSS custom properties used throughout the application
+ * for consistent theming, colors, spacing, and typography.
+ */
+
+:root {
+    /* Primary Colors */
+    --color-primary: #FF6B6B;
+    --color-primary-light: rgba(255, 107, 107, 0.7);
+    --color-primary-dark: #e55555;
+
+    /* Secondary Colors */
+    --color-secondary: #646cff;
+    --color-secondary-light: #747bff;
+
+    /* Neutral Colors */
+    --color-white: #ffffff;
+    --color-black: #1a1a1a;
+    --color-gray-light: #f9f9f9;
+    --color-gray-dark: #213547;
+
+    /* Background Colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9f9f9;
+    --bg-dark: #1a1a1a;
+
+    /* Text Colors */
+    --text-primary: #213547;
+    --text-secondary: #646cff;
+    --text-light: #ffffff;
+
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.25s ease;
+    --transition-slow: 0.4s ease;
+
+    /* Typography */
+    --font-primary: "Montserrat", serif;
+    --font-secondary: "AL_Nevada", sans-serif;
+
+    /* Font Sizes */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+
+    /* Z-Index Layers */
+    --z-base: 1;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-fixed: 300;
+    --z-modal-backdrop: 400;
+    --z-modal: 500;
+    --z-popover: 600;
+    --z-tooltip: 700;
+}

@@ -32,8 +32,8 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import "./ProductCardAuth.css";
-import "./ProductGridAuth.css";
+import "../../styles/authority/productCardAuth.css";
+import "../../styles/authority/productGridAuth.css";
 import { URL } from "../../context/url";
 
 // API Constants

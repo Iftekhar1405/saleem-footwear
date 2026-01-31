@@ -1,13 +1,31 @@
-import { ChakraProvider } from "@chakra-ui/react";
+/**
+ * App Component - Main Application Home Page
+ * 
+ * @description
+ * The main landing page component that displays the home page with navigation,
+ * product categories, product grid, and brand scroller. Also includes role-based
+ * floating action buttons for admin and employee users.
+ * 
+ * @returns {JSX.Element} The rendered home page
+ */
+
 import React from "react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import BrandScroller from "./components/BrandScroller";
-import CategoryGrid from "./components/Category";
-// import Header from './components/Header';
-import Nav from "./components/Nav";
-import ProductGrid from "./components/ProductGrid";
-import Scroll from "./components/Scroll";
-import "./components/Style.css";
+
+// Layout Components
+import { Nav } from "./components/layout";
+
+// Common Components
+import { BrandScroller, Scroll } from "./components/common";
+
+// Product Components
+import { Category, ProductGrid } from "./components/product";
+
+// Styles
+import "./styles/components/style.css";
+
+// Route Guards
 import RoleBasedComponent from "./RoleBasedComponents";
 
 function App() {
@@ -38,7 +56,7 @@ function App() {
         </RoleBasedComponent>
       </div>
       <BrandScroller />
-      <CategoryGrid />
+      <Category />
       <ProductGrid />
     </ChakraProvider>
   );

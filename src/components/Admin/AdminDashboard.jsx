@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Package, CheckCircle, XCircle, Users, ShoppingBag } from "lucide-react";
-import './AdminDashboard.css';
+import '../../styles/admin/adminDashboard.css';
 
 function AdminDashboard() {
   return (

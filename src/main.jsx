@@ -1,38 +1,73 @@
+/**
+ * Main Entry Point
+ * 
+ * @description
+ * Application entry point that sets up routing and renders the root component.
+ * Uses React Router for client-side routing and Chakra UI for component library.
+ */
+
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import "./index.css";
+import { ChakraProvider } from "@chakra-ui/react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
 } from "react-router-dom";
-import { Layout } from "./components/Layout.jsx";
-import Cart from "./components/Cart.jsx";
-import Login from "./components/Login.jsx";
-import Register from "./components/Register.jsx";
-import Prelogin from "./components/Prelogin.jsx";
-import ProductCard from "./components/ProductCard.jsx";
-import Profile from "./components/Profile.jsx";
+
+// Main App Component
+import App from "./App.jsx";
+
+// Styles
+import "./index.css";
+
+// Layout Components
+import { Layout } from "./components/layout";
+
+// Auth Components
+import { Login, Register, Prelogin } from "./components/auth";
+
+// Product Components
+import { ProductCard, Cart } from "./components/product";
+
+// User Components
+import { Profile, Orders, OrderSummary } from "./components/user";
+
+// Common Components
+import { SearchBar } from "./components/common";
+
+// Admin Components
+import {
+  AllCustomers,
+  AcceptedOrders,
+  PendingOrders,
+  RejectedOrders,
+  AdminDashboard,
+} from "./components/admin";
+
+// Authority Components
+import { AddProduct, ProductGridAuth } from "./components/authority";
+
+// Page Components
+import {
+  ContactUs,
+  PDFViewer,
+  TermsAndConditions,
+  PrivacyPolicy,
+} from "./pages";
+
+// Other Components
+import CategorizedProducts from "./components/product/CategorizedProducts.jsx";
+
+// Route Guards
 import ProtectedRoute from "./ProtectedRoute";
 import RoleBasedRoute from "./RoleBasedRoutes.jsx";
-import AllCustomers from "./components/Admin/AllCustomers.jsx";
-import AcceptedOrders from "./components/Admin/AcceptedOrders.jsx";
-import PendingOrders from "./components/Admin/PendingOrders.jsx";
-import RejectedOrders from "./components/Admin/RejectedOrders.jsx";
-import AddProduct from "./components/Authority/AddProduct.jsx";
-import AdminDashboard from "./components/Admin/AdminDashboard.jsx";
-import ContactUs from "./components/Contact-Us.jsx";
-import OrderSummary from "./components/OrderSummary.jsx";
-import CategorizedProducts from "./components/CategorizedProducts.jsx";
-import PDFViewer from "./components/PDF.jsx";
-import Orders from "./components/Orders.jsx";
-import ProductGridAuth from "./components/Authority/ProductGridAuth.jsx";
-import SearchBar from "./components/SearchBar.jsx";
-import TermsAndConditions from "./pages/TermsAndConditions.jsx";
-import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
-import { ChakraProvider } from "@chakra-ui/react";
+
+/**
+ * Router Configuration
+ * Defines all application routes with their corresponding components and protection levels
+ */
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -124,10 +159,13 @@ const router = createBrowserRouter(
   )
 );
 
+/**
+ * Render Application
+ * Wraps the router in ChakraProvider for UI components
+ */
 ReactDOM.createRoot(document.getElementById("root")).render(
-  // <React.StrictMode>
   <ChakraProvider>
     <RouterProvider router={router} />
   </ChakraProvider>
-  // </React.StrictMode>,
 );
+
