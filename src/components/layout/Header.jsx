@@ -328,7 +328,7 @@ const Header = () => {
             width={"100%"}
           >
             {["SHOP", "CATEGORIES", "CONTACT US"].map((item, i) => (
-              <Link to={`/${item.toLowerCase().replace(" ", "-")}`} key={item}>
+              <Link to={`/${item === "CATEGORIES" ? "explore" : item.toLowerCase().replace(" ", "-")}`} key={item}>
                 <MotionText
                   custom={i}
                   variants={textVariants}
@@ -346,7 +346,7 @@ const Header = () => {
                     position: "absolute",
                     width:
                       location.pathname ===
-                      `/${item.toLowerCase().replace(" ", "-")}`
+                      `/${item === "CATEGORIES" ? "explore" : item.toLowerCase().replace(" ", "-")}`
                         ? "100%"
                         : "0%",
                     height: "1px",
@@ -507,7 +507,7 @@ const Header = () => {
               {[
                 { to: "/", label: "HOME" },
                 { to: "/products", label: "SHOP" },
-                { to: "/categories", label: "CATEGORIES" },
+                { to: "/explore", label: "CATEGORIES" },
                 { to: "/contact-us", label: "CONTACT US" },
                 { to: "/terms-and-conditions", label: "TERMS & CONDITIONS" },
                 { to: "/privacy-policy", label: "PRIVACY POLICY" },

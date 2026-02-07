@@ -19,6 +19,9 @@ import {
     Tooltip,
     Checkbox,
     Slide,
+    Badge,
+    Wrap,
+    WrapItem,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { URL } from "../context/url";
@@ -56,6 +59,8 @@ const translations = {
         bulkMessageIntro: "Hello, I am interested in these products:",
         itemLabel: "Item",
         articleLabel: "Article",
+        categoryLabel: "Category",
+        colorLabel: "Color",
         imageLabel: "Image",
     },
     hi: {
@@ -70,6 +75,8 @@ const translations = {
         bulkMessageIntro: "नमस्ते, मैं इन उत्पादों में रुचि रखता हूँ:", // Hello, I am interested
         itemLabel: "आइटम", // Item
         articleLabel: "आर्टिकल", // Article
+        categoryLabel: "श्रेणी", // Category
+        colorLabel: "रंग", // Color
         imageLabel: "छवि", // Image
     },
 };
@@ -225,10 +232,10 @@ const Explore = () => {
         let message = "";
 
         if (lang === "hi") {
-            message = `नमस्ते, मैं इस प्रोडक्ट के बारे में जानकारी चाहता हूँ।\nआर्टिकल: ${item.article}\nImage: ${item.imageUrl}`;
+            message = `नमस्ते, मैं इस प्रोडक्ट के बारे में जानकारी चाहता हूँ।\n${t.articleLabel}: ${item.article}\n${t.categoryLabel}: ${item.category}\n${t.colorLabel}: ${item.color}\n${t.imageLabel}: ${item.imageUrl}`;
 
         } else {
-            message = `Hello, I am interested in this product:\nArticle: ${item.article}\nImage: ${item.imageUrl}`;
+            message = `Hello, I am interested in this product:\nArticle: ${item.article}\nCategory: ${item.category}\nColor: ${item.color}\nImage: ${item.imageUrl}`;
         }
 
         const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
@@ -242,9 +249,9 @@ const Explore = () => {
 
         selectedItems.forEach((item, index) => {
             if (lang === "hi") {
-                message += `${index + 1}. ${t.articleLabel}: ${item.article}\n${t.imageLabel}: ${item.imageUrl}\n\n`;
+                message += `${index + 1}. ${t.articleLabel}: ${item.article}, ${t.categoryLabel}: ${item.category}, ${t.colorLabel}: ${item.color}\n${t.imageLabel}: ${item.imageUrl}\n\n`;
             } else {
-                message += `${index + 1}. ${t.articleLabel}: ${item.article}\n${t.imageLabel}: ${item.imageUrl}\n\n`;
+                message += `${index + 1}. ${t.articleLabel}: ${item.article}, ${t.categoryLabel}: ${item.category}, ${t.colorLabel}: ${item.color}\n${t.imageLabel}: ${item.imageUrl}\n\n`;
             }
         });
 
@@ -332,50 +339,50 @@ const Explore = () => {
 
                         {/* Mobile Grid Toggle (Tabular) */}
                         <HStack
-    display={{ base: "flex", md: "none" }}
-    spacing={1}
-    bg="white"
-    p={1}
-    borderRadius="lg"
-    border="1px solid"
-    borderColor="gray.200"
-    boxShadow="sm"
->
-    <IconButton
-        icon={<Rows3 size={18} />}
-        aria-label="Single Column"
-        size="sm"
-        variant="ghost"
-        color={isSingleColumn ? "white" : "gray.600"}
-        bg={isSingleColumn ? "red.500" : "transparent"}
-        _hover={{
-            bg: isSingleColumn ? "red.600" : "gray.100"
-        }}
-        _active={{
-            bg: isSingleColumn ? "red.600" : "gray.200"
-        }}
-        onClick={() => setIsSingleColumn(true)}
-        borderRadius="md"
-        transition="all 0.2s"
-    />
-    <IconButton
-        icon={<FaThLarge size={16} />}
-        aria-label="Double Column"
-        size="sm"
-        variant="ghost"
-        color={!isSingleColumn ? "white" : "gray.600"}
-        bg={!isSingleColumn ? "red.500" : "transparent"}
-        _hover={{
-            bg: !isSingleColumn ? "red.600" : "gray.100"
-        }}
-        _active={{
-            bg: !isSingleColumn ? "red.600" : "gray.200"
-        }}
-        onClick={() => setIsSingleColumn(false)}
-        borderRadius="md"
-        transition="all 0.2s"
-    />
-</HStack>
+                            display={{ base: "flex", md: "none" }}
+                            spacing={1}
+                            bg="white"
+                            p={1}
+                            borderRadius="lg"
+                            border="1px solid"
+                            borderColor="gray.200"
+                            boxShadow="sm"
+                        >
+                            <IconButton
+                                icon={<Rows3 size={18} />}
+                                aria-label="Single Column"
+                                size="sm"
+                                variant="ghost"
+                                color={isSingleColumn ? "white" : "gray.600"}
+                                bg={isSingleColumn ? "red.500" : "transparent"}
+                                _hover={{
+                                    bg: isSingleColumn ? "red.600" : "gray.100"
+                                }}
+                                _active={{
+                                    bg: isSingleColumn ? "red.600" : "gray.200"
+                                }}
+                                onClick={() => setIsSingleColumn(true)}
+                                borderRadius="md"
+                                transition="all 0.2s"
+                            />
+                            <IconButton
+                                icon={<FaThLarge size={16} />}
+                                aria-label="Double Column"
+                                size="sm"
+                                variant="ghost"
+                                color={!isSingleColumn ? "white" : "gray.600"}
+                                bg={!isSingleColumn ? "red.500" : "transparent"}
+                                _hover={{
+                                    bg: !isSingleColumn ? "red.600" : "gray.100"
+                                }}
+                                _active={{
+                                    bg: !isSingleColumn ? "red.600" : "gray.200"
+                                }}
+                                onClick={() => setIsSingleColumn(false)}
+                                borderRadius="md"
+                                transition="all 0.2s"
+                            />
+                        </HStack>
                     </HStack>
 
                     {/* Dropdown */}
@@ -511,7 +518,7 @@ const Explore = () => {
                                 </Box>
 
                                 <Box height="4px" width="100%" bg={accentColor} />
-                                <Box p={4} display="flex" flexDirection="column" alignItems="center">
+                                <Box p={4} position="relative" display="flex" flexDirection="column" alignItems="center">
                                     <Image
                                         src={item.imageUrl}
                                         alt={item.article}
@@ -525,7 +532,49 @@ const Explore = () => {
                                             e.target.src = logo; // Double fallback on error
                                         }}
                                     />
-                                    <Heading size="md" color="gray.700">{item.article}</Heading>
+                                    <Heading size="md" color="gray.700" mb={2}>{item.article}</Heading>
+
+                                    <Wrap position="absolute" top={2} left={2} justify="center" spacing={2} mb={3}>
+                                        {/* {item.article && (
+                                            <WrapItem>
+                                                <Badge
+                                                    colorScheme="purple"
+                                                    variant="subtle"
+                                                    borderRadius="full"
+                                                    px={2}
+                                                    fontSize="0.7em"
+                                                >
+                                                    {item.article}
+                                                </Badge>
+                                            </WrapItem>
+                                        )} */}
+                                        {/* {item.category && (
+                                            <WrapItem>
+                                                <Badge
+                                                    colorScheme="teal"
+                                                    variant="subtle"
+                                                    borderRadius="full"
+                                                    px={2}
+                                                    fontSize="0.7em"
+                                                >
+                                                    {item.category}
+                                                </Badge>
+                                            </WrapItem>
+                                        )} */}
+                                        {item.color && (
+                                            <WrapItem>
+                                                <Badge
+                                                    colorScheme="orange"
+                                                    variant="outline"
+                                                    borderRadius="full"
+                                                    px={2}
+                                                    fontSize="0.7em"
+                                                >
+                                                    {item.color}
+                                                </Badge>
+                                            </WrapItem>
+                                        )}
+                                    </Wrap>
                                     <HStack mt={2} color="green.500">
                                         <Icon as={FaWhatsapp} />
                                         <Text fontSize="xs" fontWeight="bold">{t.clickToChat}</Text>
