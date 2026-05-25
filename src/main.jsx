@@ -42,6 +42,7 @@ import {
   AllCustomers,
   AcceptedOrders,
   PendingOrders,
+  Promotions,
   RejectedOrders,
   AdminDashboard,
 } from "./components/Admin";
@@ -145,6 +146,14 @@ const router = createBrowserRouter(
         element={
           <RoleBasedRoute allowedRoles={["admin"]}>
             <RejectedOrders /> {/* This route is only accessible by admins */}
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="promotions"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <Promotions />
           </RoleBasedRoute>
         }
       />

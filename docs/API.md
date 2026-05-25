@@ -97,7 +97,7 @@ GET /products?page=1&limit=20
 - `page` (optional): Page number for pagination
 - `limit` (optional): Number of products per page
 - `category` (optional): Filter by category
-- `gender` (optional): Filter by gender (male, female, unisex, kids)
+- `gender` (optional): Filter by gender (`male`, `female`, `kids`, `unisex`). Aliases accepted (`men`, `women`, etc.).
 - `brand` (optional): Filter by brand
 
 **Response:**
@@ -226,6 +226,36 @@ Authorization: Bearer {token}
 ```
 
 ---
+
+### Search
+
+#### List genders with product counts
+```http
+GET /search/genders
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "genders": [
+    { "id": "male", "label": "Men's", "count": 42 },
+    { "id": "female", "label": "Women's", "count": 38 },
+    { "id": "kids", "label": "Kids'", "count": 12 },
+    { "id": "unisex", "label": "Unisex", "count": 5 }
+  ]
+}
+```
+
+#### Categories (optional gender filter)
+```http
+GET /search/category?gender=male
+```
+
+#### Products in category (optional gender filter)
+```http
+GET /search/category/specific?category=Sandals&gender=male&page=1&limit=20
+```
 
 ### Orders
 

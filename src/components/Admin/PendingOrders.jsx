@@ -29,11 +29,14 @@ import {
 } from "framer-motion";
 import { CheckIcon, CloseIcon, ViewIcon } from "@chakra-ui/icons";
 import { useReactToPrint } from "react-to-print";
+import { useSearchParams } from "react-router-dom";
 import { URL } from "../../context/url";
 
 const MotionCard = motion(Card);
 
 function PendingOrders() {
+  const [searchParams] = useSearchParams();
+  const highlightOrderId = searchParams.get("orderId");
   const [pendingOrders, setPendingOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [printOrder, setPrintOrder] = useState(null);
@@ -110,6 +113,17 @@ function PendingOrders() {
 
     fetchPendingOrders();
   }, [toast]);
+
+  useEffect(() => {
+    if (!highlightOrderId || loading || pendingOrders.length === 0) return;
+    const timer = setTimeout(() => {
+      const el = document.getElementById(`pending-order-${highlightOrderId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [highlightOrderId, loading, pendingOrders]);
 
   const updateOrderStatus = async (orderId, status) => {
     try {
@@ -273,6 +287,7 @@ function PendingOrders() {
             pendingOrders.map((order) => (
               <MotionCard
                 key={order._id}
+                id={`pending-order-${order._id}`}
                 variant="elevated"
                 bg={cardBgColor}
                 initial="hidden"
@@ -280,6 +295,10 @@ function PendingOrders() {
                 exit="exit"
                 boxShadow="lg"
                 borderRadius="xl"
+                borderWidth={order._id === highlightOrderId ? "2px" : undefined}
+                borderColor={
+                  order._id === highlightOrderId ? "orange.400" : undefined
+                }
               >
                 <CardHeader>
                   <HStack justifyContent="space-between">

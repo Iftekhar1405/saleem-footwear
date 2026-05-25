@@ -180,34 +180,47 @@ const Cart = () => {
     console.log(cart)
   };
 
-  const generateWhatsAppMessage = () => {
-    const itemDetails = cart
+  const generateWhatsAppMessage = (order) => {
+    const items = order?.items?.length ? order.items : cart;
+    const total = order?.totalPrice ?? totalPrice;
+    const cartons = order?.totalItems ?? totalItems;
+    const orderId = order?._id ?? "";
+    const adminUrl = orderId
+      ? `https://salimfootwear.com/pending-orders?orderId=${encodeURIComponent(orderId)}`
+      : "https://salimfootwear.com/pending-orders";
+
+    const itemDetails = items
       .map((item, index) => {
-        const { brand, article, gender } = item.productId;
-        const itemSets = item.itemSet
-          .map(
-            (set, i) =>
-              `    • Size: ${set.size}, Set: ${set.lengths}`
-          )
+        const product = item.productId || {};
+        const brand = product.brand ?? "N/A";
+        const article = product.article ?? "N/A";
+        const itemSets = (item.itemSet || [])
+          .map((set) => `    - Size: ${set.size}, Pairs: ${set.lengths}`)
           .join("\n");
 
         return `Item ${index + 1}:
-    • Article: ${article}
-    • Color: ${item.color}
-    • Quantity: ${item.quantity}
-  ${itemSets ? `  • Item Sets:\n${itemSets}` : ""}`;
+  • Brand: ${brand}
+  • Article: ${article}
+  • Color: ${item.color}
+  • Quantity: ${item.quantity} carton(s)${itemSets ? `\n  • Sizes:\n${itemSets}` : ""}`;
       })
       .join("\n\n");
 
     const message = `🛒 *New Order Placed!*
-  
-  👤 *User ID:* ${userId}
-  
-  📦 *Items:*
-  ${itemDetails}
-  
-  
-  Please proceed to process the order. ✅`;
+
+👤 *User ID:* ${userId}
+
+📦 *Items:*
+${itemDetails}
+
+💰 *Order total:* ₹${total}
+📊 *Total cartons:* ${cartons}
+
+🆔 *Order ID:* \`${orderId}\`
+
+🔗 *Admin order:* ${adminUrl}
+
+Please proceed to process the order. ✅`;
 
     return encodeURIComponent(message);
   };
@@ -255,14 +268,15 @@ const Cart = () => {
           isClosable: true,
         });
 
-        const whatsappNumber = "+917024191093"; // Admin's number
-        const messageURL = `https://wa.me/${whatsappNumber}?text=${generateWhatsAppMessage()}`;
+        const order = response.data.data;
+        const whatsappDigits = "917024191093";
+        const messageURL = `https://wa.me/${whatsappDigits}?text=${generateWhatsAppMessage(order)}`;
 
         window.open(messageURL, "_blank");
 
         // Clear cart after successful order
         setCart([]);
-        navigate("/order-summary", { state: { order: response.data.data } });
+        navigate("/order-summary", { state: { order } });
       } else {
         toast({
           title: "Cart is empty.",

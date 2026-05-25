@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Package, CheckCircle, XCircle, Users, ShoppingBag } from "lucide-react";
+import { Package, CheckCircle, XCircle, Users, ShoppingBag, Megaphone } from "lucide-react";
 import '../../styles/admin/adminDashboard.css';
 
 function AdminDashboard() {
@@ -41,6 +41,13 @@ function AdminDashboard() {
           <div className="admin-card">
             <ShoppingBag size={24} />
             <h2>Edit Products</h2>
+          </div>
+        </Link>
+
+        <Link to='/promotions' className="card-link">
+          <div className="admin-card">
+            <Megaphone size={24} />
+            <h2>Promotions</h2>
           </div>
         </Link>
       </div>
