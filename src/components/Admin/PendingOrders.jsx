@@ -13,12 +13,11 @@ import {
   Td, 
   Button, 
   Spinner, 
-  Card, 
-  CardHeader, 
-  CardBody, 
-  Heading, 
-  Tag, 
-  useColorModeValue,
+  Card,
+  CardHeader,
+  CardBody,
+  Heading,
+  Tag,
   Tooltip,
   IconButton,
   useToast
@@ -207,8 +206,8 @@ function PendingOrders() {
     }
   };
 
-  const bgColor = useColorModeValue("gray.50", "gray.800");
-  const cardBgColor = useColorModeValue("white", "gray.700");
+  const bgColor = "gray.50";
+  const cardBgColor = "white";
 
   if (loading) {
     return (
@@ -230,14 +229,12 @@ function PendingOrders() {
       minHeight="100vh"
     >
       <VStack spacing={6} align="stretch">
-        <Heading 
-          as="h1" 
-          size="xl" 
-          textAlign="center" 
-          mb={4}
-        >
-          Pending Orders
-        </Heading>
+        <Box>
+          <Heading size="lg" color="gray.800">Pending Orders</Heading>
+          <Text color="gray.500" mt={1} fontSize="sm">
+            Review and action incoming customer orders
+          </Text>
+        </Box>
 
         {/* Print Area - Hidden from view */}
         {printOrder && (
