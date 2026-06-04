@@ -261,9 +261,54 @@ const ProductCard = ({ product, onEdit, onDelete }) => {
 const ProductEditForm = ({ product, onSave, onCancel }) => {
   const [editedProduct, setEditedProduct] = useState({
     ...product,
-    // Ensure colorsStock exists
     colorsStock: product.colorsStock || [],
   });
+  const [isUploading, setIsUploading] = useState(false);
+  const primaryFileInputRef = useRef(null);
+  const toast = useToast();
+
+  const uploadImages = async (files, colorKey = null) => {
+    if (!files || files.length === 0) return;
+    setIsUploading(true);
+    const formData = new FormData();
+    Array.from(files).forEach((f) => formData.append("images", f));
+    try {
+      const response = await axios.post(`${URL}/upload-img-test`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const urls = response.data.images;
+      if (colorKey === null) {
+        setEditedProduct((prev) => ({
+          ...prev,
+          images: [...(prev.images || []), ...urls],
+        }));
+      } else {
+        setEditedProduct((prev) => ({
+          ...prev,
+          colors: {
+            ...prev.colors,
+            [colorKey]: [...(prev.colors[colorKey] || []), ...urls],
+          },
+        }));
+      }
+      toast({
+        title: "Images uploaded",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch (err) {
+      toast({
+        title: "Upload failed",
+        description: err.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -560,36 +605,67 @@ const ProductEditForm = ({ product, onSave, onCancel }) => {
 
         {/* Default Images Section */}
         <Box>
-          <Heading size="sm" mb={2}>
-            Default Images
+          <Heading size="sm" mb={3}>
+            Primary Images
           </Heading>
-          <VStack spacing={2} align="stretch">
-            {(editedProduct.images || []).map((imgUrl, index) => (
-              <HStack key={`image-${index}`}>
-                <Input
-                  value={imgUrl}
-                  onChange={(e) => handleImageChange(e, index)}
-                  size="sm"
-                />
-                <IconButton
-                  icon={<CloseIcon />}
-                  onClick={() => handleImageRemove(index)}
-                  colorScheme="red"
-                  size="sm"
-                  aria-label="Remove image"
-                />
-              </HStack>
-            ))}
-            <Button
-              leftIcon={<AddIcon />}
-              onClick={() => addImageField()}
-              size="sm"
-              colorScheme="blue"
-              variant="ghost"
-            >
-              Add Image
-            </Button>
-          </VStack>
+          {(editedProduct.images || []).length > 0 && (
+            <SimpleGrid columns={{ base: 3, md: 4, lg: 5 }} spacing={3} mb={3}>
+              {(editedProduct.images || []).map((imgUrl, index) => (
+                <Box
+                  key={`image-${index}`}
+                  position="relative"
+                  role="group"
+                  borderRadius="md"
+                  overflow="hidden"
+                  boxShadow="sm"
+                >
+                  <Image
+                    src={imgUrl}
+                    alt={`Product image ${index + 1}`}
+                    width="100%"
+                    height="90px"
+                    objectFit="cover"
+                    fallbackSrc="https://via.placeholder.com/150x90?text=Image"
+                  />
+                  <IconButton
+                    icon={<CloseIcon boxSize="8px" />}
+                    size="xs"
+                    colorScheme="red"
+                    aria-label="Remove image"
+                    position="absolute"
+                    top={1}
+                    right={1}
+                    opacity={0}
+                    _groupHover={{ opacity: 1 }}
+                    transition="opacity 0.15s"
+                    onClick={() => handleImageRemove(index)}
+                  />
+                </Box>
+              ))}
+            </SimpleGrid>
+          )}
+          <Input
+            ref={primaryFileInputRef}
+            type="file"
+            multiple
+            accept="image/*"
+            display="none"
+            onChange={(e) => {
+              uploadImages(e.target.files, null);
+              e.target.value = "";
+            }}
+          />
+          <Button
+            leftIcon={<AddIcon />}
+            size="sm"
+            colorScheme="blue"
+            variant="outline"
+            isLoading={isUploading}
+            loadingText="Uploading…"
+            onClick={() => primaryFileInputRef.current?.click()}
+          >
+            Add Images
+          </Button>
         </Box>
 
         <Divider />
@@ -645,32 +721,65 @@ const ProductEditForm = ({ product, onSave, onCancel }) => {
                       />
                     </HStack>
 
-                    {(editedProduct.colors[color] || []).map(
-                      (imgUrl, index) => (
-                        <HStack key={`${color}-image-${index}`}>
-                          <Input
-                            value={imgUrl}
-                            onChange={(e) => handleImageChange(e, index, color)}
-                            size="sm"
-                          />
-                          <IconButton
-                            icon={<CloseIcon />}
-                            onClick={() => handleImageRemove(index, color)}
-                            colorScheme="red"
-                            size="sm"
-                            aria-label="Remove color image"
-                          />
-                        </HStack>
-                      )
+                    {(editedProduct.colors[color] || []).length > 0 && (
+                      <SimpleGrid columns={{ base: 3, md: 4 }} spacing={2} mb={2}>
+                        {(editedProduct.colors[color] || []).map((imgUrl, index) => (
+                          <Box
+                            key={`${color}-image-${index}`}
+                            position="relative"
+                            role="group"
+                            borderRadius="md"
+                            overflow="hidden"
+                            boxShadow="sm"
+                          >
+                            <Image
+                              src={imgUrl}
+                              alt={`${color} image ${index + 1}`}
+                              width="100%"
+                              height="70px"
+                              objectFit="cover"
+                              fallbackSrc="https://via.placeholder.com/120x70?text=Image"
+                            />
+                            <IconButton
+                              icon={<CloseIcon boxSize="8px" />}
+                              size="xs"
+                              colorScheme="red"
+                              aria-label="Remove color image"
+                              position="absolute"
+                              top={1}
+                              right={1}
+                              opacity={0}
+                              _groupHover={{ opacity: 1 }}
+                              transition="opacity 0.15s"
+                              onClick={() => handleImageRemove(index, color)}
+                            />
+                          </Box>
+                        ))}
+                      </SimpleGrid>
                     )}
+                    <Input
+                      id={`color-file-input-${color}`}
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      display="none"
+                      onChange={(e) => {
+                        uploadImages(e.target.files, color);
+                        e.target.value = "";
+                      }}
+                    />
                     <Button
                       leftIcon={<AddIcon />}
-                      onClick={() => addImageField(color)}
                       size="sm"
                       colorScheme="blue"
                       variant="ghost"
+                      isLoading={isUploading}
+                      loadingText="Uploading…"
+                      onClick={() =>
+                        document.getElementById(`color-file-input-${color}`)?.click()
+                      }
                     >
-                      Add Image for {color}
+                      Add Images for {color}
                     </Button>
                   </VStack>
                 </Card>
