@@ -25,7 +25,9 @@ export function Layout() {
   return (
     <div className={shouldHideNavbar ? "no-header-layout" : "layout"}>
       {!shouldHideNavbar && <Header />}
-      <Outlet />
+      <main className="layout-main">
+        <Outlet />
+      </main>
       {!shouldHideNavbar && <Footer />}
     </div>
   );
