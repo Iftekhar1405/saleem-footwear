@@ -2,13 +2,14 @@
 
 A modern, full-featured e-commerce platform for footwear wholesale business built with React, Chakra UI, and Framer Motion.
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Version](https://img.shields.io/badge/version-1.23.1-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+Build Status
+Version
+License
 
 ## 🚀 Features
 
 ### For Customers
+
 - 🛍️ Browse extensive product catalog
 - 🔍 Advanced search and filtering
 - 🛒 Shopping cart management
@@ -17,6 +18,7 @@ A modern, full-featured e-commerce platform for footwear wholesale business buil
 - 📱 Fully responsive design
 
 ### For Employees
+
 - ➕ Add new products
 - ✏️ Edit existing products
 - 🗑️ Delete products
@@ -24,11 +26,14 @@ A modern, full-featured e-commerce platform for footwear wholesale business buil
 - 🎨 Handle color variants and stock
 
 ### For Admins
+
 - 📊 Dashboard with statistics
 - 📋 Order management (Accept/Reject)
 - 👥 Customer management
 - 📈 Business analytics
 - 🔐 User role management
+
+
 
 ## 🛠️ Tech Stack
 
@@ -42,21 +47,29 @@ A modern, full-featured e-commerce platform for footwear wholesale business buil
 - **Icons**: Chakra UI Icons + Lucide React
 - **State Management**: React Context + LocalStorage
 
+
+
 ## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed:
+
 - **Node.js**: v16.0.0 or higher
 - **npm**: v7.0.0 or higher (comes with Node.js)
 - **Git**: For cloning the repository
 
 Check your versions:
+
 ```bash
 node --version
 npm --version
 git --version
 ```
 
+
+
 ## 🚀 Installation
+
+
 
 ### 1. Clone the Repository
 
@@ -64,6 +77,8 @@ git --version
 git clone https://github.com/Iftekhar1405/saleem-footwear.git
 cd saleem-footwear
 ```
+
+
 
 ### 2. Install Dependencies
 
@@ -86,6 +101,8 @@ For local development, you can uncomment the development URL:
 ```javascript
 // export const URL = "http://localhost:8080/api/v1";
 ```
+
+
 
 ### 4. Start Development Server
 
@@ -142,6 +159,8 @@ saleem-footwear/
 └── README.md               # This file
 ```
 
+
+
 ## 📚 Documentation
 
 Comprehensive documentation is available in the `docs/` folder:
@@ -151,6 +170,8 @@ Comprehensive documentation is available in the `docs/` folder:
 - **[Components](./docs/components/COMPONENTS_OVERVIEW.md)**: Component documentation
 - **[Layout Components](./docs/components/LAYOUT.md)**: Header, Nav, Layout details
 
+
+
 ## 🔑 User Roles
 
 The application supports three user roles:
@@ -159,6 +180,8 @@ The application supports three user roles:
 2. **Employee/Authority**: Manage products (add, edit, delete)
 3. **Admin**: Full access including order management and customer management
 
+
+
 ## 🌐 API Integration
 
 The application integrates with a backend API hosted on Vercel:
@@ -166,6 +189,7 @@ The application integrates with a backend API hosted on Vercel:
 **Base URL**: `https://saleem-footwear-api.vercel.app/api/v1`
 
 ### Key Endpoints:
+
 - `POST /auth/login` - User authentication
 - `POST /auth/register` - User registration
 - `GET /products` - Fetch products
@@ -183,7 +207,10 @@ The application uses a combination of:
 3. **CSS Variables**: Defined in `src/styles/variables.css`
 4. **Framer Motion**: For animations and transitions
 
+
+
 ### CSS Organization:
+
 ```
 styles/
 ├── admin/              # Admin component styles
@@ -195,6 +222,8 @@ styles/
 └── index.js            # CSS exports
 ```
 
+
+
 ## 🔐 Authentication
 
 Authentication is handled using JWT tokens:
@@ -204,6 +233,8 @@ Authentication is handled using JWT tokens:
 3. Token stored in `localStorage`
 4. Token sent in `Authorization` header for protected routes
 5. Token expires after 7 days (configurable on backend)
+
+
 
 ## 🛒 Cart Management
 
@@ -222,12 +253,17 @@ Cart data is stored in `localStorage`:
 }
 ```
 
+
+
 ## 📱 Responsive Design
 
 The application is fully responsive with breakpoints:
+
 - **Mobile**: < 768px
 - **Tablet**: 768px - 1024px
 - **Desktop**: > 1024px
+
+
 
 ## 🧪 Available Scripts
 
@@ -245,49 +281,74 @@ npm run preview
 npm run lint
 ```
 
+
+
 ## 🐛 Troubleshooting
 
+
+
 ### Port Already in Use
+
 If port 5173 is busy:
+
 ```bash
 # Vite will automatically use the next available port
 # Or specify a custom port in vite.config.js
 ```
 
+
+
 ### Build Errors
+
 ```bash
 # Clear node_modules and reinstall
 rm -rf node_modules package-lock.json
 npm install
 ```
 
+
+
 ### API Connection Issues
+
 - Check if backend API is accessible
 - Verify API URL in `src/context/url.jsx`
 - Check browser console for CORS errors
 
+
+
 ## 🚀 Deployment
 
+
+
 ### Vercel (Recommended)
+
 1. Push code to GitHub
 2. Import project in Vercel
 3. Configure build settings:
-   - Build Command: `npm run build`
-   - Output Directory: `dist`
+  - Build Command: `npm run build`
+  - Output Directory: `dist`
 4. Deploy
 
+
+
 ### Netlify
+
 1. Connect GitHub repository
 2. Build settings:
-   - Build Command: `npm run build`
-   - Publish Directory: `dist`
+  - Build Command: `npm run build`
+  - Publish Directory: `dist`
 3. Add `_redirects` file for SPA routing
 
+
+
 ### Manual Deployment
+
 ```bash
 npm run build
 # Upload dist/ folder to your hosting provider
 ```
+
+
 
 ## 🤝 Contributing
 
@@ -296,6 +357,8 @@ npm run build
 3. Commit changes (`git commit -m 'Add AmazingFeature'`)
 4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+
 
 ## 📝 License
 
@@ -306,12 +369,17 @@ This project is licensed under the MIT License.
 - **Managed by**: Iftekhar Ahmad & Amaan Ahmad
 - **Location**: Ambikapur, Surguja, Chhattisgarh, 497001
 
+
+
 ## 📞 Contact
 
 For support or queries:
-- **Email**: contact@saleemfootwear.com
+
+- **Email**: [contact@saleemfootwear.com](mailto:contact@saleemfootwear.com)
 - **Phone**: +91-XXXXXXXXXX
 - **Website**: [saleemfootwear.com](https://saleemfootwear.com)
+
+
 
 ## 🙏 Acknowledgments
 
