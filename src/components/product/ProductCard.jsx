@@ -82,6 +82,11 @@ const ProductCard = () => {
   const [dialogMessage, setDialogMessage] = useState("");
   const cancelRef = React.useRef();
 
+  // Reset scroll position when opening a product detail page
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {

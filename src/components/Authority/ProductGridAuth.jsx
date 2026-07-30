@@ -385,11 +385,13 @@ const ProductEditDrawer = ({ product, isOpen, onClose, onSave }) => {
   };
 
   const renameColor = (oldName, newName) => {
-    if (!newName.trim()) return;
     setEdited((prev) => {
-      const colors = { ...prev.colors };
-      colors[newName] = colors[oldName];
-      delete colors[oldName];
+      // Rebuild the colors object preserving insertion order so the renamed
+      // key stays in place (avoids the list reordering while typing).
+      const colors = {};
+      Object.keys(prev.colors).forEach((key) => {
+        colors[key === oldName ? newName : key] = prev.colors[key];
+      });
       return {
         ...prev,
         colors,
@@ -720,7 +722,7 @@ const ProductEditDrawer = ({ product, isOpen, onClose, onSave }) => {
 
                   {colorKeys.map((colorName, idx) => (
                     <Box
-                      key={`${colorName}-${idx}`}
+                      key={idx}
                       border="1px solid"
                       borderColor="gray.100"
                       borderRadius="14px"
