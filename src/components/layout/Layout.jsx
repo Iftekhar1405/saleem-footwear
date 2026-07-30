@@ -9,7 +9,7 @@
  * @returns {JSX.Element} The layout wrapper with optional header
  */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -17,6 +17,12 @@ import "../../styles/components/layout.css";
 
 export function Layout() {
   const location = useLocation();
+
+  // Reset scroll to the top whenever the route changes so a new page never
+  // opens scrolled down to a position carried over from the previous page.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   // Routes where the header should be hidden
   const hideNavbarRoutes = ["/login", "/register", "/prelogin"];
