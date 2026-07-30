@@ -1,3 +1,13 @@
+## [2.2.1](https://github.com/Iftekhar1405/saleem-footwear/compare/v2.2.0...v2.2.1) (2026-07-30)
+
+
+### Bug Fixes
+
+* keep footer at the bottom without showing it on initial load ([ea2061f](https://github.com/Iftekhar1405/saleem-footwear/commit/ea2061f6d16d6987fde940ac9697678f00d584d4))
+* prevent product detail page from overflowing horizontally when a product has many colors ([69254e0](https://github.com/Iftekhar1405/saleem-footwear/commit/69254e0e353cc53fcab258348644758b696f5c41))
+* reset scroll on product detail and stop color name input losing focus ([5366c47](https://github.com/Iftekhar1405/saleem-footwear/commit/5366c4714e6a40f9d25ce4eeab8e877f24409eee))
+* scroll to top on every route change so pages don't open scrolled down ([dc3ce87](https://github.com/Iftekhar1405/saleem-footwear/commit/dc3ce87a48bd3722e7621ca0c2e30de4cc8fd8af))
+
 # [2.2.0](https://github.com/Iftekhar1405/saleem-footwear/compare/v2.1.0...v2.2.0) (2026-06-04)
 
 
