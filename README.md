@@ -33,8 +33,6 @@ License
 - 📈 Business analytics
 - 🔐 User role management
 
-
-
 ## 🛠️ Tech Stack
 
 - **Frontend Framework**: React 18.3.1
