@@ -1,4 +1,18 @@
+/* Sticky-footer layout: the main content area fills the visible viewport (minus
+   the 70px fixed-header offset applied on :root in index.css) so the footer stays
+   just below the fold instead of riding up while a page is empty or still loading. */
+.layout,
 .no-header-layout {
-    margin-top: 0;
-    padding-top: 0;
-  }
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-main {
+  flex: 1 0 auto;
+  min-height: calc(100vh - 70px);
+}
+
+.no-header-layout {
+  margin-top: 0;
+  padding-top: 0;
+}

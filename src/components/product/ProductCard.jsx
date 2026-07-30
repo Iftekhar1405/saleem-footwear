@@ -228,7 +228,7 @@ const ProductCard = () => {
   return (
     <Container maxW="container.xl" py={{ base: 1, md: 1 }}>
       <Grid
-        templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }}
+        templateColumns={{ base: "minmax(0, 1fr)", lg: "repeat(2, minmax(0, 1fr))" }}
         gap={{ base: 4, md: 8, lg: 12 }}
       >
         {/* Image Gallery with Overlay Controls */}
