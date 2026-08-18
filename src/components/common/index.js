@@ -9,3 +9,4 @@ export { default as BrandScroller } from './BrandScroller';
 export { default as SearchBar } from './SearchBar';
 export { default as Scroll } from './Scroll';
 export { default as PinField } from './PinField';
+export { default as ConfirmDialog } from './ConfirmDialog';

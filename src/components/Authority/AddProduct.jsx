@@ -481,10 +481,11 @@ function AddProduct() {
         { colorName: "", selectedImages: [], newColorImages: [] },
       ]);
     } catch (error) {
-      console.log("🪵 ~ handleSubmit ~ error:", error)
       toast({
         title: "Error",
-        description: error.response.data.msg || "Failed to add product. Please try again.",
+        description:
+          error.response?.data?.msg ||
+          "Failed to add product. Please try again.",
         status: "error",
         duration: 5000,
         isClosable: true,

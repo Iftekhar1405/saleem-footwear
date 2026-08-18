@@ -25,8 +25,9 @@ import {
   AlertDialogFooter,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { Trash2, Edit3, UserX, UserCheck, Search, Phone, MapPin, KeyRound } from "lucide-react";
+import { Trash2, UserX, UserCheck, Search, Phone, MapPin, KeyRound } from "lucide-react";
 import { URL } from "../../context/url";
+import { ConfirmDialog } from "../common";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -47,6 +48,8 @@ function AllCustomers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [pinResetTarget, setPinResetTarget] = useState(null);
   const [isResettingPin, setIsResettingPin] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
@@ -142,6 +145,24 @@ function AllCustomers() {
         duration: 3000,
         isClosable: true,
       });
+    }
+  };
+
+  const runPendingAction = async () => {
+    if (!pendingAction) return;
+    setActionLoading(true);
+    try {
+      if (pendingAction.kind === "delete") {
+        await handleDeleteCustomer(pendingAction.customer._id);
+      } else if (pendingAction.kind === "block") {
+        await handleBlockCustomer(
+          pendingAction.customer._id,
+          pendingAction.customer.isBlocked
+        );
+      }
+    } finally {
+      setActionLoading(false);
+      setPendingAction(null);
     }
   };
 
@@ -294,8 +315,9 @@ function AllCustomers() {
                         variant="ghost"
                         size="sm"
                         colorScheme={customer.isBlocked ? "green" : "orange"}
-                        onClick={() => handleBlockCustomer(customer._id, customer.isBlocked)}
+                        onClick={() => setPendingAction({ kind: "block", customer })}
                         px={2}
+                        title={customer.isBlocked ? "Unblock dealer" : "Block dealer"}
                       >
                         {customer.isBlocked ? <UserCheck size={16} /> : <UserX size={16} />}
                       </Button>
@@ -303,8 +325,9 @@ function AllCustomers() {
                         variant="ghost"
                         size="sm"
                         colorScheme="red"
-                        onClick={() => handleDeleteCustomer(customer._id)}
+                        onClick={() => setPendingAction({ kind: "delete", customer })}
                         px={2}
+                        title="Delete dealer"
                       >
                         <Trash2 size={16} />
                       </Button>
@@ -316,6 +339,41 @@ function AllCustomers() {
           </Grid>
         )}
       </VStack>
+
+      <ConfirmDialog
+        isOpen={!!pendingAction}
+        onClose={() => setPendingAction(null)}
+        onConfirm={runPendingAction}
+        isLoading={actionLoading}
+        title={
+          pendingAction?.kind === "delete"
+            ? "Delete dealer"
+            : pendingAction?.customer?.isBlocked
+              ? "Unblock dealer"
+              : "Block dealer"
+        }
+        confirmLabel={
+          pendingAction?.kind === "delete"
+            ? "Delete"
+            : pendingAction?.customer?.isBlocked
+              ? "Unblock"
+              : "Block"
+        }
+        confirmColorScheme={
+          pendingAction?.kind === "delete"
+            ? "red"
+            : pendingAction?.customer?.isBlocked
+              ? "green"
+              : "orange"
+        }
+        body={
+          pendingAction?.kind === "delete"
+            ? `Permanently delete ${pendingAction?.customer?.name || "this dealer"} and their account? This cannot be undone.`
+            : pendingAction?.customer?.isBlocked
+              ? `Unblock ${pendingAction?.customer?.name || "this dealer"}? They will be able to log in and order again.`
+              : `Block ${pendingAction?.customer?.name || "this dealer"}? They will not be able to log in until unblocked.`
+        }
+      />
 
       <AlertDialog
         isOpen={isOpen}

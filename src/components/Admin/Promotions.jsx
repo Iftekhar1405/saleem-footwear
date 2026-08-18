@@ -24,6 +24,7 @@ import {
 import { DeleteIcon } from "@chakra-ui/icons";
 import { ImagePlus } from "lucide-react";
 import { URL as API_URL } from "../../context/url";
+import { ConfirmDialog } from "../common";
 
 const initialForm = {
   title: "",
@@ -45,6 +46,8 @@ function Promotions() {
   const [imagePreview, setImagePreview] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const toast = useToast();
 
   const token = useMemo(() => localStorage.getItem("token"), []);
@@ -163,7 +166,10 @@ function Promotions() {
     }
   };
 
-  const deletePromotion = async (id) => {
+  const deletePromotion = async () => {
+    if (!deleteTarget) return;
+    const id = deleteTarget._id;
+    setDeleting(true);
     try {
       await axios.delete(`${API_URL}/promotions/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -177,6 +183,7 @@ function Promotions() {
         duration: 2500,
         isClosable: true,
       });
+      setDeleteTarget(null);
     } catch (error) {
       console.error("Error deleting promotion:", error);
       toast({
@@ -186,6 +193,8 @@ function Promotions() {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -359,7 +368,7 @@ function Promotions() {
                         icon={<DeleteIcon />}
                         colorScheme="red"
                         variant="ghost"
-                        onClick={() => deletePromotion(promotion._id)}
+                        onClick={() => setDeleteTarget(promotion)}
                       />
                     </HStack>
                   </VStack>
@@ -369,6 +378,16 @@ function Promotions() {
           </Grid>
         )}
       </VStack>
+
+      <ConfirmDialog
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={deletePromotion}
+        isLoading={deleting}
+        title="Delete promotion"
+        confirmLabel="Delete"
+        body={`Delete "${deleteTarget?.title || "this promotion"}"? It will stop showing in the app immediately.`}
+      />
     </Box>
   );
 }
