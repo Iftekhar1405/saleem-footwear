@@ -40,24 +40,26 @@ const PinField = ({
         </FormLabel>
       ) : null}
       <HStack spacing={2} align="center">
-        <HStack spacing={2} flex="1" justify="space-between">
+        <HStack spacing={2} flex="1">
           <PinInput
             value={value}
             onChange={onChange}
             mask={!show}
             type="number"
             otp={false}
+            manageFocus
             placeholder=""
             size={size}
             focusBorderColor={focusBorderColor}
             autoFocus={autoFocus}
           >
             {Array.from({ length }).map((_, i) => (
-              <PinInputField key={i} flex="1" fontWeight="600" {...fieldProps} />
+              <PinInputField key={i} fontWeight="600" {...fieldProps} />
             ))}
           </PinInput>
         </HStack>
         <IconButton
+          type="button"
           aria-label={show ? "Hide PIN" : "Show PIN"}
           variant="ghost"
           size="sm"
