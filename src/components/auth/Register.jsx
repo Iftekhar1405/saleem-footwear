@@ -14,7 +14,6 @@ import {
   extendTheme,
   useColorModeValue,
   InputGroup,
-  InputRightElement,
   Icon,
   useToast,
   Text,
@@ -25,12 +24,10 @@ import {
   FiUser,
   FiHome,
   FiPhone,
-  FiLock,
-  FiEye,
-  FiEyeOff,
   FiShoppingBag,
 } from "react-icons/fi";
 import { URL } from "../../context/url";
+import { PinField } from "../common";
 
 // Create a custom ChakraProvider theme (matching the Login theme)
 const theme = extendTheme({
@@ -100,8 +97,6 @@ function Register() {
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState("customer");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -115,22 +110,12 @@ function Register() {
   const cardBg = useColorModeValue("white", "gray.800");
   const subtleTextColor = useColorModeValue("gray.600", "gray.400");
 
-  const togglePassword = () => {
-    setShowPassword(!showPassword);
+  const handlePasswordChange = (value) => {
+    setPassword(value.replace(/\D/g, "").slice(0, 6));
   };
 
-  const toggleConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
-  const handlePasswordChange = (e) => {
-    const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 6);
-    setPassword(digitsOnly);
-  };
-
-  const handleConfirmPasswordChange = (e) => {
-    const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 6);
-    setConfirmPassword(digitsOnly);
+  const handleConfirmPasswordChange = (value) => {
+    setConfirmPassword(value.replace(/\D/g, "").slice(0, 6));
   };
 
   const handleSubmit = async (e) => {
@@ -332,79 +317,17 @@ function Register() {
                   </InputGroup>
                 </FormControl>
 
-                <FormControl isRequired>
-                  <FormLabel color="red.600" fontWeight="medium">
-                    PIN
-                  </FormLabel>
-                  <InputGroup>
-                    <InputLeftElement pointerEvents="none" color="red.500">
-                      <Icon as={FiLock} />
-                    </InputLeftElement>
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      inputMode="numeric"
-                      maxLength={6}
-                      value={password}
-                      onChange={handlePasswordChange}
-                      placeholder="Create a 6-digit PIN"
-                      pl={10}
-                      focusBorderColor="red.400"
-                      _focus={{ boxShadow: "0 0 0 1px red.400" }}
-                      as={motion.input}
-                      whileFocus={{ scale: 1.01 }}
-                    />
-                    <InputRightElement width="3rem">
-                      <Button
-                        h="1.5rem"
-                        size="sm"
-                        variant="ghost"
-                        onClick={togglePassword}
-                      >
-                        <Icon
-                          as={showPassword ? FiEyeOff : FiEye}
-                          color="gray.500"
-                        />
-                      </Button>
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
+                <PinField
+                  label="PIN"
+                  value={password}
+                  onChange={handlePasswordChange}
+                />
 
-                <FormControl isRequired>
-                  <FormLabel color="red.600" fontWeight="medium">
-                    Confirm PIN
-                  </FormLabel>
-                  <InputGroup>
-                    <InputLeftElement pointerEvents="none" color="red.500">
-                      <Icon as={FiLock} />
-                    </InputLeftElement>
-                    <Input
-                      type={showConfirmPassword ? "text" : "password"}
-                      inputMode="numeric"
-                      maxLength={6}
-                      value={confirmPassword}
-                      onChange={handleConfirmPasswordChange}
-                      placeholder="Confirm your 6-digit PIN"
-                      pl={10}
-                      focusBorderColor="red.400"
-                      _focus={{ boxShadow: "0 0 0 1px red.400" }}
-                      as={motion.input}
-                      whileFocus={{ scale: 1.01 }}
-                    />
-                    <InputRightElement width="3rem">
-                      <Button
-                        h="1.5rem"
-                        size="sm"
-                        variant="ghost"
-                        onClick={toggleConfirmPassword}
-                      >
-                        <Icon
-                          as={showConfirmPassword ? FiEyeOff : FiEye}
-                          color="gray.500"
-                        />
-                      </Button>
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
+                <PinField
+                  label="Confirm PIN"
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
+                />
 
                 <FormControl isRequired>
                   <FormLabel color="red.600" fontWeight="medium">

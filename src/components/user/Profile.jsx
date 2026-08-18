@@ -32,6 +32,7 @@ import {
 import { motion } from 'framer-motion';
 import { SearchIcon, EditIcon, CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import { URL } from '../../context/url';
+import { PinField } from '../common';
 
 // Mock API service
 const mockApiService = {
@@ -604,55 +605,52 @@ const Profile = () => {
           </Box>
 
           <Box p={6}>
-            <Flex direction={{ base: 'column', md: 'row' }} gap={4}>
-              <FormControl>
-                <FormLabel fontSize="sm" color="gray.400">Current PIN</FormLabel>
-                <Input
-                  type="password"
-                  inputMode="numeric"
-                  maxLength={6}
-                  value={currentPin}
-                  onChange={(e) => setCurrentPin(sanitizePin(e.target.value))}
-                  bg="gray.700"
-                  border="1px solid"
-                  borderColor="gray.600"
-                  _hover={{ borderColor: 'blue.400' }}
-                  _focus={{ borderColor: 'blue.400' }}
-                  placeholder="••••••"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel fontSize="sm" color="gray.400">New PIN</FormLabel>
-                <Input
-                  type="password"
-                  inputMode="numeric"
-                  maxLength={6}
-                  value={newPin}
-                  onChange={(e) => setNewPin(sanitizePin(e.target.value))}
-                  bg="gray.700"
-                  border="1px solid"
-                  borderColor="gray.600"
-                  _hover={{ borderColor: 'blue.400' }}
-                  _focus={{ borderColor: 'blue.400' }}
-                  placeholder="••••••"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel fontSize="sm" color="gray.400">Confirm New PIN</FormLabel>
-                <Input
-                  type="password"
-                  inputMode="numeric"
-                  maxLength={6}
-                  value={confirmPin}
-                  onChange={(e) => setConfirmPin(sanitizePin(e.target.value))}
-                  bg="gray.700"
-                  border="1px solid"
-                  borderColor="gray.600"
-                  _hover={{ borderColor: 'blue.400' }}
-                  _focus={{ borderColor: 'blue.400' }}
-                  placeholder="••••••"
-                />
-              </FormControl>
+            <Flex direction="column" gap={4}>
+              <PinField
+                label="Current PIN"
+                value={currentPin}
+                onChange={(v) => setCurrentPin(sanitizePin(v))}
+                isRequired={false}
+                labelColor="gray.400"
+                focusBorderColor="blue.400"
+                iconColor="gray.400"
+                fieldProps={{
+                  bg: 'gray.700',
+                  borderColor: 'gray.600',
+                  color: 'white',
+                  _hover: { borderColor: 'blue.400' },
+                }}
+              />
+              <PinField
+                label="New PIN"
+                value={newPin}
+                onChange={(v) => setNewPin(sanitizePin(v))}
+                isRequired={false}
+                labelColor="gray.400"
+                focusBorderColor="blue.400"
+                iconColor="gray.400"
+                fieldProps={{
+                  bg: 'gray.700',
+                  borderColor: 'gray.600',
+                  color: 'white',
+                  _hover: { borderColor: 'blue.400' },
+                }}
+              />
+              <PinField
+                label="Confirm New PIN"
+                value={confirmPin}
+                onChange={(v) => setConfirmPin(sanitizePin(v))}
+                isRequired={false}
+                labelColor="gray.400"
+                focusBorderColor="blue.400"
+                iconColor="gray.400"
+                fieldProps={{
+                  bg: 'gray.700',
+                  borderColor: 'gray.600',
+                  color: 'white',
+                  _hover: { borderColor: 'blue.400' },
+                }}
+              />
             </Flex>
 
             <Button

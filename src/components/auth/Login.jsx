@@ -13,14 +13,14 @@ import {
   useToast,
   ChakraProvider,
   InputGroup,
-  InputRightElement,
   Icon,
   extendTheme,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { FiPhone, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { FiPhone } from "react-icons/fi";
 import { URL } from "../../context/url";
+import { PinField } from "../common";
 
 // Create a custom ChakraProvider theme
 const theme = extendTheme({
@@ -85,7 +85,6 @@ const MotionHeading = motion(Heading);
 function Login() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
@@ -103,13 +102,8 @@ function Login() {
     setPhone(e.target.value);
   };
 
-  const handlePasswordChange = (e) => {
-    const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 6);
-    setPassword(digitsOnly);
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+  const handlePasswordChange = (value) => {
+    setPassword(value.replace(/\D/g, "").slice(0, 6));
   };
 
   const handleSubmit = async (e) => {
@@ -267,42 +261,11 @@ function Login() {
                   </InputGroup>
                 </FormControl>
 
-                <FormControl isRequired>
-                  <FormLabel color="red.600" fontWeight="medium">
-                    PIN
-                  </FormLabel>
-                  <InputGroup>
-                    <InputLeftElement pointerEvents="none" color="red.500">
-                      <Icon as={FiLock} />
-                    </InputLeftElement>
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      inputMode="numeric"
-                      maxLength={6}
-                      value={password}
-                      onChange={handlePasswordChange}
-                      placeholder="Enter your 6-digit PIN"
-                      pl={10}
-                      focusBorderColor="red.400"
-                      _focus={{ boxShadow: "0 0 0 1px red.400" }}
-                      as={motion.input}
-                      whileFocus={{ scale: 1.01 }}
-                    />
-                    <InputRightElement width="3rem">
-                      <Button
-                        h="1.5rem"
-                        size="sm"
-                        variant="ghost"
-                        onClick={togglePasswordVisibility}
-                      >
-                        <Icon
-                          as={showPassword ? FiEyeOff : FiEye}
-                          color="gray.500"
-                        />
-                      </Button>
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
+                <PinField
+                  label="PIN"
+                  value={password}
+                  onChange={handlePasswordChange}
+                />
 
                 <Button
                   type="submit"
