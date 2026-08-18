@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Box, 
-  Input, 
-  Spinner, 
-  Text, 
-  Heading, 
+import axios from 'axios';
+import {
+  Box,
+  Input,
+  Spinner,
+  Text,
+  Heading,
   Flex,
   IconButton,
   useToast,
@@ -30,6 +31,7 @@ import {
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { SearchIcon, EditIcon, CheckIcon, CloseIcon } from '@chakra-ui/icons';
+import { URL } from '../../context/url';
 
 // Mock API service
 const mockApiService = {
@@ -58,6 +60,12 @@ const Profile = () => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedField, setSelectedField] = useState(null);
+
+  // Change PIN form state
+  const [currentPin, setCurrentPin] = useState('');
+  const [newPin, setNewPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
+  const [isChangingPin, setIsChangingPin] = useState(false);
 
   // Fetch user data from localStorage (token)
   useEffect(() => {
@@ -224,6 +232,64 @@ const Profile = () => {
       });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // Strip non-digits and cap at 6 characters for PIN inputs
+  const sanitizePin = (value) => value.replace(/\D/g, '').slice(0, 6);
+
+  // Handle change PIN submission
+  const handleChangePin = async () => {
+    if (currentPin.length !== 6 || newPin.length !== 6) {
+      toast({
+        title: 'Invalid PIN',
+        description: 'PIN must be exactly 6 digits.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    if (newPin !== confirmPin) {
+      toast({
+        title: 'PINs do not match',
+        description: 'New PIN and confirmation must be the same.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsChangingPin(true);
+    try {
+      await axios.patch(
+        `${URL}/auth/change-pin`,
+        { currentPin, newPin },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
+
+      toast({
+        title: 'PIN changed successfully',
+        status: 'success',
+        duration: 2500,
+        isClosable: true,
+      });
+
+      setCurrentPin('');
+      setNewPin('');
+      setConfirmPin('');
+    } catch (error) {
+      toast({
+        title: 'Failed to change PIN',
+        description: error.response?.data?.msg || 'Something went wrong. Please try again.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsChangingPin(false);
     }
   };
 
@@ -509,6 +575,94 @@ const Profile = () => {
                 </Box>
               </ScaleFade>
             )}
+          </Box>
+        </MotionBox>
+
+        {/* Change PIN section */}
+        <MotionBox
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          bg="gray.800"
+          borderRadius="xl"
+          overflow="hidden"
+          boxShadow="0 4px 20px rgba(0, 0, 0, 0.3)"
+          border="1px solid"
+          borderColor="gray.700"
+          mt={6}
+        >
+          <Box
+            bg="gray.700"
+            p={6}
+            borderBottom="1px solid"
+            borderColor="gray.600"
+          >
+            <Heading size="md" fontWeight="600">Change PIN</Heading>
+            <Text color="gray.400" fontSize="sm" mt={1}>
+              Update your 6-digit login PIN
+            </Text>
+          </Box>
+
+          <Box p={6}>
+            <Flex direction={{ base: 'column', md: 'row' }} gap={4}>
+              <FormControl>
+                <FormLabel fontSize="sm" color="gray.400">Current PIN</FormLabel>
+                <Input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={currentPin}
+                  onChange={(e) => setCurrentPin(sanitizePin(e.target.value))}
+                  bg="gray.700"
+                  border="1px solid"
+                  borderColor="gray.600"
+                  _hover={{ borderColor: 'blue.400' }}
+                  _focus={{ borderColor: 'blue.400' }}
+                  placeholder="••••••"
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel fontSize="sm" color="gray.400">New PIN</FormLabel>
+                <Input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={newPin}
+                  onChange={(e) => setNewPin(sanitizePin(e.target.value))}
+                  bg="gray.700"
+                  border="1px solid"
+                  borderColor="gray.600"
+                  _hover={{ borderColor: 'blue.400' }}
+                  _focus={{ borderColor: 'blue.400' }}
+                  placeholder="••••••"
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel fontSize="sm" color="gray.400">Confirm New PIN</FormLabel>
+                <Input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={confirmPin}
+                  onChange={(e) => setConfirmPin(sanitizePin(e.target.value))}
+                  bg="gray.700"
+                  border="1px solid"
+                  borderColor="gray.600"
+                  _hover={{ borderColor: 'blue.400' }}
+                  _focus={{ borderColor: 'blue.400' }}
+                  placeholder="••••••"
+                />
+              </FormControl>
+            </Flex>
+
+            <Button
+              mt={5}
+              colorScheme="blue"
+              onClick={handleChangePin}
+              isLoading={isChangingPin}
+            >
+              Update PIN
+            </Button>
           </Box>
         </MotionBox>
       </Flex>
