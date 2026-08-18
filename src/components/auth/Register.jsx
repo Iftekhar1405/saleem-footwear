@@ -123,13 +123,35 @@ function Register() {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const handlePasswordChange = (e) => {
+    const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setPassword(digitsOnly);
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setConfirmPassword(digitsOnly);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (password.length !== 6) {
+      toast({
+        title: "Invalid PIN",
+        description: "Your PIN must be exactly 6 digits",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast({
-        title: "Passwords don't match",
-        description: "Please make sure your passwords match",
+        title: "PINs don't match",
+        description: "Please make sure your PINs match",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -143,7 +165,7 @@ function Register() {
     const body = {
       name,
       shopName,
-      password,
+      pin: password,
       address,
       phone,
       role,
@@ -312,7 +334,7 @@ function Register() {
 
                 <FormControl isRequired>
                   <FormLabel color="red.600" fontWeight="medium">
-                    Password
+                    PIN
                   </FormLabel>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none" color="red.500">
@@ -320,9 +342,11 @@ function Register() {
                     </InputLeftElement>
                     <Input
                       type={showPassword ? "text" : "password"}
+                      inputMode="numeric"
+                      maxLength={6}
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Create a password"
+                      onChange={handlePasswordChange}
+                      placeholder="Create a 6-digit PIN"
                       pl={10}
                       focusBorderColor="red.400"
                       _focus={{ boxShadow: "0 0 0 1px red.400" }}
@@ -347,7 +371,7 @@ function Register() {
 
                 <FormControl isRequired>
                   <FormLabel color="red.600" fontWeight="medium">
-                    Confirm Password
+                    Confirm PIN
                   </FormLabel>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none" color="red.500">
@@ -355,9 +379,11 @@ function Register() {
                     </InputLeftElement>
                     <Input
                       type={showConfirmPassword ? "text" : "password"}
+                      inputMode="numeric"
+                      maxLength={6}
                       value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Confirm your password"
+                      onChange={handleConfirmPasswordChange}
+                      placeholder="Confirm your 6-digit PIN"
                       pl={10}
                       focusBorderColor="red.400"
                       _focus={{ boxShadow: "0 0 0 1px red.400" }}
