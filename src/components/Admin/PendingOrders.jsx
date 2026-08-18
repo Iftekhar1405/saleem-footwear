@@ -1,233 +1,81 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { 
-  Box, 
-  Text, 
-  VStack, 
-  HStack, 
-  Table, 
-  Thead, 
-  Tbody, 
-  Tr, 
-  Th, 
-  Td, 
-  Button, 
-  Spinner, 
+import {
+  Box,
+  Button,
   Card,
-  CardHeader,
   CardBody,
+  Flex,
   Heading,
-  Tag,
-  Tooltip,
-  IconButton,
-  useToast
+  Spinner,
+  Text,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
-import { 
-  motion, 
-  AnimatePresence 
-} from "framer-motion";
-import { CheckIcon, CloseIcon, ViewIcon } from "@chakra-ui/icons";
-import { useReactToPrint } from "react-to-print";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { useSearchParams } from "react-router-dom";
 import { URL } from "../../context/url";
-
-const MotionCard = motion(Card);
+import { useAdminOrders } from "../../hooks/useAdminOrders";
+import OrderCard from "./OrderCard";
+import { ConfirmDialog } from "../common";
 
 function PendingOrders() {
   const [searchParams] = useSearchParams();
   const highlightOrderId = searchParams.get("orderId");
-  const [pendingOrders, setPendingOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [printOrder, setPrintOrder] = useState(null);
-  const printRef = useRef(null);
+  const { orders, setOrders, loading, error } = useAdminOrders("pending");
+  const [rejectTarget, setRejectTarget] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
   const toast = useToast();
 
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,
-    documentTitle: `Pending Orders - ${new Date().toLocaleDateString()}`,
-    onAfterPrint: () => {
-      toast({
-        title: "Order Printed",
-        description: "The pending orders have been printed successfully.",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-      });
-      setPrintOrder(null);
-    },
-    onPrintError: (error) => {
-      console.error("Print error:", error);
-      toast({
-        title: "Print Error",
-        description: "Failed to print the order.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  });
-
   useEffect(() => {
-    if (printOrder && handlePrint) {
-      handlePrint();
-    }
-  }, [printOrder, handlePrint]);
-
-  const triggerPrintForOrder = (order) => {
-    setPrintOrder(order);
-  };
-
-  useEffect(() => {
-    const fetchPendingOrders = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("No authentication token found");
-        }
-
-        const response = await axios.get(`${URL}/order`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (response.data && response.data.data) {
-          const filteredOrders = response.data.data.filter(
-            (order) => order.status === "pending"
-          );
-          setPendingOrders(filteredOrders);
-        }
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch pending orders",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        setLoading(false);
-      }
-    };
-
-    fetchPendingOrders();
-  }, [toast]);
-
-  useEffect(() => {
-    if (!highlightOrderId || loading || pendingOrders.length === 0) return;
+    if (!highlightOrderId || loading || orders.length === 0) return;
     const timer = setTimeout(() => {
       const el = document.getElementById(`pending-order-${highlightOrderId}`);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 300);
     return () => clearTimeout(timer);
-  }, [highlightOrderId, loading, pendingOrders]);
+  }, [highlightOrderId, loading, orders]);
 
   const updateOrderStatus = async (orderId, status) => {
+    setActionLoading(true);
     try {
       const token = localStorage.getItem("token");
       await axios.patch(
         `${URL}/order/status/${orderId}`,
         { status },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      setPendingOrders((prevOrders) =>
-        prevOrders.filter((order) => order._id !== orderId)
-      );
-
+      setOrders((prev) => prev.filter((o) => o._id !== orderId));
       toast({
-        title: "Order Updated",
-        description: `Order ${status} successfully`,
+        title: `Order ${status}`,
         status: status === "accepted" ? "success" : "warning",
         duration: 2000,
         isClosable: true,
       });
-    } catch (error) {
-      console.error("Error updating order:", error);
+    } catch {
       toast({
         title: "Error",
-        description: `Failed to update order status to ${status}`,
+        description: `Failed to ${status === "accepted" ? "accept" : "reject"} order`,
         status: "error",
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setActionLoading(false);
+      setRejectTarget(null);
     }
   };
-
-  const updateItemStatus = async (orderId, itemId, status) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.patch(
-        `${URL}/order/item/${orderId}/status`,
-        { itemId, status },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const updatedOrders = pendingOrders.map((order) => {
-        if (order._id === orderId) {
-          return {
-            ...order,
-            items: order.items.filter((item) => item._id !== itemId),
-          };
-        }
-        return order;
-      });
-      
-      setPendingOrders(updatedOrders);
-
-      toast({
-        title: "Item Updated",
-        description: `Item ${status} successfully`,
-        status: status === "accepted" ? "success" : "warning",
-        duration: 2000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error("Error updating item:", error);
-      toast({
-        title: "Error",
-        description: `Failed to update item status`,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const bgColor = "gray.50";
-  const cardBgColor = "white";
 
   if (loading) {
     return (
-      <Box 
-        display="flex" 
-        justifyContent="center" 
-        alignItems="center" 
-        height="100vh"
-      >
-        <Spinner size="xl" />
-      </Box>
+      <Flex justify="center" align="center" minH="60vh">
+        <Spinner size="xl" color="orange.400" thickness="3px" />
+      </Flex>
     );
   }
 
   return (
-    <Box 
-      p={6} 
-      bg={bgColor} 
-      minHeight="100vh"
-    >
+    <Box p={{ base: 4, md: 8 }} bg="gray.50" minH="100vh">
       <VStack spacing={6} align="stretch">
         <Box>
           <Heading size="lg" color="gray.800">Pending Orders</Heading>
@@ -236,187 +84,74 @@ function PendingOrders() {
           </Text>
         </Box>
 
-        {/* Print Area - Hidden from view */}
-        {printOrder && (
-          <div style={{ display: 'none' }}>
-            <div ref={printRef}>
-              <h1>Order Details</h1>
-              <p>Order ID: {printOrder._id}</p>
-              <p>Customer: {printOrder.userId?.name}</p>
-              <p>Shop: {printOrder.userId?.shopName}</p>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Article</th>
-                    <th>Brand</th>
-                    <th>Price</th>
-                    <th>Color</th>
-                    <th>Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {printOrder.items.map((item) => (
-                    <tr key={item._id}>
-                      <td>{item.productId?.article || "N/A"}</td>
-                      <td>{item.productId?.brand || "N/A"}</td>
-                      <td>₹{item.price}</td>
-                      <td>{item.color}</td>
-                      <td>{item.quantity}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        <AnimatePresence>
-          {pendingOrders.length === 0 ? (
-            <Box
-              textAlign="center"
-              py={10}
-            >
-              <Text fontSize="xl" color="gray.500">
-                No pending orders at the moment
+        {error ? (
+          <Card>
+            <CardBody>
+              <Text color="red.500" textAlign="center" py={8}>
+                Failed to load pending orders. Please refresh.
               </Text>
-            </Box>
-          ) : (
-            pendingOrders.map((order) => (
-              <MotionCard
-                key={order._id}
-                id={`pending-order-${order._id}`}
-                variant="elevated"
-                bg={cardBgColor}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                boxShadow="lg"
-                borderRadius="xl"
-                borderWidth={order._id === highlightOrderId ? "2px" : undefined}
-                borderColor={
-                  order._id === highlightOrderId ? "orange.400" : undefined
-                }
-              >
-                <CardHeader>
-                  <HStack justifyContent="space-between">
-                    <VStack align="start" spacing={2}>
-                      <Heading size="md">
-                        Order ID: {order._id}
-                      </Heading>
-                      <HStack>
-                        <Tag colorScheme="blue">
-                          {order.userId?.name || 'Unknown Customer'}
-                        </Tag>
-                        <Tag colorScheme="green">
-                          {order.userId?.shopName || 'Unknown Shop'}
-                        </Tag>
-                      </HStack>
-                      <Text color="gray.500">
-                        Phone: {order.userId?.phone || 'N/A'}
-                      </Text>
-                    </VStack>
-                    <Tooltip label="Print Order">
-                      <IconButton
-                        icon={<ViewIcon />}
-                        onClick={() => triggerPrintForOrder(order)}
-                        variant="outline"
-                        colorScheme="blue"
-                        aria-label="Print Order"
-                      />
-                    </Tooltip>
-                  </HStack>
-                </CardHeader>
-                <CardBody>
-                  <Box overflowX="auto">
-                    <Table variant="simple">
-                      <Thead>
-                        <Tr>
-                          <Th>Article</Th>
-                          <Th>Brand</Th>
-                          <Th>Price</Th>
-                          <Th>Color</Th>
-                          <Th>Item Set</Th>
-                          <Th>Quantity</Th>
-                          <Th>Actions</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {order.items.map((item) => (
-                          <Tr key={item._id}>
-                            <Td>{item.productId?.article || "N/A"}</Td>
-                            <Td>{item.productId?.brand || "N/A"}</Td>
-                            <Td>₹{item.price}</Td>
-                            <Td>{item.color}</Td>
-                            <Td>
-                              {item.itemSet && item.itemSet.length > 0
-                                ? item.itemSet
-                                    .map((i) => `${i.size} (Pcs: ${i.lengths})`)
-                                    .join(", ")
-                                : "N/A"}
-                            </Td>
-                            <Td>{item.quantity}</Td>
-                            <Td>
-                              <HStack>
-                                <Tooltip label="Accept Item">
-                                  <IconButton
-                                    icon={<CheckIcon />}
-                                    colorScheme="green"
-                                    size="sm"
-                                    aria-label="Accept Item"
-                                    onClick={() =>
-                                      updateItemStatus(
-                                        order._id,
-                                        item._id,
-                                        "accepted"
-                                      )
-                                    }
-                               
-                                  />
-                                </Tooltip>
-                                <Tooltip label="Reject Item">
-                                  <IconButton
-                                    icon={<CloseIcon />}
-                                    colorScheme="red"
-                                    size="sm"
-                                    aria-label="Reject Item"
-                                    onClick={() =>
-                                      updateItemStatus(
-                                        order._id,
-                                        item._id,
-                                        "rejected"
-                                      )
-                                    }
-                                  />
-                                </Tooltip>
-                              </HStack>
-                            </Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </Box>
-                  <HStack mt={4} justifyContent="flex-end">
+            </CardBody>
+          </Card>
+        ) : orders.length === 0 ? (
+          <Card>
+            <CardBody>
+              <Text color="gray.500" textAlign="center" py={8}>
+                No pending orders at the moment.
+              </Text>
+            </CardBody>
+          </Card>
+        ) : (
+          orders.map((order) => (
+            <Box
+              key={order._id}
+              id={`pending-order-${order._id}`}
+              borderRadius="xl"
+              boxShadow={
+                order._id === highlightOrderId
+                  ? "0 0 0 2px var(--chakra-colors-orange-400)"
+                  : undefined
+              }
+            >
+              <OrderCard
+                order={order}
+                statusColorScheme="orange"
+                actions={
+                  <>
                     <Button
                       leftIcon={<CheckIcon />}
                       colorScheme="green"
+                      size="sm"
+                      isLoading={actionLoading}
                       onClick={() => updateOrderStatus(order._id, "accepted")}
                     >
-                      Accept All
+                      Accept order
                     </Button>
                     <Button
-                      leftIcon={<CloseIcon />}
+                      leftIcon={<CloseIcon boxSize={3} />}
                       colorScheme="red"
-                      onClick={() => updateOrderStatus(order._id, "rejected")}
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setRejectTarget(order)}
                     >
-                      Reject All
+                      Reject order
                     </Button>
-                  </HStack>
-                </CardBody>
-              </MotionCard>
-            ))
-          )}
-        </AnimatePresence>
+                  </>
+                }
+              />
+            </Box>
+          ))
+        )}
       </VStack>
+
+      <ConfirmDialog
+        isOpen={!!rejectTarget}
+        onClose={() => setRejectTarget(null)}
+        onConfirm={() => updateOrderStatus(rejectTarget._id, "rejected")}
+        isLoading={actionLoading}
+        title="Reject order"
+        confirmLabel="Reject"
+        body={`Reject the order from ${rejectTarget?.userId?.name || "this dealer"}? They will see it as rejected.`}
+      />
     </Box>
   );
 }
