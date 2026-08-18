@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {
   Box,
@@ -10,15 +10,22 @@ import {
   Grid,
   GridItem,
   useToast,
+  useDisclosure,
   Badge,
   Input,
   InputGroup,
   InputLeftElement,
   Flex,
   Divider,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { Trash2, Edit3, UserX, UserCheck, Search, Phone, MapPin } from "lucide-react";
+import { Trash2, Edit3, UserX, UserCheck, Search, Phone, MapPin, KeyRound } from "lucide-react";
 import { URL } from "../../context/url";
 
 const containerVariants = {
@@ -38,7 +45,11 @@ function AllCustomers() {
   const [customers, setCustomers] = useState([]);
   const [originalCustomers, setOriginalCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [pinResetTarget, setPinResetTarget] = useState(null);
+  const [isResettingPin, setIsResettingPin] = useState(false);
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef();
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -131,6 +142,46 @@ function AllCustomers() {
         duration: 3000,
         isClosable: true,
       });
+    }
+  };
+
+  const handleOpenResetPin = (customer) => {
+    setPinResetTarget(customer);
+    onOpen();
+  };
+
+  const handleCloseResetPin = () => {
+    onClose();
+    setPinResetTarget(null);
+  };
+
+  const handleResetPin = async () => {
+    if (!pinResetTarget) return;
+    setIsResettingPin(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        `${URL}/users/${pinResetTarget._id}/reset-pin`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast({
+        title: "PIN reset to 966900",
+        status: "success",
+        duration: 2500,
+        isClosable: true,
+      });
+      handleCloseResetPin();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.msg || "Failed to reset PIN",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsResettingPin(false);
     }
   };
 
@@ -232,6 +283,16 @@ function AllCustomers() {
                       <Button
                         variant="ghost"
                         size="sm"
+                        colorScheme="purple"
+                        onClick={() => handleOpenResetPin(customer)}
+                        px={2}
+                        title="Reset PIN"
+                      >
+                        <KeyRound size={16} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         colorScheme={customer.isBlocked ? "green" : "orange"}
                         onClick={() => handleBlockCustomer(customer._id, customer.isBlocked)}
                         px={2}
@@ -255,6 +316,39 @@ function AllCustomers() {
           </Grid>
         )}
       </VStack>
+
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={handleCloseResetPin}
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Reset PIN
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Reset this dealer&apos;s PIN to 966900?
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={handleCloseResetPin}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="purple"
+                onClick={handleResetPin}
+                isLoading={isResettingPin}
+                ml={3}
+              >
+                Reset PIN
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 }
