@@ -877,6 +877,8 @@ const ProductGridAuth = () => {
   const [productList, setProductList] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
 
   const {
     isOpen: isDrawerOpen,
@@ -896,15 +898,34 @@ const ProductGridAuth = () => {
     setProductList(products);
   }, [products]);
 
-  const filtered = productList.filter((p) => {
-    const q = searchQuery.toLowerCase();
-    return (
-      !q ||
-      p.article?.toLowerCase().includes(q) ||
-      p.brand?.toLowerCase().includes(q) ||
-      p.category?.toLowerCase().includes(q)
-    );
-  });
+  // Server-side search across the full catalog (debounced) — the old client
+  // filter only saw the infinitely-scrolled pages, so it missed products that
+  // weren't loaded yet.
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (!q) {
+      setSearchResults([]);
+      return undefined;
+    }
+    const timer = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const { data } = await axios.get(`${URL}/products`, {
+          params: { search: q, limit: 100 },
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        setSearchResults(data.products || []);
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const trimmedSearch = searchQuery.trim();
+  const displayed = trimmedSearch ? searchResults : productList;
 
   const handleEdit = (product) => {
     setEditingProduct(product);
@@ -924,9 +945,10 @@ const ProductGridAuth = () => {
         edited,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setProductList((prev) =>
-        prev.map((p) => (p._id === edited._id ? data.data : p))
-      );
+      const applyUpdate = (list) =>
+        list.map((p) => (p._id === edited._id ? data.data : p));
+      setProductList(applyUpdate);
+      setSearchResults(applyUpdate);
       closeDrawer();
       toast({
         title: "Product updated",
@@ -951,7 +973,9 @@ const ProductGridAuth = () => {
       await axios.delete(`${URL}/products/${deletingId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setProductList((prev) => prev.filter((p) => p._id !== deletingId));
+      const removeDeleted = (list) => list.filter((p) => p._id !== deletingId);
+      setProductList(removeDeleted);
+      setSearchResults(removeDeleted);
       toast({ title: "Product deleted", status: "success", duration: 2500, isClosable: true });
       setDeletingId(null);
       closeDelete();
@@ -999,8 +1023,8 @@ const ProductGridAuth = () => {
             Product Catalog
           </Text>
           <Text color="gray.400" fontSize="sm" mt={0.5}>
-            {filtered.length} product{filtered.length !== 1 ? "s" : ""}
-            {searchQuery ? " match your search" : " total"}
+            {displayed.length} product{displayed.length !== 1 ? "s" : ""}
+            {trimmedSearch ? " match your search" : " total"}
           </Text>
         </Box>
         <InputGroup maxW="300px" size="sm">
@@ -1020,17 +1044,17 @@ const ProductGridAuth = () => {
         </InputGroup>
       </Flex>
 
-      {/* Loading more */}
-      {loading && productList.length > 0 && (
+      {/* Loading more / searching */}
+      {((loading && productList.length > 0) || searching) && (
         <Flex justify="center" mb={5}>
           <Spinner size="sm" color="blue.400" />
         </Flex>
       )}
 
       {/* Grid */}
-      {filtered.length > 0 ? (
+      {displayed.length > 0 ? (
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={5}>
-          {filtered.map((product) => (
+          {displayed.map((product) => (
             <ProductCard
               key={product._id}
               product={product}
@@ -1040,10 +1064,11 @@ const ProductGridAuth = () => {
           ))}
         </SimpleGrid>
       ) : (
-        !loading && (
+        !loading &&
+        !searching && (
           <Flex justify="center" align="center" minH="40vh">
             <Text color="gray.400" fontSize="sm">
-              {searchQuery ? "No products match your search." : "No products found."}
+              {trimmedSearch ? "No products match your search." : "No products found."}
             </Text>
           </Flex>
         )
