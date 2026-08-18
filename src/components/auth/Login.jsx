@@ -104,7 +104,8 @@ function Login() {
   };
 
   const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
+    const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setPassword(digitsOnly);
   };
 
   const togglePasswordVisibility = () => {
@@ -117,7 +118,7 @@ function Login() {
 
     const login_body = {
       identifier: phone,
-      password: password,
+      pin: password,
     };
 
     try {
@@ -268,7 +269,7 @@ function Login() {
 
                 <FormControl isRequired>
                   <FormLabel color="red.600" fontWeight="medium">
-                    Password
+                    PIN
                   </FormLabel>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none" color="red.500">
@@ -276,9 +277,11 @@ function Login() {
                     </InputLeftElement>
                     <Input
                       type={showPassword ? "text" : "password"}
+                      inputMode="numeric"
+                      maxLength={6}
                       value={password}
                       onChange={handlePasswordChange}
-                      placeholder="Enter your password"
+                      placeholder="Enter your 6-digit PIN"
                       pl={10}
                       focusBorderColor="red.400"
                       _focus={{ boxShadow: "0 0 0 1px red.400" }}
