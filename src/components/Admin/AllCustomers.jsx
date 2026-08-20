@@ -313,6 +313,7 @@ function AllCustomers() {
                       </Button>
                       <Button
                         variant="ghost"
+                        disabled
                         size="sm"
                         colorScheme={customer.isBlocked ? "green" : "orange"}
                         onClick={() => setPendingAction({ kind: "block", customer })}
@@ -324,6 +325,7 @@ function AllCustomers() {
                       <Button
                         variant="ghost"
                         size="sm"
+                        disabled
                         colorScheme="red"
                         onClick={() => setPendingAction({ kind: "delete", customer })}
                         px={2}
