@@ -480,7 +480,7 @@ const Profile = () => {
           <Box p={6}>
             {filteredUser && Object.keys(filteredUser).length > 0 ? (
               Object.entries(filteredUser)
-                .filter(([key]) => key !== 'name' && key !== 'role') // Already displayed in header
+                .filter(([key]) => key !== 'name' && key !== 'role' && key !== 'iat' && key !== 'exp') // Already displayed in header; iat/exp are JWT metadata
                 .map(([key, value]) => (
                   <Fade in={true} key={key}>
                     <Box 
@@ -545,6 +545,7 @@ const Profile = () => {
                           {key !== 'id' && key !== 'avatarUrl' && (
                             <IconButton
                               aria-label="Edit"
+                              disabled
                               icon={<EditIcon />}
                               variant="ghost"
                               colorScheme="blue"
